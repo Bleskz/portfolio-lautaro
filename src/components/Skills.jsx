@@ -61,25 +61,23 @@ function SkillBar({ name, pct, index }) {
       <div
         className="relative"
         style={{
-          height: '2px',
+          height: '3px',
           backgroundColor: 'rgba(232,255,232,0.07)',
-          borderRadius: '1px',
         }}
       >
         {/* Animated fill */}
         <motion.div
           initial={{ width: '0%' }}
           whileInView={{ width: `${pct}%` }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.9, ease: 'easeOut', delay: index * 0.07 }}
+          viewport={{ once: true, amount: 0.05 }}
+          transition={{ duration: 0.8, ease: 'easeOut', delay: index * 0.06 }}
           className="absolute top-0 left-0 h-full"
           style={{
             background: 'linear-gradient(90deg, #00FF41, #00FFFF)',
-            boxShadow: '0 0 6px #00FF41',
-            borderRadius: '1px',
+            boxShadow: '0 0 10px rgba(0,255,65,0.8), 0 0 20px rgba(0,255,65,0.4)',
           }}
         >
-          {/* White dot at the right tip of the fill */}
+          {/* Cyan square tip at the right end of the fill */}
           <span
             className="absolute"
             style={{
@@ -88,9 +86,8 @@ function SkillBar({ name, pct, index }) {
               transform: 'translateY(-50%)',
               width: '6px',
               height: '6px',
-              borderRadius: '50%',
-              backgroundColor: '#E8FFE8',
-              boxShadow: '0 0 4px rgba(232,255,232,0.8)',
+              borderRadius: '0',
+              backgroundColor: '#00FFFF',
             }}
           />
         </motion.div>
@@ -99,7 +96,7 @@ function SkillBar({ name, pct, index }) {
   )
 }
 
-// Renders a channel card with header line and all skill bars
+// Renders a channel card with animated header line and all skill bars
 function ChannelCard({ channel }) {
   return (
     <div
@@ -109,23 +106,32 @@ function ChannelCard({ channel }) {
         backgroundColor: 'rgba(0,255,65,0.012)',
       }}
     >
-      {/* Channel header: label + extending line */}
+      {/* Channel header: label + animated extending line */}
       <div className="flex items-center gap-3 mb-6">
         <span
           style={{
             fontFamily: "'Share Tech Mono', monospace",
             fontSize: '0.6rem',
             color: '#00FF41',
-            letterSpacing: '0.08em',
+            letterSpacing: '0.35em',
             whiteSpace: 'nowrap',
             opacity: 0.85,
           }}
         >
           {channel.name}
         </span>
-        <div
+        {/* Extending line — animates width from 0 to 100% on section enter */}
+        <motion.div
           className="flex-1"
-          style={{ height: '1px', backgroundColor: 'rgba(0,255,65,0.15)' }}
+          initial={{ scaleX: 0 }}
+          whileInView={{ scaleX: 1 }}
+          viewport={{ once: true, amount: 0.05 }}
+          transition={{ duration: 0.7, ease: 'easeOut' }}
+          style={{
+            height: '1px',
+            backgroundColor: 'rgba(0,255,65,0.15)',
+            transformOrigin: 'left',
+          }}
         />
       </div>
 

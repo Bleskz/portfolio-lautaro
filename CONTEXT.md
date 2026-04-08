@@ -1,5 +1,5 @@
 ## Project: portfolio-lautaro
-## Status: PHASE 7 COMPLETE — READY FOR DEPLOY (Vercel)
+## Status: COMPLETE ✓ — LIVE AT https://portfolio-lautaro-steel.vercel.app
 
 ---
 
@@ -12,7 +12,7 @@
 - [x] Phase 5 — Projects Section (PROJECT_LOGS)
 - [x] Phase 6 — Skills Section (FREQ_STACK) + Contact Section (OPEN_CHANNEL)
 - [x] Phase 7 — Polish + Deploy Prep
-- [ ] Phase 8 — Deploy to Vercel (live URL pending)
+- [x] Phase 8 — Deploy to Vercel
 
 ---
 
@@ -54,9 +54,9 @@ all whileInView animations use viewport once:true, Google Fonts preconnect verif
 Build: zero errors, 344kB bundle (107kB gzipped).
 Files: src/components/Footer.jsx, src/App.jsx, index.html
 
-### Phase 8 — Deploy to Vercel
+### Phase 8 — Deploy to Vercel ✓
 Push to GitHub, connect Vercel, get live URL.
-Live URL: (pending)
+Live URL: https://portfolio-lautaro-steel.vercel.app
 
 ---
 
@@ -82,16 +82,29 @@ Live URL: (pending)
 
 - [x] GitHub repo for portfolio — NOT created yet. Needed before Phase 8.
 - [x] Project links:
-        TabFlow Extension  → private repo, card shows "Private Repo"
+        TabFlow Extension  → https://github.com/Bleskz/tabflow
         TabFlow Landing    → https://github.com/Bleskz/tabflow-landing
-        Steam Analyzer     → no public repo, card shows no link
-        CoreTracker        → no public repo, card shows no link
+        Steam Analyzer     → https://github.com/Bleskz/steam-analyzer
+        CoreTracker        → https://github.com/Bleskz/coretracker
 - [x] Hero glitch effect — scramble animation: letters show random chars
         that resolve to the real name. Framer Motion. Full glitch aesthetic.
 - [x] Mobile nav — hamburger menu with full-screen overlay
 - [x] Skills style — tag pills (honest, scannable, no fake percentages)
 
 ---
+
+## Phase 9 — UI Polish Pass ✓
+Comprehensive visual polish across all sections. No structural changes — pure aesthetics.
+
+Key changes:
+- Hero: two-column layout (55/45), SVG diamond decor with stroke-draw animation, grid opacity reduced to 0.025 and masked to right side, green glow blob, name color #F0FFF0 + subtle text-shadow
+- About: section padding 8rem, column gap 5rem, terminal card glow, horizontal green line above quote, quote size clamp(3.5rem,6vw,5rem)
+- Projects: grid gap 3px, card padding 2.5rem, hover scale+bg+shadow, FreqLabel 0.35→1 loop, stack chips with rgba(0,255,65,0.05) bg
+- Skills: bar height 3px, cyan square tip, stronger bar glow, channel headers letter-spacing 0.35em, extending line animates on enter
+- Contact: terminal left border 3px solid #00FF41 + -4px 0 15px glow, stronger input focus box-shadow
+- Global: SectionDivider between every section, custom 4px scrollbar, section numbers clamp(8rem,18vw,16rem)
+
+Files modified: Hero.jsx, About.jsx, Projects.jsx, ProjectCard.jsx, Skills.jsx, Contact.jsx, App.jsx, index.css, SectionHeader.jsx
 
 ## Known Issues
 
@@ -122,3 +135,4 @@ Phase 8 — Deploy to Vercel:
 - [2026-04-08] Phase 5 complete. Projects section built: LiveClock status bar, ProjectCard component, 2×2 grid with green gutters, pulsing freq label, animated left accent bar, stagger entry animations.
 - [2026-04-08] Phase 6 complete. Skills + Contact sections built together. Skills: 3-column channel cards, gradient progress bars with Framer Motion width animation, white dot tip. Contact: static terminal simulation with blinking cursor, 2-column form with focus glow and TRANSMIT state.
 - [2026-04-08] Phase 7 complete. Footer (two-column, hover glow links), scroll flash CRT effect, meta tags, performance audit. Build: zero errors, 344kB/107kB gzipped.
+- [2026-04-08] Phase 8 complete. GitHub repo creado (Bleskz/portfolio-lautaro), deploy a Vercel. LIVE: https://portfolio-lautaro-steel.vercel.app

@@ -8,6 +8,18 @@ import Skills   from './components/Skills'
 import Contact  from './components/Contact'
 import Footer   from './components/Footer'
 
+// Thin gradient line between sections — reinforces the SIGNAL/NOISE visual rhythm
+function SectionDivider() {
+  return (
+    <div
+      style={{
+        height: '1px',
+        background: 'linear-gradient(90deg, transparent, rgba(0,255,65,0.12), transparent)',
+      }}
+    />
+  )
+}
+
 // Applies a brief brightness flash on fast scrolls (CRT flicker effect)
 function useScrollFlash() {
   useEffect(() => {
@@ -44,10 +56,15 @@ function App() {
     <>
       <Navbar />
       <Hero />
+      <SectionDivider />
       <About />
+      <SectionDivider />
       <Projects />
+      <SectionDivider />
       <Skills />
+      <SectionDivider />
       <Contact />
+      <SectionDivider />
       <Footer />
     </>
   )

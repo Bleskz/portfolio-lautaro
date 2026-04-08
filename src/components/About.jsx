@@ -21,7 +21,7 @@ function About() {
   return (
     <section
       id="about"
-      className="relative min-h-screen flex flex-col justify-center px-6 py-24"
+      className="relative min-h-screen flex flex-col justify-center px-6 py-32"
       style={{ backgroundColor: '#020502' }}
     >
       <div className="max-w-6xl mx-auto w-full">
@@ -34,24 +34,25 @@ function About() {
         />
 
         {/* Two-column grid — stacks vertically on mobile */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-start">
 
           {/* LEFT — Terminal card */}
           <motion.div
             initial={{ opacity: 0, x: -40 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0 }}
+            viewport={{ once: true, amount: 0.05 }}
+            transition={{ duration: 0.4, delay: 0 }}
             style={{
               background: 'rgba(0,255,65,0.028)',
               border: '1px solid rgba(0,255,65,0.14)',
               borderRadius: '2px',
+              boxShadow: '0 0 30px rgba(0,255,65,0.06), inset 0 0 20px rgba(0,255,65,0.02)',
             }}
           >
             {/* Terminal title bar */}
             <div
               className="flex items-center px-4 py-2.5"
-              style={{ borderBottom: '1px solid rgba(0,255,65,0.14)' }}
+              style={{ borderBottom: '1px solid rgba(0,255,65,0.14)', backgroundColor: 'rgba(0,255,65,0.08)' }}
             >
               {/* Window dots — left zone */}
               <div className="flex gap-1.5 flex-1">
@@ -145,30 +146,41 @@ function About() {
           <motion.div
             initial={{ opacity: 0, x: 40 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.15 }}
+            viewport={{ once: true, amount: 0.05 }}
+            transition={{ duration: 0.4, delay: 0.1 }}
             className="flex flex-col gap-8 justify-center"
           >
             {/* Display quote */}
-            <p
-              style={{
-                fontFamily: "'Bebas Neue', sans-serif",
-                fontSize: 'clamp(2.2rem, 4vw, 3rem)',
-                lineHeight: 1.05,
-                color: '#E8FFE8',
-              }}
-            >
-              Always{' '}
-              <span
+            <div>
+              {/* Thin horizontal green line above the quote */}
+              <div
                 style={{
-                  color: '#00FF41',
-                  textShadow: '0 0 22px rgba(0,255,65,0.55)',
+                  width: '60px',
+                  height: '2px',
+                  backgroundColor: '#00FF41',
+                  marginBottom: '1rem',
+                }}
+              />
+              <p
+                style={{
+                  fontFamily: "'Bebas Neue', sans-serif",
+                  fontSize: 'clamp(3.5rem, 6vw, 5rem)',
+                  lineHeight: 1.05,
+                  color: '#E8FFE8',
                 }}
               >
-                make
-              </span>
-              {' '}something.
-            </p>
+                Always{' '}
+                <span
+                  style={{
+                    color: '#00FF41',
+                    textShadow: '0 0 25px rgba(0,255,65,0.6)',
+                  }}
+                >
+                  make
+                </span>
+                {' '}something.
+              </p>
+            </div>
 
             {/* Bio paragraphs */}
             <div className="flex flex-col gap-4">
@@ -200,7 +212,7 @@ function About() {
               variants={{ visible: { transition: { staggerChildren: 0.04 } } }}
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true }}
+              viewport={{ once: true, amount: 0.05 }}
             >
               {STACK_TAGS.map((tag) => (
                 <motion.span
@@ -214,18 +226,18 @@ function About() {
                     fontFamily: "'Share Tech Mono', monospace",
                     fontSize: '0.62rem',
                     color: '#00FF41',
-                    border: '1px solid rgba(0,255,65,0.22)',
-                    background: 'transparent',
+                    border: '1px solid rgba(0,255,65,0.3)',
+                    background: 'rgba(0,255,65,0.05)',
                     letterSpacing: '0.05em',
                     transition: 'background 0.2s, border-color 0.2s',
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.background = 'rgba(0,255,65,0.07)'
-                    e.currentTarget.style.borderColor = 'rgba(0,255,65,0.5)'
+                    e.currentTarget.style.background = 'rgba(0,255,65,0.1)'
+                    e.currentTarget.style.borderColor = 'rgba(0,255,65,0.55)'
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.background = 'transparent'
-                    e.currentTarget.style.borderColor = 'rgba(0,255,65,0.22)'
+                    e.currentTarget.style.background = 'rgba(0,255,65,0.05)'
+                    e.currentTarget.style.borderColor = 'rgba(0,255,65,0.3)'
                   }}
                 >
                   {tag}

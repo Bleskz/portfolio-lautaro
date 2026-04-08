@@ -1,8 +1,7 @@
 // Individual project card with animated left accent bar, pulsing freq, and action buttons
-import { motion, useAnimation } from 'framer-motion'
-import { useEffect } from 'react'
+import { motion } from 'framer-motion'
 
-// Stack chip — same style as About tags
+// Stack chip — improved contrast: subtle background + stronger border
 function StackChip({ label }) {
   return (
     <motion.span
@@ -11,19 +10,19 @@ function StackChip({ label }) {
         fontFamily: "'Share Tech Mono', monospace",
         fontSize: '0.62rem',
         color: '#00FF41',
-        border: '1px solid rgba(0,255,65,0.22)',
-        background: 'transparent',
+        border: '1px solid rgba(0,255,65,0.3)',
+        background: 'rgba(0,255,65,0.05)',
         letterSpacing: '0.05em',
         display: 'inline-block',
         transition: 'background 0.2s, border-color 0.2s',
       }}
       onMouseEnter={(e) => {
-        e.currentTarget.style.background = 'rgba(0,255,65,0.07)'
-        e.currentTarget.style.borderColor = 'rgba(0,255,65,0.5)'
+        e.currentTarget.style.background = 'rgba(0,255,65,0.1)'
+        e.currentTarget.style.borderColor = 'rgba(0,255,65,0.55)'
       }}
       onMouseLeave={(e) => {
-        e.currentTarget.style.background = 'transparent'
-        e.currentTarget.style.borderColor = 'rgba(0,255,65,0.22)'
+        e.currentTarget.style.background = 'rgba(0,255,65,0.05)'
+        e.currentTarget.style.borderColor = 'rgba(0,255,65,0.3)'
       }}
     >
       {label}
@@ -31,25 +30,12 @@ function StackChip({ label }) {
   )
 }
 
-// Freq label that pulses opacity on a 2.5s loop
+// Freq label — pulses opacity between 0.35 and 1 on a 2.5s loop
 function FreqLabel({ freq }) {
-  const controls = useAnimation()
-
-  useEffect(() => {
-    // Continuously animate opacity between 0.4 and 1
-    async function pulse() {
-      while (true) {
-        await controls.start({ opacity: 1, transition: { duration: 1.25, ease: 'easeInOut' } })
-        await controls.start({ opacity: 0.4, transition: { duration: 1.25, ease: 'easeInOut' } })
-      }
-    }
-    pulse()
-  }, [controls])
-
   return (
     <motion.span
-      animate={controls}
-      initial={{ opacity: 0.4 }}
+      animate={{ opacity: [0.35, 1] }}
+      transition={{ duration: 2.5, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }}
       style={{
         fontFamily: "'Share Tech Mono', monospace",
         fontSize: '0.6rem',
@@ -74,11 +60,17 @@ function ProjectCard({ sigId, type, freq, name, codename, description, stack, co
     <motion.div
       initial={{ opacity: 0, y: 28 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.45, delay: index * 0.08 }}
+      viewport={{ once: true, amount: 0.05 }}
+      transition={{ duration: 0.4, delay: index * 0.06 }}
+      whileHover={{
+        scale: 1.005,
+        backgroundColor: 'rgba(0,255,65,0.04)',
+        boxShadow: 'inset 0 0 60px rgba(0,255,65,0.03)',
+        transition: { duration: 0.2 },
+      }}
       style={{
         backgroundColor: '#020502',
-        padding: '2rem',
+        padding: '2.5rem',
         position: 'relative',
         overflow: 'hidden',
       }}

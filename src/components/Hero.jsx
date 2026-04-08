@@ -16,6 +16,121 @@ function fadeUp(delay) {
   }
 }
 
+// Decorative right-column SVG — wireframe diamond with drawing animation
+function HeroDecor() {
+  // Diamond M200,24 L380,240 L200,456 L20,240 Z — perimeter ≈ 1125px
+  const dashLen = 1200
+
+  return (
+    <div style={{ position: 'relative', width: '100%', maxWidth: '460px' }}>
+      <svg
+        viewBox="0 0 400 480"
+        style={{ width: '100%', overflow: 'visible' }}
+        aria-hidden="true"
+      >
+        {/* Outer diamond — stroke draws from start on load */}
+        <motion.path
+          d="M 200,24 L 380,240 L 200,456 L 20,240 Z"
+          fill="none"
+          stroke="#00FF41"
+          strokeWidth="1.5"
+          strokeDasharray={dashLen}
+          initial={{ strokeDashoffset: dashLen }}
+          animate={{ strokeDashoffset: 0 }}
+          transition={{ duration: 1.5, ease: 'easeInOut', delay: 0.5 }}
+          style={{ filter: 'drop-shadow(0 0 5px rgba(0,255,65,0.55))' }}
+        />
+
+        {/* Inner diamond — thinner, more faint, draws slightly later */}
+        <motion.path
+          d="M 200,90 L 320,240 L 200,390 L 80,240 Z"
+          fill="none"
+          stroke="rgba(0,255,65,0.18)"
+          strokeWidth="1"
+          strokeDasharray="900"
+          initial={{ strokeDashoffset: 900 }}
+          animate={{ strokeDashoffset: 0 }}
+          transition={{ duration: 1.4, ease: 'easeInOut', delay: 1.0 }}
+        />
+
+        {/* Pulsing ring at center */}
+        <motion.circle
+          cx="200" cy="240" r="18"
+          fill="none"
+          stroke="#00FF41"
+          strokeWidth="1"
+          animate={{ r: [14, 22, 14], opacity: [0.2, 0.5, 0.2] }}
+          transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+        />
+
+        {/* Dot cluster — 5 dots rotating around center */}
+        <motion.g
+          animate={{ rotate: 360 }}
+          transition={{ duration: 22, repeat: Infinity, ease: 'linear' }}
+          style={{ transformOrigin: '200px 240px' }}
+        >
+          {[0, 72, 144, 216, 288].map((angle, i) => {
+            const rad = (angle * Math.PI) / 180
+            const r = 52
+            const cx = 200 + r * Math.cos(rad)
+            const cy = 240 + r * Math.sin(rad)
+            return <circle key={i} cx={cx} cy={cy} r="2.5" fill="#00FF41" opacity="0.45" />
+          })}
+        </motion.g>
+
+        {/* Crosshair lines at center — appear after the diamond draws */}
+        <motion.line
+          x1="200" y1="222" x2="200" y2="258"
+          stroke="rgba(0,255,65,0.35)" strokeWidth="1"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.9, duration: 0.3 }}
+        />
+        <motion.line
+          x1="182" y1="240" x2="218" y2="240"
+          stroke="rgba(0,255,65,0.35)" strokeWidth="1"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.9, duration: 0.3 }}
+        />
+
+        {/* Corner tick marks at diamond vertices */}
+        {[
+          { x: 200, y: 24, r: 0 },
+          { x: 380, y: 240, r: 0 },
+          { x: 200, y: 456, r: 0 },
+          { x: 20, y: 240, r: 0 },
+        ].map((pt, i) => (
+          <motion.circle
+            key={i}
+            cx={pt.x} cy={pt.y} r="3"
+            fill="#00FF41"
+            opacity="0"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 0.6 }}
+            transition={{ delay: 1.6 + i * 0.08, duration: 0.2 }}
+          />
+        ))}
+      </svg>
+
+      {/* Horizontal scanning line — moves top to bottom on repeat */}
+      <motion.div
+        animate={{ y: ['0%', '100%'] }}
+        transition={{ duration: 4.5, repeat: Infinity, ease: 'linear', delay: 2.2 }}
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: '8%',
+          right: '8%',
+          height: '1px',
+          background: 'linear-gradient(90deg, transparent, rgba(0,255,65,0.22), transparent)',
+          pointerEvents: 'none',
+        }}
+      />
+    </div>
+  )
+}
+
 // Full-screen hero section — SIGNAL DETECTED
 function Hero() {
   const nameRef = useRef(null)
@@ -105,19 +220,31 @@ function Hero() {
         }
       `}</style>
 
-      {/* Background grid — two linear-gradients + radial mask to fade at edges */}
+      {/* Background grid — reduced opacity, mask fades left (text) side, lives on the right */}
       <div
         style={{
           position: 'absolute',
           inset: 0,
           backgroundImage: `
-            linear-gradient(rgba(0,255,65,0.04) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(0,255,65,0.04) 1px, transparent 1px)
+            linear-gradient(rgba(0,255,65,0.025) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0,255,65,0.025) 1px, transparent 1px)
           `,
           backgroundSize: '60px 60px',
-          maskImage: 'radial-gradient(ellipse 85% 85% at 50% 50%, black 30%, transparent 100%)',
-          WebkitMaskImage: 'radial-gradient(ellipse 85% 85% at 50% 50%, black 30%, transparent 100%)',
+          maskImage: 'radial-gradient(ellipse 58% 75% at 78% 50%, black 15%, transparent 72%)',
+          WebkitMaskImage: 'radial-gradient(ellipse 58% 75% at 78% 50%, black 15%, transparent 72%)',
           pointerEvents: 'none',
+        }}
+      />
+
+      {/* Green radial glow blob — soft ambient light behind the name */}
+      <div
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          inset: 0,
+          background: 'radial-gradient(ellipse 60% 50% at 30% 50%, rgba(0,255,65,0.06) 0%, transparent 70%)',
+          pointerEvents: 'none',
+          zIndex: 0,
         }}
       />
 
@@ -130,7 +257,7 @@ function Hero() {
           right: '1.5vw',
           fontFamily: "'Bebas Neue', cursive",
           fontSize: '15vw',
-          color: 'rgba(0,255,65,0.035)',
+          color: 'rgba(0,255,65,0.03)',
           lineHeight: 1,
           pointerEvents: 'none',
           userSelect: 'none',
@@ -139,159 +266,179 @@ function Hero() {
         01
       </div>
 
-      {/* ── MAIN CONTENT ── */}
-      <div style={{ position: 'relative', zIndex: 1 }}>
+      {/* ── MAIN CONTENT — two-column on desktop ── */}
+      <div
+        style={{
+          position: 'relative',
+          zIndex: 1,
+          display: 'flex',
+          alignItems: 'center',
+          gap: '2rem',
+        }}
+      >
+        {/* Left column — 55% — all existing content */}
+        <div style={{ flex: '0 0 55%', maxWidth: '55%' }}>
 
-        {/* 1. Tag line (delay 0.2s) */}
-        <motion.div
-          {...fadeUp(0.2)}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '1rem',
-            marginBottom: '1.5rem',
-          }}
+          {/* 1. Tag line (delay 0.2s) */}
+          <motion.div
+            {...fadeUp(0.2)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '1rem',
+              marginBottom: '1.5rem',
+            }}
+          >
+            <div
+              style={{
+                width: '40px',
+                height: '1px',
+                backgroundColor: '#00FF41',
+                boxShadow: '0 0 8px #00FF41',
+                flexShrink: 0,
+              }}
+            />
+            <span
+              style={{
+                fontFamily: "'Share Tech Mono', monospace",
+                fontSize: '0.72rem',
+                color: '#00FF41',
+                letterSpacing: '0.28em',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+              }}
+            >
+              ▸&nbsp;&nbsp;SIGNAL DETECTED&nbsp;&nbsp;//&nbsp;&nbsp;INITIALIZING TRANSMISSION
+            </span>
+          </motion.div>
+
+          {/* 2. Name with CSS glitch pseudo-elements (delay 0.4s) */}
+          <motion.div
+            {...fadeUp(0.4)}
+            ref={nameRef}
+            style={{ marginBottom: '1.75rem' }}
+          >
+            <div
+              className="glitch-line"
+              data-text="LAUTARO"
+              style={{
+                fontFamily: "'Bebas Neue', cursive",
+                fontSize: 'clamp(5rem, 13vw, 12rem)',
+                color: '#F0FFF0',
+                textShadow: '0 0 40px rgba(0,255,65,0.08)',
+              }}
+            >
+              LAUTARO
+            </div>
+            <div
+              className="glitch-line"
+              data-text="VELO"
+              style={{
+                fontFamily: "'Bebas Neue', cursive",
+                fontSize: 'clamp(5rem, 13vw, 12rem)',
+                color: '#F0FFF0',
+                textShadow: '0 0 40px rgba(0,255,65,0.08)',
+              }}
+            >
+              VELO
+            </div>
+          </motion.div>
+
+          {/* 3. Subtitle (delay 0.6s) */}
+          <motion.p
+            {...fadeUp(0.6)}
+            style={{
+              fontFamily: "'Space Mono', monospace",
+              fontStyle: 'italic',
+              fontSize: 'clamp(0.78rem, 1.4vw, 0.95rem)',
+              color: 'rgba(232,255,232,0.45)',
+              lineHeight: 1.8,
+              marginBottom: '2.5rem',
+            }}
+          >
+            // Fullstack Developer from Neuquen, AR<br />
+            — Ships things. Fast. With whatever it takes.
+          </motion.p>
+
+          {/* 4. CTA button row (delay 0.8s) */}
+          <motion.div
+            {...fadeUp(0.8)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '2.5rem',
+              flexWrap: 'wrap',
+            }}
+          >
+            {/* Button A — scroll to Projects */}
+            <motion.button
+              onClick={() => scrollTo('projects')}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              style={{
+                fontFamily: "'Share Tech Mono', monospace",
+                fontSize: '0.78rem',
+                letterSpacing: '0.1em',
+                backgroundColor: '#00FF41',
+                color: '#020502',
+                border: 'none',
+                cursor: 'pointer',
+                padding: '0.85rem 2rem',
+                clipPath: 'polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%)',
+                transition: 'background-color 0.2s, box-shadow 0.2s',
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.backgroundColor = '#00FFFF'
+                e.currentTarget.style.boxShadow = '0 0 28px rgba(0,255,255,0.45)'
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.backgroundColor = '#00FF41'
+                e.currentTarget.style.boxShadow = 'none'
+              }}
+            >
+              TUNE IN → PROJECTS
+            </motion.button>
+
+            {/* Button B — scroll to Contact */}
+            <motion.button
+              onClick={() => scrollTo('contact')}
+              whileHover={{ scale: 1.01 }}
+              style={{
+                fontFamily: "'Share Tech Mono', monospace",
+                fontSize: '0.78rem',
+                letterSpacing: '0.1em',
+                backgroundColor: 'transparent',
+                color: '#00FF41',
+                border: 'none',
+                borderBottom: '1px solid rgba(0,255,65,0.35)',
+                cursor: 'pointer',
+                padding: '0.3rem 0',
+                transition: 'color 0.2s, letter-spacing 0.25s, border-color 0.2s',
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.color = '#00FFFF'
+                e.currentTarget.style.borderBottomColor = 'rgba(0,255,255,0.5)'
+                e.currentTarget.style.letterSpacing = '0.18em'
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.color = '#00FF41'
+                e.currentTarget.style.borderBottomColor = 'rgba(0,255,65,0.35)'
+                e.currentTarget.style.letterSpacing = '0.1em'
+              }}
+            >
+              OPEN CHANNEL →
+            </motion.button>
+          </motion.div>
+        </div>
+
+        {/* Right column — decorative SVG, hidden on mobile/tablet */}
+        <div
+          className="hidden lg:flex"
+          style={{ flex: '1', justifyContent: 'center', alignItems: 'center' }}
         >
-          {/* 40px horizontal green line with glow */}
-          <div
-            style={{
-              width: '40px',
-              height: '1px',
-              backgroundColor: '#00FF41',
-              boxShadow: '0 0 8px #00FF41',
-              flexShrink: 0,
-            }}
-          />
-          <span
-            style={{
-              fontFamily: "'Share Tech Mono', monospace",
-              fontSize: '0.72rem',
-              color: '#00FF41',
-              letterSpacing: '0.28em',
-              whiteSpace: 'nowrap',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-            }}
-          >
-            ▸&nbsp;&nbsp;SIGNAL DETECTED&nbsp;&nbsp;//&nbsp;&nbsp;INITIALIZING TRANSMISSION
-          </span>
-        </motion.div>
-
-        {/* 2. Name with CSS glitch pseudo-elements (delay 0.4s) */}
-        <motion.div
-          {...fadeUp(0.4)}
-          ref={nameRef}
-          style={{ marginBottom: '1.75rem' }}
-        >
-          <div
-            className="glitch-line"
-            data-text="LAUTARO"
-            style={{
-              fontFamily: "'Bebas Neue', cursive",
-              fontSize: 'clamp(5rem, 13vw, 12rem)',
-              color: '#E8FFE8',
-            }}
-          >
-            LAUTARO
-          </div>
-          <div
-            className="glitch-line"
-            data-text="VELO"
-            style={{
-              fontFamily: "'Bebas Neue', cursive",
-              fontSize: 'clamp(5rem, 13vw, 12rem)',
-              color: '#E8FFE8',
-            }}
-          >
-            VELO
-          </div>
-        </motion.div>
-
-        {/* 3. Subtitle (delay 0.6s) */}
-        <motion.p
-          {...fadeUp(0.6)}
-          style={{
-            fontFamily: "'Space Mono', monospace",
-            fontStyle: 'italic',
-            fontSize: 'clamp(0.78rem, 1.4vw, 0.95rem)',
-            color: 'rgba(232,255,232,0.45)',
-            lineHeight: 1.8,
-            marginBottom: '2.5rem',
-          }}
-        >
-          // Fullstack Developer from Neuquen, AR<br />
-          — Ships things. Fast. With whatever it takes.
-        </motion.p>
-
-        {/* 4. CTA button row (delay 0.8s) */}
-        <motion.div
-          {...fadeUp(0.8)}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '2.5rem',
-            flexWrap: 'wrap',
-          }}
-        >
-          {/* Button A — scroll to Projects */}
-          <motion.button
-            onClick={() => scrollTo('projects')}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            style={{
-              fontFamily: "'Share Tech Mono', monospace",
-              fontSize: '0.78rem',
-              letterSpacing: '0.1em',
-              backgroundColor: '#00FF41',
-              color: '#020502',
-              border: 'none',
-              cursor: 'pointer',
-              padding: '0.85rem 2rem',
-              clipPath: 'polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%)',
-              transition: 'background-color 0.2s, box-shadow 0.2s',
-            }}
-            onMouseEnter={e => {
-              e.currentTarget.style.backgroundColor = '#00FFFF'
-              e.currentTarget.style.boxShadow = '0 0 28px rgba(0,255,255,0.45)'
-            }}
-            onMouseLeave={e => {
-              e.currentTarget.style.backgroundColor = '#00FF41'
-              e.currentTarget.style.boxShadow = 'none'
-            }}
-          >
-            TUNE IN → PROJECTS
-          </motion.button>
-
-          {/* Button B — scroll to Contact */}
-          <motion.button
-            onClick={() => scrollTo('contact')}
-            whileHover={{ scale: 1.01 }}
-            style={{
-              fontFamily: "'Share Tech Mono', monospace",
-              fontSize: '0.78rem',
-              letterSpacing: '0.1em',
-              backgroundColor: 'transparent',
-              color: '#00FF41',
-              border: 'none',
-              borderBottom: '1px solid rgba(0,255,65,0.35)',
-              cursor: 'pointer',
-              padding: '0.3rem 0',
-              transition: 'color 0.2s, letter-spacing 0.25s, border-color 0.2s',
-            }}
-            onMouseEnter={e => {
-              e.currentTarget.style.color = '#00FFFF'
-              e.currentTarget.style.borderBottomColor = 'rgba(0,255,255,0.5)'
-              e.currentTarget.style.letterSpacing = '0.18em'
-            }}
-            onMouseLeave={e => {
-              e.currentTarget.style.color = '#00FF41'
-              e.currentTarget.style.borderBottomColor = 'rgba(0,255,65,0.35)'
-              e.currentTarget.style.letterSpacing = '0.1em'
-            }}
-          >
-            OPEN CHANNEL →
-          </motion.button>
-        </motion.div>
+          <HeroDecor />
+        </div>
       </div>
 
       {/* 5. Scroll hint — absolute bottom-left (delay 1.0s) */}
@@ -306,7 +453,6 @@ function Hero() {
           gap: '0.7rem',
         }}
       >
-        {/* Animated sliding green line */}
         <motion.div
           animate={{ x: [0, 10, 0], opacity: [0.4, 1, 0.4] }}
           transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}

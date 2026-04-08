@@ -6,12 +6,15 @@ function SectionHeader({ tag, title, accent, subtitle, number }) {
     <div className="relative mb-16">
       {/* Decorative background number — top-right, non-interactive */}
       <span
-        className="absolute top-0 right-0 select-none pointer-events-none"
+        className="absolute select-none pointer-events-none"
         style={{
           fontFamily: "'Bebas Neue', sans-serif",
-          fontSize: '12vw',
-          color: 'rgba(0,255,65,0.028)',
+          fontSize: 'clamp(8rem, 18vw, 16rem)',
+          color: 'rgba(0,255,65,0.03)',
           lineHeight: 1,
+          right: '2rem',
+          top: '3rem',
+          zIndex: 0,
         }}
       >
         {number}
@@ -20,8 +23,8 @@ function SectionHeader({ tag, title, accent, subtitle, number }) {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5 }}
+        viewport={{ once: true, amount: 0.05 }}
+        transition={{ duration: 0.4 }}
         className="flex items-start gap-6"
       >
         {/* Vertical tag rotated on the left */}

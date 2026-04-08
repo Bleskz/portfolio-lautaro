@@ -13,7 +13,7 @@ const PROJECTS = [
     description:
       'Chrome/Brave extension that saves and restores tab groups across restarts. Named groups, persistent sessions, one-click restore. No more lost tabs.',
     stack: ['CHROME API', 'VANILLA JS', 'HTML/CSS'],
-    codeUrl: 'https://github.com/Bleskz',
+    codeUrl: 'https://github.com/Bleskz/tabflow',
     demoUrl: '#',
   },
   {
@@ -25,7 +25,7 @@ const PROJECTS = [
     description:
       'Analyzes any Steam profile in depth. Total playtime, real money spent on games, inventory market value, full library breakdown. Raw numbers, zero filter.',
     stack: ['REACT', 'STEAM API', 'TAILWIND', 'NODE.JS'],
-    codeUrl: 'https://github.com/Bleskz',
+    codeUrl: 'https://github.com/Bleskz/steam-analyzer',
     demoUrl: '#',
   },
   {
@@ -37,7 +37,7 @@ const PROJECTS = [
     description:
       'Windows desktop app for oil companies. Register, search and manage well samples — cuttings, cores, channels. Sample loans, Excel + PDF export. Runs 100% offline.',
     stack: ['ELECTRON', 'REACT', 'SQLITE', 'NODE.JS'],
-    codeUrl: 'https://github.com/Bleskz',
+    codeUrl: 'https://github.com/Bleskz/coretracker',
     demoUrl: '#',
   },
   {
@@ -49,7 +49,7 @@ const PROJECTS = [
     description:
       'Product page for the TabFlow extension. Fast, minimal, conversion-focused. Built to get installs.',
     stack: ['HTML', 'CSS', 'VANILLA JS', 'RESPONSIVE'],
-    codeUrl: 'https://github.com/Bleskz',
+    codeUrl: 'https://github.com/Bleskz/tabflow-landing',
     demoUrl: '#',
   },
 ]
@@ -119,7 +119,7 @@ function Projects() {
         <div
           className="grid grid-cols-1 md:grid-cols-2"
           style={{
-            gap: '2px',
+            gap: '3px',
             backgroundColor: 'rgba(0,255,65,0.06)',
           }}
         >

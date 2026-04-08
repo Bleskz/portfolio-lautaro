@@ -11,6 +11,12 @@ body {
   overflow-x: hidden;
 }
 
+/* Custom scrollbar — minimal, matches SIGNAL/NOISE palette */
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: #020502; }
+::-webkit-scrollbar-thumb { background: rgba(0,255,65,0.5); border-radius: 0; }
+::-webkit-scrollbar-thumb:hover { background: #00FF41; }
+
 /* Scanlines overlay — subtle CRT effect across the whole screen */
 body::before {
   content: '';

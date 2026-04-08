@@ -9,10 +9,11 @@ function Terminal() {
     <div
       style={{
         backgroundColor: 'rgba(2,5,2,0.95)',
-        borderTop: '3px solid #00FF41',
-        borderLeft: '1px solid rgba(0,255,65,0.3)',
+        borderTop: '1px solid rgba(0,255,65,0.15)',
+        borderLeft: '3px solid #00FF41',
         borderRight: '1px solid rgba(0,255,65,0.08)',
         borderBottom: '1px solid rgba(0,255,65,0.08)',
+        boxShadow: '-4px 0 15px rgba(0,255,65,0.2)',
       }}
     >
       {/* Window bar: colored dots + terminal title */}
@@ -123,10 +124,10 @@ function ContactForm() {
     letterSpacing: '0.05em',
   }
 
-  // Applies glow on focus
+  // Applies stronger glow on focus
   function onFocus(e) {
     e.target.style.border = '1px solid rgba(0,255,65,0.5)'
-    e.target.style.boxShadow = '0 0 8px rgba(0,255,65,0.18)'
+    e.target.style.boxShadow = '0 0 0 1px rgba(0,255,65,0.5), 0 0 20px rgba(0,255,65,0.1)'
   }
 
   // Removes glow on blur
@@ -234,8 +235,8 @@ function Contact() {
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0 }}
+            viewport={{ once: true, amount: 0.05 }}
+            transition={{ duration: 0.4, delay: 0 }}
           >
             <Terminal />
           </motion.div>
@@ -244,8 +245,8 @@ function Contact() {
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.15 }}
+            viewport={{ once: true, amount: 0.05 }}
+            transition={{ duration: 0.4, delay: 0.1 }}
           >
             <ContactForm />
           </motion.div>
