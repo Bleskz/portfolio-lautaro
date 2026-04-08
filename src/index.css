@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background-color: #020502;
+  color: #E8FFE8;
+  cursor: crosshair;
+  overflow-x: hidden;
+}
+
+/* Scanlines overlay — subtle CRT effect across the whole screen */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 255, 65, 0.012) 2px,
+    rgba(0, 255, 65, 0.012) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+}
