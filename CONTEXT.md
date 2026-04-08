@@ -106,6 +106,21 @@ Key changes:
 
 Files modified: Hero.jsx, About.jsx, Projects.jsx, ProjectCard.jsx, Skills.jsx, Contact.jsx, App.jsx, index.css, SectionHeader.jsx
 
+## Phase 10 — Lenis Smooth Scroll ✓
+Inertia scrolling via Lenis library. Buttery deceleration on mouse wheel.
+Nav links use lenis.scrollTo() with -80px offset and 1.8s duration.
+No Framer Motion useScroll conflicts found — whileInView animations unaffected.
+
+Key changes:
+- Installed: lenis (1 package, 0 vulnerabilities)
+- Created: src/hooks/useLenis.js — initializes Lenis, runs raf loop, cleans up on unmount
+- App.jsx: imports useLenis, passes lenisRef down to Navbar
+- Navbar.jsx: scrollTo() updated to use lenis.scrollTo() with offset/duration, falls back to native if lenis unavailable
+
+Build: zero errors, 365kB / 112kB gzipped (+21kB from Lenis)
+
+Files: src/hooks/useLenis.js, src/App.jsx, src/components/Navbar.jsx
+
 ## Known Issues
 
 None
@@ -136,3 +151,4 @@ Phase 8 — Deploy to Vercel:
 - [2026-04-08] Phase 6 complete. Skills + Contact sections built together. Skills: 3-column channel cards, gradient progress bars with Framer Motion width animation, white dot tip. Contact: static terminal simulation with blinking cursor, 2-column form with focus glow and TRANSMIT state.
 - [2026-04-08] Phase 7 complete. Footer (two-column, hover glow links), scroll flash CRT effect, meta tags, performance audit. Build: zero errors, 344kB/107kB gzipped.
 - [2026-04-08] Phase 8 complete. GitHub repo creado (Bleskz/portfolio-lautaro), deploy a Vercel. LIVE: https://portfolio-lautaro-steel.vercel.app
+- [2026-04-08] Phase 10 complete. Lenis smooth inertia scroll instalado. Nav links actualizados a lenis.scrollTo(). Build limpio.

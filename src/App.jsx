@@ -1,5 +1,6 @@
 // Root app — renders Navbar, all sections, and Footer in order
 import { useEffect } from 'react'
+import useLenis from './hooks/useLenis'
 import Navbar   from './components/Navbar'
 import Hero     from './components/Hero'
 import About    from './components/About'
@@ -51,10 +52,11 @@ function useScrollFlash() {
 
 function App() {
   useScrollFlash()
+  const lenisRef = useLenis()
 
   return (
     <>
-      <Navbar />
+      <Navbar lenisRef={lenisRef} />
       <Hero />
       <SectionDivider />
       <About />

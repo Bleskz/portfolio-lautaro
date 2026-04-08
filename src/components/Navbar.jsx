@@ -1,9 +1,14 @@
 import { motion } from 'framer-motion'
 
-// Scrolls smoothly to the section matching the given id
-function scrollTo(id) {
-  const el = document.getElementById(id)
-  if (el) el.scrollIntoView({ behavior: 'smooth' })
+// Scrolls smoothly to a section — uses Lenis if available, falls back to native
+function scrollTo(id, lenisRef) {
+  const lenis = lenisRef?.current
+  if (lenis) {
+    lenis.scrollTo(`#${id}`, { offset: -80, duration: 1.8 })
+  } else {
+    const el = document.getElementById(id)
+    if (el) el.scrollIntoView({ behavior: 'smooth' })
+  }
 }
 
 // Nav links data — number prefix + section id
@@ -16,7 +21,7 @@ const NAV_LINKS = [
 ]
 
 // Fixed top navbar with signal indicator, nav links, and CTA button
-function Navbar() {
+function Navbar({ lenisRef }) {
   return (
     <motion.nav
       initial={{ y: -60, opacity: 0 }}
@@ -72,23 +77,23 @@ function Navbar() {
         style={{ gap: '2rem', alignItems: 'center' }}
       >
         {NAV_LINKS.map(({ num, label, id }) => (
-          <NavLink key={id} num={num} label={label} id={id} />
+          <NavLink key={id} num={num} label={label} id={id} lenisRef={lenisRef} />
         ))}
       </div>
 
       {/* RIGHT — CTA button, justified to the right */}
       <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-        <CTAButton onClick={() => scrollTo('contact')} />
+        <CTAButton onClick={() => scrollTo('contact', lenisRef)} />
       </div>
     </motion.nav>
   )
 }
 
 // Single nav link with hover effect
-function NavLink({ num, label, id }) {
+function NavLink({ num, label, id, lenisRef }) {
   return (
     <motion.button
-      onClick={() => scrollTo(id)}
+      onClick={() => scrollTo(id, lenisRef)}
       whileHover={{ scale: 1.05 }}
       style={{
         background: 'none',
