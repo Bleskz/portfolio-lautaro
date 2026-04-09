@@ -47,12 +47,15 @@ function FreqLabel({ freq }) {
 function ProjectCard({ sigId, type, freq, name, codename, description, stack, codeUrl, demoUrl, index }) {
   const { t } = useLang()
 
-  // Opens a URL in new tab; skips navigation if url is '#'
+  // Opens a URL in new tab; skips if null or '#'
   function openLink(url) {
     if (url && url !== '#') {
       window.open(url, '_blank', 'noopener,noreferrer')
     }
   }
+
+  // demoUrl === null means desktop app — show a different label instead of a greyed-out button
+  const isDesktopOnly = demoUrl === null
 
   return (
     <motion.div
@@ -176,41 +179,50 @@ function ProjectCard({ sigId, type, freq, name, codename, description, stack, co
           {t.projects.viewCode}
         </button>
 
-        {/* LIVE_DEMO button */}
-        <button
-          onClick={() => openLink(demoUrl)}
-          disabled={demoUrl === '#'}
-          aria-label={demoUrl === '#' ? `${t.projects.liveDemo} — not available` : t.projects.liveDemo}
-          style={{
-            fontFamily: "'Share Tech Mono', monospace",
-            fontSize: '0.62rem',
-            color: demoUrl === '#' ? C.b(0.6) : C.bg,
-            background: demoUrl === '#' ? C.g(0.35) : C.green,
-            border: `1px solid ${demoUrl === '#' ? C.g(0.2) : C.green}`,
-            padding: '0.45rem 0.9rem',
-            cursor: demoUrl === '#' ? 'not-allowed' : 'pointer',
-            opacity: demoUrl === '#' ? 0.5 : 1,
-            letterSpacing: '0.06em',
-            transition: 'background 0.2s, border-color 0.2s, color 0.2s, box-shadow 0.2s',
-            pointerEvents: demoUrl === '#' ? 'none' : 'auto',
-          }}
-          onMouseEnter={(e) => {
-            if (demoUrl !== '#') {
+        {/* LIVE_DEMO button — or DESKTOP_APP label if no browser demo exists */}
+        {isDesktopOnly ? (
+          <span
+            style={{
+              fontFamily: "'Share Tech Mono', monospace",
+              fontSize: '0.62rem',
+              color: C.g(0.4),
+              border: `1px solid ${C.g(0.12)}`,
+              padding: '0.45rem 0.9rem',
+              letterSpacing: '0.06em',
+              cursor: 'default',
+            }}
+            title="Desktop application — no browser demo available"
+          >
+            DESKTOP_APP
+          </span>
+        ) : (
+          <button
+            onClick={() => openLink(demoUrl)}
+            style={{
+              fontFamily: "'Share Tech Mono', monospace",
+              fontSize: '0.62rem',
+              color: C.bg,
+              background: C.green,
+              border: `1px solid ${C.green}`,
+              padding: '0.45rem 0.9rem',
+              cursor: 'pointer',
+              letterSpacing: '0.06em',
+              transition: 'background 0.2s, border-color 0.2s, color 0.2s, box-shadow 0.2s',
+            }}
+            onMouseEnter={(e) => {
               e.currentTarget.style.background = C.cyan
               e.currentTarget.style.borderColor = C.cyan
               e.currentTarget.style.boxShadow = `0 0 14px ${C.c(0.5)}`
-            }
-          }}
-          onMouseLeave={(e) => {
-            if (demoUrl !== '#') {
+            }}
+            onMouseLeave={(e) => {
               e.currentTarget.style.background = C.green
               e.currentTarget.style.borderColor = C.green
               e.currentTarget.style.boxShadow = 'none'
-            }
-          }}
-        >
-          {t.projects.liveDemo}
-        </button>
+            }}
+          >
+            {t.projects.liveDemo}
+          </button>
+        )}
       </div>
     </motion.div>
   )

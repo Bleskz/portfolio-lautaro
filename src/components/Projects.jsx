@@ -16,7 +16,7 @@ const PROJECTS_BASE = [
     codename: 'TABFLOW_V1.EXE',
     stack: ['CHROME API', 'VANILLA JS', 'HTML/CSS'],
     codeUrl: `${LINKS.github}/tabflow`,
-    demoUrl: '#',
+    demoUrl: 'https://chromewebstore.google.com/detail/tabflow-workspace-tab-man/fallkdcngmhiefbhlfbjhjeibmoedkpp',
   },
   {
     sigId: 'SIG-002',
@@ -27,7 +27,7 @@ const PROJECTS_BASE = [
     codename: 'STEAM_ANALYZER.SYS',
     stack: ['REACT', 'STEAM API', 'TAILWIND', 'NODE.JS'],
     codeUrl: `${LINKS.github}/steam-analyzer`,
-    demoUrl: '#',
+    demoUrl: 'https://steam-analyzer-rust.vercel.app/',
   },
   {
     sigId: 'SIG-003',
@@ -38,7 +38,7 @@ const PROJECTS_BASE = [
     codename: 'CORETRACK_DESKTOP.EXE',
     stack: ['ELECTRON', 'REACT', 'SQLITE', 'NODE.JS'],
     codeUrl: `${LINKS.github}/coretracker`,
-    demoUrl: '#',
+    demoUrl: null, // Desktop app — no browser demo, .exe not yet built
   },
   {
     sigId: 'SIG-004',
@@ -49,7 +49,7 @@ const PROJECTS_BASE = [
     codename: 'TABFLOW_LANDING.HTML',
     stack: ['HTML', 'CSS', 'VANILLA JS', 'RESPONSIVE'],
     codeUrl: `${LINKS.github}/tabflow-landing`,
-    demoUrl: '#',
+    demoUrl: 'https://mytabflow.com/',
   },
 ]
 
