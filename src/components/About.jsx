@@ -32,8 +32,8 @@ function About() {
           fontSize: 'clamp(8rem, 18vw, 16rem)',
           color: 'rgba(0,255,65,0.03)',
           lineHeight: 1,
-          right: '2rem',
-          top: '3rem',
+          right: '1.5vw',
+          bottom: '-1vw',
           zIndex: 0,
         }}
       >
