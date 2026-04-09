@@ -218,16 +218,31 @@ function Contact() {
   return (
     <section
       id="contact"
-      className="min-h-screen py-24 px-6"
+      className="relative min-h-screen py-24 px-6"
       style={{ backgroundColor: '#020502' }}
     >
+      {/* Decorative background number — anchored to section, not clipped */}
+      <span
+        className="absolute select-none pointer-events-none"
+        style={{
+          fontFamily: "'Bebas Neue', sans-serif",
+          fontSize: 'clamp(8rem, 18vw, 16rem)',
+          color: 'rgba(0,255,65,0.03)',
+          lineHeight: 1,
+          right: '2rem',
+          top: '3rem',
+          zIndex: 0,
+        }}
+      >
+        05
+      </span>
+
       <div className="max-w-6xl mx-auto">
         <SectionHeader
           tag="SIGNAL_05"
           title="OPEN_"
           accent="CHANNEL"
           subtitle="// TRANSMISSION PROTOCOL ACTIVE"
-          number="05"
         />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">

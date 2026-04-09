@@ -25,12 +25,18 @@
 - Discord: Bleskz
 
 ## Proyectos y links
-| Proyecto         | Stack                              | Link                                         |
-|------------------|------------------------------------|----------------------------------------------|
-| TabFlow          | Chrome API, Vanilla JS, HTML/CSS   | Privado — mostrar "Private Repo"             |
-| Steam Analyzer   | React, Steam API, Tailwind, Node   | Sin repo — no mostrar link                  |
-| CoreTracker      | Electron, React, SQLite, Node      | Sin repo — no mostrar link                  |
-| TabFlow Landing  | HTML, CSS, Vanilla JS              | https://github.com/Bleskz/tabflow-landing    |
+| Proyecto         | Stack                              | GitHub                                          | Demo                        |
+|------------------|------------------------------------|-------------------------------------------------|-----------------------------|
+| TabFlow          | Chrome API, Vanilla JS, HTML/CSS   | https://github.com/Bleskz/tabflow               | # (no en Chrome Web Store)  |
+| Steam Analyzer   | React, Steam API, Tailwind, Node   | https://github.com/Bleskz/steam-analyzer        | # (sin deploy activo)       |
+| CoreTracker      | Electron, React, SQLite, Node      | https://github.com/Bleskz/coretracker           | # (app de escritorio)       |
+| TabFlow Landing  | HTML, CSS, Vanilla JS              | https://github.com/Bleskz/tabflow-landing       | # (pendiente)               |
+
+## Pendiente — actualizar demoUrl cuando esté listo
+- TabFlow: subir a Chrome Web Store → actualizar demoUrl en Projects.jsx
+- Steam Analyzer: hacer deploy a Vercel → actualizar demoUrl en Projects.jsx
+- TabFlow Landing: confirmar URL de deploy → actualizar demoUrl en Projects.jsx
+- CoreTracker: es desktop, demoUrl queda en '#' para siempre
 
 ## Decisiones de diseño tomadas
 - Hero glitch: animación de letras con caracteres aleatorios que se "resuelven" al nombre real (Framer Motion)

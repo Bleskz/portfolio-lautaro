@@ -22,3 +22,11 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+.vercel
+
+# Claude Code — no subir al repo
+CLAUDE.md
+CONTEXT.md
+AUDIT.md
+recordatorios.md

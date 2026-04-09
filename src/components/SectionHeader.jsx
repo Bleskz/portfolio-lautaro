@@ -1,24 +1,9 @@
 // Reusable section header: vertical tag, split-color title, subtitle, decorative number
 import { motion } from 'framer-motion'
 
-function SectionHeader({ tag, title, accent, subtitle, number }) {
+function SectionHeader({ tag, title, accent, subtitle }) {
   return (
     <div className="relative mb-16">
-      {/* Decorative background number — top-right, non-interactive */}
-      <span
-        className="absolute select-none pointer-events-none"
-        style={{
-          fontFamily: "'Bebas Neue', sans-serif",
-          fontSize: 'clamp(8rem, 18vw, 16rem)',
-          color: 'rgba(0,255,65,0.03)',
-          lineHeight: 1,
-          right: '2rem',
-          top: '3rem',
-          zIndex: 0,
-        }}
-      >
-        {number}
-      </span>
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}

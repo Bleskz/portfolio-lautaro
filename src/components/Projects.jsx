@@ -85,13 +85,28 @@ function Projects() {
       className="relative min-h-screen flex flex-col justify-center px-6 py-24"
       style={{ backgroundColor: '#020502' }}
     >
+      {/* Decorative background number — anchored to section, not clipped */}
+      <span
+        className="absolute select-none pointer-events-none"
+        style={{
+          fontFamily: "'Bebas Neue', sans-serif",
+          fontSize: 'clamp(8rem, 18vw, 16rem)',
+          color: 'rgba(0,255,65,0.03)',
+          lineHeight: 1,
+          right: '2rem',
+          top: '3rem',
+          zIndex: 0,
+        }}
+      >
+        03
+      </span>
+
       <div className="max-w-6xl mx-auto w-full">
         <SectionHeader
           tag="SIGNAL_03"
           title="PROJECT_"
           accent="LOGS"
           subtitle="// TRANSMISSIONS CAPTURED"
-          number="03"
         />
 
         {/* Log status bar */}

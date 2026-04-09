@@ -7,7 +7,7 @@ const TERMINAL_ROWS = [
   { key: 'ROLE',       value: 'Fullstack Developer',                   cyan: false, link: null },
   { key: 'ORIGIN',     value: 'Neuquen, Argentina',                    cyan: false, link: null },
   { key: 'STATUS',     value: 'BUILDING_SOMETHING_RN',                 cyan: true,  link: null },
-  { key: 'EXPERIENCE', value: 'Self-taught, 0 to shipped in 2 months', cyan: false, link: null },
+  { key: 'EXPERIENCE', value: 'Self-taught, 0 to shipped', cyan: false, link: null },
   { key: 'GITHUB',     value: 'github.com/Bleskz',                     cyan: false, link: 'https://github.com/Bleskz' },
   { key: 'DISCORD',    value: 'Bleskz',                                cyan: false, link: null },
 ]
@@ -24,13 +24,28 @@ function About() {
       className="relative min-h-screen flex flex-col justify-center px-6 py-32"
       style={{ backgroundColor: '#020502' }}
     >
+      {/* Decorative background number — anchored to section, not clipped */}
+      <span
+        className="absolute select-none pointer-events-none"
+        style={{
+          fontFamily: "'Bebas Neue', sans-serif",
+          fontSize: 'clamp(8rem, 18vw, 16rem)',
+          color: 'rgba(0,255,65,0.03)',
+          lineHeight: 1,
+          right: '2rem',
+          top: '3rem',
+          zIndex: 0,
+        }}
+      >
+        02
+      </span>
+
       <div className="max-w-6xl mx-auto w-full">
         <SectionHeader
           tag="SIGNAL_02"
           title="USER_"
           accent="PROFILE"
           subtitle="// IDENTITY PACKET RECEIVED"
-          number="02"
         />
 
         {/* Two-column grid — stacks vertically on mobile */}
