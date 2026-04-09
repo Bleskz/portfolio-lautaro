@@ -121,6 +121,18 @@ Build: zero errors, 365kB / 112kB gzipped (+21kB from Lenis)
 
 Files: src/hooks/useLenis.js, src/App.jsx, src/components/Navbar.jsx
 
+## Phase 11 — i18n: Multi-language Support ✓
+Full translation support for EN / ES / PT / FR. No new dependencies — pure React context.
+Language choice is persisted in localStorage. Technical terms, project names, and terminal aesthetic labels are never translated.
+
+Key changes:
+- Language selector (EN/ES/PT/FR) added to Navbar right column — always visible
+- Translated: nav labels, hero subtitle + CTAs, About bio + quote + role/experience, project descriptions, skills subtitle, contact form placeholders + terminal responses + submit button
+- NOT translated: SIGNAL_DETECTED, USER_PROFILE, PROJECT_LOGS, FREQ_STACK, OPEN_CHANNEL, SIGNAL_ACTIVE, codenames, stack tags (REACT, NODE.JS, ELECTRON, CHROME EXT API, SQLITE, TAILWIND, FRAMER MOTION, CLAUDE CODE, COMFYUI), project names (TabFlow, Steam Analyzer, CoreTracker, TabFlow Landing)
+
+Files created: src/i18n/translations.js, src/context/LangContext.jsx
+Files modified: src/App.jsx, src/components/Navbar.jsx, src/components/Hero.jsx, src/components/About.jsx, src/components/Projects.jsx, src/components/ProjectCard.jsx, src/components/Skills.jsx, src/components/Contact.jsx
+
 ## Known Issues
 
 None

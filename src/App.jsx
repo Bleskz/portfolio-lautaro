@@ -1,6 +1,7 @@
 // Root app — renders Navbar, all sections, and Footer in order
 import { useEffect } from 'react'
 import useLenis from './hooks/useLenis'
+import { LangProvider } from './context/LangContext'
 import Navbar   from './components/Navbar'
 import Hero     from './components/Hero'
 import About    from './components/About'
@@ -55,7 +56,7 @@ function App() {
   const lenisRef = useLenis()
 
   return (
-    <>
+    <LangProvider>
       <Navbar lenisRef={lenisRef} />
       <Hero />
       <SectionDivider />
@@ -68,7 +69,7 @@ function App() {
       <Contact />
       <SectionDivider />
       <Footer />
-    </>
+    </LangProvider>
   )
 }
 

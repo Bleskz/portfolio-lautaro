@@ -1,6 +1,7 @@
 // Skills section — FREQ_STACK: three-column channel cards with animated progress bars
 import { motion } from 'framer-motion'
 import SectionHeader from './SectionHeader'
+import { useLang } from '../context/LangContext'
 
 const channels = [
   {
@@ -143,6 +144,8 @@ function ChannelCard({ channel }) {
 }
 
 function Skills() {
+  const { t } = useLang()
+
   return (
     <section
       id="skills"
@@ -170,7 +173,7 @@ function Skills() {
           tag="SIGNAL_04"
           title="FREQ_"
           accent="STACK"
-          subtitle="// CALIBRATED FREQUENCIES"
+          subtitle={t.skills.subtitle}
         />
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

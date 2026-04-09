@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
+import { useLang } from '../context/LangContext'
 
 // Scrolls smoothly to the section with the given id
 function scrollTo(id) {
@@ -134,6 +135,7 @@ function HeroDecor() {
 // Full-screen hero section — SIGNAL DETECTED
 function Hero() {
   const nameRef = useRef(null)
+  const { t } = useLang()
 
   // Randomly applies a 60ms blur glitch to the name every 4–8 seconds
   useEffect(() => {
@@ -357,8 +359,8 @@ function Hero() {
               marginBottom: '2.5rem',
             }}
           >
-            // Fullstack Developer from Neuquen, AR<br />
-            — Ships things. Fast. With whatever it takes.
+            {t.hero.subtitle1}<br />
+            {t.hero.subtitle2}
           </motion.p>
 
           {/* 4. CTA button row (delay 0.8s) */}
@@ -397,7 +399,7 @@ function Hero() {
                 e.currentTarget.style.boxShadow = 'none'
               }}
             >
-              TUNE IN → PROJECTS
+              {t.hero.ctaProjects}
             </motion.button>
 
             {/* Button B — scroll to Contact */}
@@ -427,7 +429,7 @@ function Hero() {
                 e.currentTarget.style.letterSpacing = '0.1em'
               }}
             >
-              OPEN CHANNEL →
+              {t.hero.ctaContact}
             </motion.button>
           </motion.div>
         </div>
@@ -472,7 +474,7 @@ function Hero() {
             letterSpacing: '0.2em',
           }}
         >
-          ─── SCROLL TO RECEIVE
+          {t.hero.scroll}
         </span>
       </motion.div>
     </section>

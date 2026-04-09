@@ -1,16 +1,7 @@
 // About section — USER_PROFILE: terminal card on the left, bio + tags on the right
 import { motion } from 'framer-motion'
 import SectionHeader from './SectionHeader'
-
-const TERMINAL_ROWS = [
-  { key: 'NAME',       value: 'Lautaro Velo',                          cyan: false, link: null },
-  { key: 'ROLE',       value: 'Fullstack Developer',                   cyan: false, link: null },
-  { key: 'ORIGIN',     value: 'Neuquen, Argentina',                    cyan: false, link: null },
-  { key: 'STATUS',     value: 'BUILDING_SOMETHING_RN',                 cyan: true,  link: null },
-  { key: 'EXPERIENCE', value: 'Self-taught, 0 to shipped', cyan: false, link: null },
-  { key: 'GITHUB',     value: 'github.com/Bleskz',                     cyan: false, link: 'https://github.com/Bleskz' },
-  { key: 'DISCORD',    value: 'Bleskz',                                cyan: false, link: null },
-]
+import { useLang } from '../context/LangContext'
 
 const STACK_TAGS = [
   'REACT', 'NODE.JS', 'ELECTRON', 'CHROME EXT API', 'SQLITE',
@@ -18,6 +9,19 @@ const STACK_TAGS = [
 ]
 
 function About() {
+  const { t } = useLang()
+
+  // Terminal rows: keys are terminal labels (never translated), only ROLE and EXPERIENCE values are translated
+  const TERMINAL_ROWS = [
+    { key: 'NAME',       value: 'Lautaro Velo',                cyan: false, link: null },
+    { key: 'ROLE',       value: t.about.role,                  cyan: false, link: null },
+    { key: 'ORIGIN',     value: 'Neuquen, Argentina',          cyan: false, link: null },
+    { key: 'STATUS',     value: 'BUILDING_SOMETHING_RN',       cyan: true,  link: null },
+    { key: 'EXPERIENCE', value: t.about.experience,            cyan: false, link: null },
+    { key: 'GITHUB',     value: 'github.com/Bleskz',           cyan: false, link: 'https://github.com/Bleskz' },
+    { key: 'DISCORD',    value: 'Bleskz',                      cyan: false, link: null },
+  ]
+
   return (
     <section
       id="about"
@@ -45,7 +49,7 @@ function About() {
           tag="SIGNAL_02"
           title="USER_"
           accent="PROFILE"
-          subtitle="// IDENTITY PACKET RECEIVED"
+          subtitle={t.about.subtitle}
         />
 
         {/* Two-column grid — stacks vertically on mobile */}
@@ -184,16 +188,16 @@ function About() {
                   color: '#E8FFE8',
                 }}
               >
-                Always{' '}
+                {t.about.quotePart1}{' '}
                 <span
                   style={{
                     color: '#00FF41',
                     textShadow: '0 0 25px rgba(0,255,65,0.6)',
                   }}
                 >
-                  make
+                  {t.about.quoteWord}
                 </span>
-                {' '}something.
+                {' '}{t.about.quotePart2}
               </p>
             </div>
 
@@ -207,7 +211,7 @@ function About() {
                   lineHeight: 1.75,
                 }}
               >
-                No esperé tener el stack perfecto ni la idea del siglo. Arranqué, rompí cosas, las arreglé, y así sigo. Esa es la única forma en que algo llega a existir.
+                {t.about.bio1}
               </p>
               <p
                 style={{
@@ -217,7 +221,7 @@ function About() {
                   lineHeight: 1.75,
                 }}
               >
-                Trabajo con todo lo que tengo — código, IA, diseño. Si algo se puede construir, se construye.
+                {t.about.bio2}
               </p>
             </div>
 

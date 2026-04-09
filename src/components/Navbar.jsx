@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion'
+import { useLang } from '../context/LangContext'
 
 // Scrolls smoothly to a section — uses Lenis if available, falls back to native
 function scrollTo(id, lenisRef) {
@@ -11,17 +12,61 @@ function scrollTo(id, lenisRef) {
   }
 }
 
-// Nav links data — number prefix + section id
-const NAV_LINKS = [
-  { num: '01.', label: 'HOME',     id: 'home'     },
-  { num: '02.', label: 'ABOUT',    id: 'about'    },
-  { num: '03.', label: 'PROJECTS', id: 'projects' },
-  { num: '04.', label: 'SKILLS',   id: 'skills'   },
-  { num: '05.', label: 'CONTACT',  id: 'contact'  },
-]
+// Available language codes
+const LANGS = ['en', 'es', 'pt', 'fr']
 
-// Fixed top navbar with signal indicator, nav links, and CTA button
+// Language switcher buttons — EN / ES / PT / FR
+function LangSelector({ lang, changeLang }) {
+  return (
+    <div style={{ display: 'flex', gap: '0.25rem' }}>
+      {LANGS.map((l) => (
+        <button
+          key={l}
+          onClick={() => changeLang(l)}
+          style={{
+            fontFamily: "'Share Tech Mono', monospace",
+            fontSize: '0.58rem',
+            letterSpacing: '0.1em',
+            background: lang === l ? 'rgba(0,255,65,0.15)' : 'transparent',
+            border: `1px solid ${lang === l ? 'rgba(0,255,65,0.5)' : 'rgba(0,255,65,0.15)'}`,
+            color: lang === l ? '#00FF41' : 'rgba(0,255,65,0.4)',
+            cursor: 'pointer',
+            padding: '0.22rem 0.4rem',
+            textTransform: 'uppercase',
+            transition: 'background 0.2s, border-color 0.2s, color 0.2s',
+          }}
+          onMouseEnter={(e) => {
+            if (l !== lang) {
+              e.currentTarget.style.color = '#00FF41'
+              e.currentTarget.style.borderColor = 'rgba(0,255,65,0.35)'
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (l !== lang) {
+              e.currentTarget.style.color = 'rgba(0,255,65,0.4)'
+              e.currentTarget.style.borderColor = 'rgba(0,255,65,0.15)'
+            }
+          }}
+        >
+          {l.toUpperCase()}
+        </button>
+      ))}
+    </div>
+  )
+}
+
+// Fixed top navbar with signal indicator, nav links, lang selector, and CTA button
 function Navbar({ lenisRef }) {
+  const { lang, changeLang, t } = useLang()
+
+  const NAV_LINKS = [
+    { num: '01.', label: t.nav.home,     id: 'home'     },
+    { num: '02.', label: t.nav.about,    id: 'about'    },
+    { num: '03.', label: t.nav.projects, id: 'projects' },
+    { num: '04.', label: t.nav.skills,   id: 'skills'   },
+    { num: '05.', label: t.nav.contact,  id: 'contact'  },
+  ]
+
   return (
     <motion.nav
       initial={{ y: -60, opacity: 0 }}
@@ -81,9 +126,10 @@ function Navbar({ lenisRef }) {
         ))}
       </div>
 
-      {/* RIGHT — CTA button, justified to the right */}
-      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-        <CTAButton onClick={() => scrollTo('contact', lenisRef)} />
+      {/* RIGHT — Lang selector + CTA button */}
+      <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '0.75rem' }}>
+        <LangSelector lang={lang} changeLang={changeLang} />
+        <CTAButton label={t.nav.cta} onClick={() => scrollTo('contact', lenisRef)} />
       </div>
     </motion.nav>
   )
@@ -131,8 +177,8 @@ function NavLink({ num, label, id, lenisRef }) {
   )
 }
 
-// CTA button — OPEN_CHANNEL with hover to cyan
-function CTAButton({ onClick }) {
+// CTA button — translatable label, hover to cyan
+function CTAButton({ label, onClick }) {
   return (
     <motion.button
       onClick={onClick}
@@ -147,6 +193,7 @@ function CTAButton({ onClick }) {
         cursor: 'pointer',
         padding: '0.45rem 1rem',
         transition: 'background-color 0.2s, box-shadow 0.2s',
+        whiteSpace: 'nowrap',
       }}
       onMouseEnter={e => {
         e.currentTarget.style.backgroundColor = '#00FFFF'
@@ -157,7 +204,7 @@ function CTAButton({ onClick }) {
         e.currentTarget.style.boxShadow = 'none'
       }}
     >
-      OPEN_CHANNEL →
+      {label}
     </motion.button>
   )
 }

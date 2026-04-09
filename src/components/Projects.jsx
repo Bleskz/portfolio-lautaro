@@ -2,52 +2,50 @@
 import { useState, useEffect } from 'react'
 import SectionHeader from './SectionHeader'
 import ProjectCard from './ProjectCard'
+import { useLang } from '../context/LangContext'
 
-const PROJECTS = [
+// Static project data — names and codenames are never translated
+const PROJECTS_BASE = [
   {
     sigId: 'SIG-001',
+    descKey: 'tabflow',
     type: 'CHROME_EXT',
     freq: '443.7MHz',
     name: 'TabFlow',
     codename: 'TABFLOW_V1.EXE',
-    description:
-      'Chrome/Brave extension that saves and restores tab groups across restarts. Named groups, persistent sessions, one-click restore. No more lost tabs.',
     stack: ['CHROME API', 'VANILLA JS', 'HTML/CSS'],
     codeUrl: 'https://github.com/Bleskz/tabflow',
     demoUrl: '#',
   },
   {
     sigId: 'SIG-002',
+    descKey: 'steam',
     type: 'WEB_APP',
     freq: '887.2MHz',
     name: 'Steam Analyzer',
     codename: 'STEAM_ANALYZER.SYS',
-    description:
-      'Analyzes any Steam profile in depth. Total playtime, real money spent on games, inventory market value, full library breakdown. Raw numbers, zero filter.',
     stack: ['REACT', 'STEAM API', 'TAILWIND', 'NODE.JS'],
     codeUrl: 'https://github.com/Bleskz/steam-analyzer',
     demoUrl: '#',
   },
   {
     sigId: 'SIG-003',
+    descKey: 'coretracker',
     type: 'DESKTOP_APP',
     freq: '334.1MHz',
     name: 'CoreTracker',
     codename: 'CORETRACK_DESKTOP.EXE',
-    description:
-      'Windows desktop app for oil companies. Register, search and manage well samples — cuttings, cores, channels. Sample loans, Excel + PDF export. Runs 100% offline.',
     stack: ['ELECTRON', 'REACT', 'SQLITE', 'NODE.JS'],
     codeUrl: 'https://github.com/Bleskz/coretracker',
     demoUrl: '#',
   },
   {
     sigId: 'SIG-004',
+    descKey: 'tabflowlanding',
     type: 'LANDING',
     freq: '221.9MHz',
     name: 'TabFlow Landing',
     codename: 'TABFLOW_LANDING.HTML',
-    description:
-      'Product page for the TabFlow extension. Fast, minimal, conversion-focused. Built to get installs.',
     stack: ['HTML', 'CSS', 'VANILLA JS', 'RESPONSIVE'],
     codeUrl: 'https://github.com/Bleskz/tabflow-landing',
     demoUrl: '#',
@@ -79,6 +77,14 @@ function LiveClock() {
 }
 
 function Projects() {
+  const { t } = useLang()
+
+  // Merge static base data with translated descriptions
+  const PROJECTS = PROJECTS_BASE.map((p) => ({
+    ...p,
+    description: t.projects[p.descKey].description,
+  }))
+
   return (
     <section
       id="projects"
@@ -106,7 +112,7 @@ function Projects() {
           tag="SIGNAL_03"
           title="PROJECT_"
           accent="LOGS"
-          subtitle="// TRANSMISSIONS CAPTURED"
+          subtitle={t.projects.subtitle}
         />
 
         {/* Log status bar */}

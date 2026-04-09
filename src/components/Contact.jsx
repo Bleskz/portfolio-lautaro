@@ -2,9 +2,10 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import SectionHeader from './SectionHeader'
+import { useLang } from '../context/LangContext'
 
 // Simulated terminal card — static display, not interactive
-function Terminal() {
+function Terminal({ t }) {
   return (
     <div
       style={{
@@ -48,23 +49,23 @@ function Terminal() {
       >
         <p style={{ color: 'rgba(232,255,232,0.45)' }}>$ ping --target lautaro.velo</p>
         <p style={{ color: '#E8FFE8', paddingLeft: '1rem' }}>
-          → Handshake established. Signal strong.
+          {t.contact.handshake}
         </p>
 
         <p className="mt-2" style={{ color: 'rgba(232,255,232,0.45)' }}>
           $ mail --to bleslautaro@gmail.com
         </p>
-        <p style={{ color: '#00FFFF', paddingLeft: '1rem' }}>✓ Channel open</p>
+        <p style={{ color: '#00FFFF', paddingLeft: '1rem' }}>{t.contact.channelOpen}</p>
 
         <p className="mt-2" style={{ color: 'rgba(232,255,232,0.45)' }}>
           $ connect --discord Bleskz
         </p>
-        <p style={{ color: '#00FFFF', paddingLeft: '1rem' }}>✓ Ready</p>
+        <p style={{ color: '#00FFFF', paddingLeft: '1rem' }}>{t.contact.ready}</p>
 
         <p className="mt-2" style={{ color: 'rgba(232,255,232,0.45)' }}>
           $ open github.com/Bleskz
         </p>
-        <p style={{ color: '#00FFFF', paddingLeft: '1rem' }}>✓ 4 repos available</p>
+        <p style={{ color: '#00FFFF', paddingLeft: '1rem' }}>{t.contact.reposAvailable}</p>
 
         <p className="mt-3" style={{ color: '#00FF41' }}>
           $ <span className="terminal-cursor">█</span>
@@ -87,6 +88,7 @@ function Terminal() {
 
 // Contact form with focus glow and success state on submit
 function ContactForm() {
+  const { t } = useLang()
   const [status, setStatus] = useState('idle') // 'idle' | 'transmitted'
   const [form, setForm] = useState({ name: '', email: '', message: '' })
 
@@ -143,7 +145,7 @@ function ContactForm() {
           <label style={labelStyle}>// SENDER_ID</label>
           <input
             type="text"
-            placeholder="your name"
+            placeholder={t.contact.namePlaceholder}
             value={form.name}
             onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
             style={baseInputStyle}
@@ -171,7 +173,7 @@ function ContactForm() {
           <label style={labelStyle}>// PAYLOAD</label>
           <textarea
             rows={5}
-            placeholder="your message"
+            placeholder={t.contact.msgPlaceholder}
             value={form.message}
             onChange={(e) => setForm((f) => ({ ...f, message: e.target.value }))}
             style={{ ...baseInputStyle, resize: 'vertical' }}
@@ -199,7 +201,7 @@ function ContactForm() {
             alignSelf: 'flex-start',
           }}
         >
-          {status === 'transmitted' ? 'TRANSMITTED ✓' : 'TRANSMIT →'}
+          {status === 'transmitted' ? t.contact.submitted : t.contact.submit}
         </button>
       </form>
 
@@ -215,6 +217,8 @@ function ContactForm() {
 }
 
 function Contact() {
+  const { t } = useLang()
+
   return (
     <section
       id="contact"
@@ -242,7 +246,7 @@ function Contact() {
           tag="SIGNAL_05"
           title="OPEN_"
           accent="CHANNEL"
-          subtitle="// TRANSMISSION PROTOCOL ACTIVE"
+          subtitle={t.contact.subtitle}
         />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
@@ -253,7 +257,7 @@ function Contact() {
             viewport={{ once: true, amount: 0.05 }}
             transition={{ duration: 0.4, delay: 0 }}
           >
-            <Terminal />
+            <Terminal t={t} />
           </motion.div>
 
           {/* Right — Contact form */}

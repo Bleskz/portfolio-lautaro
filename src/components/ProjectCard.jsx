@@ -1,5 +1,6 @@
 // Individual project card with animated left accent bar, pulsing freq, and action buttons
 import { motion } from 'framer-motion'
+import { useLang } from '../context/LangContext'
 
 // Stack chip — improved contrast: subtle background + stronger border
 function StackChip({ label }) {
@@ -49,6 +50,8 @@ function FreqLabel({ freq }) {
 }
 
 function ProjectCard({ sigId, type, freq, name, codename, description, stack, codeUrl, demoUrl, index }) {
+  const { t } = useLang()
+
   // Opens a URL in new tab; skips navigation if url is '#'
   function openLink(url) {
     if (url && url !== '#') {
@@ -175,7 +178,7 @@ function ProjectCard({ sigId, type, freq, name, codename, description, stack, co
             e.currentTarget.style.borderColor = 'rgba(0,255,65,0.28)'
           }}
         >
-          VIEW_CODE
+          {t.projects.viewCode}
         </button>
 
         {/* LIVE_DEMO button */}
@@ -203,7 +206,7 @@ function ProjectCard({ sigId, type, freq, name, codename, description, stack, co
             e.currentTarget.style.boxShadow = 'none'
           }}
         >
-          LIVE_DEMO →
+          {t.projects.liveDemo}
         </button>
       </div>
     </motion.div>
