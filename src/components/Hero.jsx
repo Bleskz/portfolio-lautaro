@@ -1,6 +1,8 @@
 import { useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { useLang } from '../context/LangContext'
+import useReducedMotion from '../hooks/useReducedMotion'
+import { C } from '../theme/colors'
 
 // Scrolls smoothly to the section with the given id
 function scrollTo(id) {
@@ -18,7 +20,7 @@ function fadeUp(delay) {
 }
 
 // Decorative right-column SVG — wireframe diamond with drawing animation
-function HeroDecor() {
+function HeroDecor({ reducedMotion }) {
   // Diamond M200,24 L380,240 L200,456 L20,240 Z — perimeter ≈ 1125px
   const dashLen = 1200
 
@@ -54,20 +56,20 @@ function HeroDecor() {
           transition={{ duration: 1.4, ease: 'easeInOut', delay: 1.0 }}
         />
 
-        {/* Pulsing ring at center */}
+        {/* Pulsing ring at center — disabled under reduced motion */}
         <motion.circle
           cx="200" cy="240" r="18"
           fill="none"
           stroke="#00FF41"
           strokeWidth="1"
-          animate={{ r: [14, 22, 14], opacity: [0.2, 0.5, 0.2] }}
-          transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+          animate={reducedMotion ? { r: 16, opacity: 0.35 } : { r: [14, 22, 14], opacity: [0.2, 0.5, 0.2] }}
+          transition={{ duration: 3, repeat: reducedMotion ? 0 : Infinity, ease: 'easeInOut' }}
         />
 
-        {/* Dot cluster — 5 dots rotating around center */}
+        {/* Dot cluster — 5 dots rotating around center — disabled under reduced motion */}
         <motion.g
-          animate={{ rotate: 360 }}
-          transition={{ duration: 22, repeat: Infinity, ease: 'linear' }}
+          animate={reducedMotion ? { rotate: 0 } : { rotate: 360 }}
+          transition={{ duration: 22, repeat: reducedMotion ? 0 : Infinity, ease: 'linear' }}
           style={{ transformOrigin: '200px 240px' }}
         >
           {[0, 72, 144, 216, 288].map((angle, i) => {
@@ -114,10 +116,10 @@ function HeroDecor() {
         ))}
       </svg>
 
-      {/* Horizontal scanning line — moves top to bottom on repeat */}
+      {/* Horizontal scanning line — disabled under reduced motion */}
       <motion.div
-        animate={{ y: ['0%', '100%'] }}
-        transition={{ duration: 4.5, repeat: Infinity, ease: 'linear', delay: 2.2 }}
+        animate={reducedMotion ? { y: '50%', opacity: 0 } : { y: ['0%', '100%'] }}
+        transition={{ duration: 4.5, repeat: reducedMotion ? 0 : Infinity, ease: 'linear', delay: 2.2 }}
         style={{
           position: 'absolute',
           top: 0,
@@ -136,9 +138,12 @@ function HeroDecor() {
 function Hero() {
   const nameRef = useRef(null)
   const { t } = useLang()
+  const reducedMotion = useReducedMotion()
 
-  // Randomly applies a 60ms blur glitch to the name every 4–8 seconds
+  // Randomly applies a 60ms blur glitch to the name every 4–8 seconds — skipped under reduced motion
   useEffect(() => {
+    if (reducedMotion) return
+
     let timeout
 
     function scheduleGlitch() {
@@ -156,14 +161,14 @@ function Hero() {
 
     scheduleGlitch()
     return () => clearTimeout(timeout)
-  }, [])
+  }, [reducedMotion])
 
   return (
     <section
       id="home"
       style={{
         minHeight: '100vh',
-        backgroundColor: '#020502',
+        backgroundColor: C.bg,
         position: 'relative',
         overflow: 'hidden',
         display: 'flex',
@@ -244,7 +249,7 @@ function Hero() {
         style={{
           position: 'absolute',
           inset: 0,
-          background: 'radial-gradient(ellipse 60% 50% at 30% 50%, rgba(0,255,65,0.06) 0%, transparent 70%)',
+          background: `radial-gradient(ellipse 60% 50% at 30% 50%, ${C.g(0.06)} 0%, transparent 70%)`,
           pointerEvents: 'none',
           zIndex: 0,
         }}
@@ -259,7 +264,7 @@ function Hero() {
           right: '1.5vw',
           fontFamily: "'Bebas Neue', cursive",
           fontSize: '15vw',
-          color: 'rgba(0,255,65,0.03)',
+          color: C.g(0.03),
           lineHeight: 1,
           pointerEvents: 'none',
           userSelect: 'none',
@@ -294,8 +299,8 @@ function Hero() {
               style={{
                 width: '40px',
                 height: '1px',
-                backgroundColor: '#00FF41',
-                boxShadow: '0 0 8px #00FF41',
+                backgroundColor: C.green,
+                boxShadow: `0 0 8px ${C.green}`,
                 flexShrink: 0,
               }}
             />
@@ -303,7 +308,7 @@ function Hero() {
               style={{
                 fontFamily: "'Share Tech Mono', monospace",
                 fontSize: '0.72rem',
-                color: '#00FF41',
+                color: C.green,
                 letterSpacing: '0.28em',
               }}
             >
@@ -324,7 +329,7 @@ function Hero() {
                 fontFamily: "'Bebas Neue', cursive",
                 fontSize: 'clamp(3.5rem, 14vw, 12rem)',
                 color: '#F0FFF0',
-                textShadow: '0 0 40px rgba(0,255,65,0.08)',
+                textShadow: `0 0 40px ${C.g(0.08)}`,
               }}
             >
               LAUTARO
@@ -336,7 +341,7 @@ function Hero() {
                 fontFamily: "'Bebas Neue', cursive",
                 fontSize: 'clamp(3.5rem, 14vw, 12rem)',
                 color: '#F0FFF0',
-                textShadow: '0 0 40px rgba(0,255,65,0.08)',
+                textShadow: `0 0 40px ${C.g(0.08)}`,
               }}
             >
               VELO
@@ -350,7 +355,7 @@ function Hero() {
               fontFamily: "'Space Mono', monospace",
               fontStyle: 'italic',
               fontSize: 'clamp(0.78rem, 1.4vw, 0.95rem)',
-              color: 'rgba(232,255,232,0.45)',
+              color: C.w(0.45),
               lineHeight: 1.8,
               marginBottom: '2.5rem',
             }}
@@ -378,8 +383,8 @@ function Hero() {
                 fontFamily: "'Share Tech Mono', monospace",
                 fontSize: '0.78rem',
                 letterSpacing: '0.1em',
-                backgroundColor: '#00FF41',
-                color: '#020502',
+                backgroundColor: C.green,
+                color: C.bg,
                 border: 'none',
                 cursor: 'pointer',
                 padding: '0.85rem 2rem',
@@ -387,11 +392,11 @@ function Hero() {
                 transition: 'background-color 0.2s, box-shadow 0.2s',
               }}
               onMouseEnter={e => {
-                e.currentTarget.style.backgroundColor = '#00FFFF'
-                e.currentTarget.style.boxShadow = '0 0 28px rgba(0,255,255,0.45)'
+                e.currentTarget.style.backgroundColor = C.cyan
+                e.currentTarget.style.boxShadow = `0 0 28px ${C.c(0.45)}`
               }}
               onMouseLeave={e => {
-                e.currentTarget.style.backgroundColor = '#00FF41'
+                e.currentTarget.style.backgroundColor = C.green
                 e.currentTarget.style.boxShadow = 'none'
               }}
             >
@@ -407,21 +412,21 @@ function Hero() {
                 fontSize: '0.78rem',
                 letterSpacing: '0.1em',
                 backgroundColor: 'transparent',
-                color: '#00FF41',
+                color: C.green,
                 border: 'none',
-                borderBottom: '1px solid rgba(0,255,65,0.35)',
+                borderBottom: `1px solid ${C.g(0.35)}`,
                 cursor: 'pointer',
                 padding: '0.3rem 0',
                 transition: 'color 0.2s, letter-spacing 0.25s, border-color 0.2s',
               }}
               onMouseEnter={e => {
-                e.currentTarget.style.color = '#00FFFF'
-                e.currentTarget.style.borderBottomColor = 'rgba(0,255,255,0.5)'
+                e.currentTarget.style.color = C.cyan
+                e.currentTarget.style.borderBottomColor = C.c(0.5)
                 e.currentTarget.style.letterSpacing = '0.18em'
               }}
               onMouseLeave={e => {
-                e.currentTarget.style.color = '#00FF41'
-                e.currentTarget.style.borderBottomColor = 'rgba(0,255,65,0.35)'
+                e.currentTarget.style.color = C.green
+                e.currentTarget.style.borderBottomColor = C.g(0.35)
                 e.currentTarget.style.letterSpacing = '0.1em'
               }}
             >
@@ -435,7 +440,7 @@ function Hero() {
           className="hidden lg:flex"
           style={{ flex: '1', justifyContent: 'center', alignItems: 'center' }}
         >
-          <HeroDecor />
+          <HeroDecor reducedMotion={reducedMotion} />
         </div>
       </div>
 
@@ -457,8 +462,8 @@ function Hero() {
           style={{
             width: '28px',
             height: '1px',
-            backgroundColor: '#00FF41',
-            boxShadow: '0 0 6px #00FF41',
+            backgroundColor: C.green,
+            boxShadow: `0 0 6px ${C.green}`,
             flexShrink: 0,
           }}
         />
@@ -466,7 +471,7 @@ function Hero() {
           style={{
             fontFamily: "'Share Tech Mono', monospace",
             fontSize: '0.62rem',
-            color: 'rgba(0,255,65,0.38)',
+            color: C.g(0.38),
             letterSpacing: '0.2em',
           }}
         >

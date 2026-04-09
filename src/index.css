@@ -11,11 +11,14 @@ body {
   overflow-x: hidden;
 }
 
-/* Custom scrollbar — minimal, matches SIGNAL/NOISE palette */
+/* Custom scrollbar — webkit (Chrome, Edge, Safari) */
 ::-webkit-scrollbar { width: 3px; }
 ::-webkit-scrollbar-track { background: #020502; }
 ::-webkit-scrollbar-thumb { background: rgba(0,255,65,0.5); border-radius: 0; }
 ::-webkit-scrollbar-thumb:hover { background: #00FF41; }
+
+/* Custom scrollbar — Firefox */
+* { scrollbar-width: thin; scrollbar-color: rgba(0,255,65,0.5) #020502; }
 
 /* Global focus indicator — visible green outline for keyboard navigation */
 :focus-visible {

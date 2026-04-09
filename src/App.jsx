@@ -1,14 +1,17 @@
 // Root app — renders Navbar, all sections, and Footer in order
-import { useEffect } from 'react'
+import { useEffect, lazy, Suspense } from 'react'
 import useLenis from './hooks/useLenis'
+import useReducedMotion from './hooks/useReducedMotion'
 import { LangProvider } from './context/LangContext'
-import Navbar   from './components/Navbar'
-import Hero     from './components/Hero'
-import About    from './components/About'
-import Projects from './components/Projects'
-import Skills   from './components/Skills'
-import Contact  from './components/Contact'
-import Footer   from './components/Footer'
+import Navbar from './components/Navbar'
+import Hero   from './components/Hero'
+
+// Lazy-loaded sections — deferred until after Hero paints
+const About    = lazy(() => import('./components/About'))
+const Projects = lazy(() => import('./components/Projects'))
+const Skills   = lazy(() => import('./components/Skills'))
+const Contact  = lazy(() => import('./components/Contact'))
+const Footer   = lazy(() => import('./components/Footer'))
 
 // Thin gradient line between sections — reinforces the SIGNAL/NOISE visual rhythm
 function SectionDivider() {
@@ -23,8 +26,11 @@ function SectionDivider() {
 }
 
 // Applies a brief brightness flash on fast scrolls (CRT flicker effect)
-function useScrollFlash() {
+// Skipped entirely when prefers-reduced-motion is active
+function useScrollFlash(reducedMotion) {
   useEffect(() => {
+    if (reducedMotion) return
+
     let lastY = window.scrollY
     let flashTimeout = null
 
@@ -48,27 +54,30 @@ function useScrollFlash() {
       clearTimeout(flashTimeout)
       document.body.style.filter = 'none'
     }
-  }, [])
+  }, [reducedMotion])
 }
 
 function App() {
-  useScrollFlash()
+  const reducedMotion = useReducedMotion()
+  useScrollFlash(reducedMotion)
   const lenisRef = useLenis()
 
   return (
     <LangProvider>
       <Navbar lenisRef={lenisRef} />
       <Hero />
-      <SectionDivider />
-      <About />
-      <SectionDivider />
-      <Projects />
-      <SectionDivider />
-      <Skills />
-      <SectionDivider />
-      <Contact />
-      <SectionDivider />
-      <Footer />
+      <Suspense fallback={<div style={{ backgroundColor: '#020502', minHeight: '100vh' }} />}>
+        <SectionDivider />
+        <About />
+        <SectionDivider />
+        <Projects />
+        <SectionDivider />
+        <Skills />
+        <SectionDivider />
+        <Contact />
+        <SectionDivider />
+        <Footer />
+      </Suspense>
     </LangProvider>
   )
 }

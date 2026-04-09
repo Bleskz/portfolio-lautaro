@@ -1,5 +1,6 @@
 // Reusable section header: vertical tag, split-color title, subtitle, decorative number
 import { motion } from 'framer-motion'
+import { C } from '../theme/colors'
 
 function SectionHeader({ tag, title, accent, subtitle }) {
   return (
@@ -18,7 +19,7 @@ function SectionHeader({ tag, title, accent, subtitle }) {
             style={{
               fontFamily: "'Share Tech Mono', monospace",
               fontSize: '0.6rem',
-              color: '#00FF41',
+              color: C.green,
               writingMode: 'vertical-rl',
               textOrientation: 'mixed',
               transform: 'rotate(180deg)',
@@ -39,8 +40,8 @@ function SectionHeader({ tag, title, accent, subtitle }) {
               lineHeight: 1,
             }}
           >
-            <span style={{ color: '#E8FFE8' }}>{title}</span>
-            <span style={{ color: '#00FF41' }}>{accent}</span>
+            <span style={{ color: C.white }}>{title}</span>
+            <span style={{ color: C.green }}>{accent}</span>
           </h2>
 
           {/* Subtitle */}
@@ -48,7 +49,7 @@ function SectionHeader({ tag, title, accent, subtitle }) {
             style={{
               fontFamily: "'Share Tech Mono', monospace",
               fontSize: '0.72rem',
-              color: 'rgba(0,255,65,0.45)',
+              color: C.g(0.45),
               marginTop: '0.3rem',
               letterSpacing: '0.05em',
             }}

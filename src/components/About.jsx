@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import SectionHeader from './SectionHeader'
 import { useLang } from '../context/LangContext'
 import { LINKS } from '../config/links'
+import { C } from '../theme/colors'
 
 const STACK_TAGS = [
   'REACT', 'NODE.JS', 'ELECTRON', 'CHROME EXT API', 'SQLITE',
@@ -27,7 +28,7 @@ function About() {
     <section
       id="about"
       className="relative min-h-screen flex flex-col justify-center px-6 py-32"
-      style={{ backgroundColor: '#020502' }}
+      style={{ backgroundColor: C.bg }}
     >
       {/* Decorative background number — anchored to section, not clipped */}
       <span
@@ -35,7 +36,7 @@ function About() {
         style={{
           fontFamily: "'Bebas Neue', sans-serif",
           fontSize: 'clamp(8rem, 18vw, 16rem)',
-          color: 'rgba(0,255,65,0.03)',
+          color: C.g(0.03),
           lineHeight: 1,
           right: '1.5vw',
           bottom: '-1vw',
@@ -63,29 +64,29 @@ function About() {
             viewport={{ once: true, amount: 0.05 }}
             transition={{ duration: 0.4, delay: 0 }}
             style={{
-              background: 'rgba(0,255,65,0.028)',
-              border: '1px solid rgba(0,255,65,0.14)',
+              background: C.g(0.028),
+              border: `1px solid ${C.g(0.14)}`,
               borderRadius: '2px',
-              boxShadow: '0 0 30px rgba(0,255,65,0.06), inset 0 0 20px rgba(0,255,65,0.02)',
+              boxShadow: `0 0 30px ${C.g(0.06)}, inset 0 0 20px ${C.g(0.02)}`,
             }}
           >
             {/* Terminal title bar */}
             <div
               className="flex items-center px-4 py-2.5"
-              style={{ borderBottom: '1px solid rgba(0,255,65,0.14)', backgroundColor: 'rgba(0,255,65,0.08)' }}
+              style={{ borderBottom: `1px solid ${C.g(0.14)}`, backgroundColor: C.g(0.08) }}
             >
               {/* Window dots — left zone */}
               <div className="flex gap-1.5 flex-1">
-                <span style={{ color: 'rgba(0,255,65,0.3)', fontSize: '0.7rem' }}>●</span>
-                <span style={{ color: 'rgba(0,255,65,0.3)', fontSize: '0.7rem' }}>●</span>
-                <span style={{ color: 'rgba(0,255,65,0.3)', fontSize: '0.7rem' }}>●</span>
+                <span style={{ color: C.g(0.3), fontSize: '0.7rem' }}>●</span>
+                <span style={{ color: C.g(0.3), fontSize: '0.7rem' }}>●</span>
+                <span style={{ color: C.g(0.3), fontSize: '0.7rem' }}>●</span>
               </div>
               {/* Centered filename — middle zone */}
               <span
                 style={{
                   fontFamily: "'Share Tech Mono', monospace",
                   fontSize: '0.58rem',
-                  color: 'rgba(0,255,65,0.4)',
+                  color: C.g(0.4),
                   letterSpacing: '0.08em',
                   flexShrink: 0,
                 }}
@@ -102,14 +103,14 @@ function About() {
                 <div
                   key={row.key}
                   className="flex items-start py-2.5"
-                  style={{ borderBottom: '1px solid rgba(0,255,65,0.07)' }}
+                  style={{ borderBottom: `1px solid ${C.g(0.07)}` }}
                 >
                   {/* Key */}
                   <span
                     style={{
                       fontFamily: "'Share Tech Mono', monospace",
                       fontSize: '0.72rem',
-                      color: '#00FF41',
+                      color: C.green,
                       minWidth: '90px',
                       flexShrink: 0,
                     }}
@@ -122,7 +123,7 @@ function About() {
                     style={{
                       fontFamily: "'Share Tech Mono', monospace",
                       fontSize: '0.72rem',
-                      color: 'rgba(0,255,65,0.35)',
+                      color: C.g(0.35),
                       marginRight: '0.6rem',
                       flexShrink: 0,
                     }}
@@ -139,9 +140,9 @@ function About() {
                       style={{
                         fontFamily: "'Share Tech Mono', monospace",
                         fontSize: '0.72rem',
-                        color: '#00FF41',
+                        color: C.green,
                         textDecoration: 'underline',
-                        textDecorationColor: 'rgba(0,255,65,0.35)',
+                        textDecorationColor: C.g(0.35),
                       }}
                     >
                       {row.value}
@@ -151,7 +152,7 @@ function About() {
                       style={{
                         fontFamily: "'Share Tech Mono', monospace",
                         fontSize: '0.72rem',
-                        color: row.cyan ? '#00FFFF' : 'rgba(232,255,232,0.8)',
+                        color: row.cyan ? C.cyan : C.w(0.8),
                       }}
                     >
                       {row.value}
@@ -177,7 +178,7 @@ function About() {
                 style={{
                   width: '60px',
                   height: '2px',
-                  backgroundColor: '#00FF41',
+                  backgroundColor: C.green,
                   marginBottom: '1rem',
                 }}
               />
@@ -186,14 +187,14 @@ function About() {
                   fontFamily: "'Bebas Neue', sans-serif",
                   fontSize: 'clamp(3.5rem, 6vw, 5rem)',
                   lineHeight: 1.05,
-                  color: '#E8FFE8',
+                  color: C.white,
                 }}
               >
                 {t.about.quotePart1}{' '}
                 <span
                   style={{
-                    color: '#00FF41',
-                    textShadow: '0 0 25px rgba(0,255,65,0.6)',
+                    color: C.green,
+                    textShadow: `0 0 25px ${C.g(0.6)}`,
                   }}
                 >
                   {t.about.quoteWord}
@@ -208,7 +209,7 @@ function About() {
                 style={{
                   fontFamily: "'Space Mono', monospace",
                   fontSize: '0.8rem',
-                  color: 'rgba(232,255,232,0.5)',
+                  color: C.w(0.5),
                   lineHeight: 1.75,
                 }}
               >
@@ -218,7 +219,7 @@ function About() {
                 style={{
                   fontFamily: "'Space Mono', monospace",
                   fontSize: '0.8rem',
-                  color: 'rgba(232,255,232,0.5)',
+                  color: C.w(0.5),
                   lineHeight: 1.75,
                 }}
               >
@@ -241,23 +242,15 @@ function About() {
                     hidden: { opacity: 0, y: 8 },
                     visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
                   }}
+                  whileHover={{ background: C.g(0.1), borderColor: C.g(0.55) }}
                   className="px-2 py-1 cursor-default"
                   style={{
                     fontFamily: "'Share Tech Mono', monospace",
                     fontSize: '0.62rem',
-                    color: '#00FF41',
-                    border: '1px solid rgba(0,255,65,0.3)',
-                    background: 'rgba(0,255,65,0.05)',
+                    color: C.green,
+                    border: `1px solid ${C.g(0.3)}`,
+                    background: C.g(0.05),
                     letterSpacing: '0.05em',
-                    transition: 'background 0.2s, border-color 0.2s',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background = 'rgba(0,255,65,0.1)'
-                    e.currentTarget.style.borderColor = 'rgba(0,255,65,0.55)'
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background = 'rgba(0,255,65,0.05)'
-                    e.currentTarget.style.borderColor = 'rgba(0,255,65,0.3)'
                   }}
                 >
                   {tag}

@@ -1,5 +1,5 @@
 // Projects section — PROJECT_LOGS: live status bar + 2×2 card grid
-import { useState, useEffect } from 'react'
+import { useState, useEffect, memo } from 'react'
 import SectionHeader from './SectionHeader'
 import ProjectCard from './ProjectCard'
 import { useLang } from '../context/LangContext'
@@ -65,8 +65,8 @@ function formatTimestamp(date) {
   return `${y}.${mo}.${d}_${h}:${mi}:${s}`
 }
 
-// Live clock that ticks every second
-function LiveClock() {
+// Live clock that ticks every second — memoized to prevent re-renders of parent
+const LiveClock = memo(function LiveClock() {
   const [timestamp, setTimestamp] = useState(() => formatTimestamp(new Date()))
 
   useEffect(() => {
@@ -75,7 +75,7 @@ function LiveClock() {
   }, [])
 
   return <span>{timestamp}</span>
-}
+})
 
 function Projects() {
   const { t } = useLang()

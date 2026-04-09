@@ -2,6 +2,7 @@
 import { motion } from 'framer-motion'
 import SectionHeader from './SectionHeader'
 import { useLang } from '../context/LangContext'
+import { C } from '../theme/colors'
 
 const channels = [
   {
@@ -42,7 +43,7 @@ function SkillBar({ name, pct, index }) {
           style={{
             fontFamily: "'Share Tech Mono', monospace",
             fontSize: '0.72rem',
-            color: '#E8FFE8',
+            color: C.white,
           }}
         >
           {name}
@@ -51,7 +52,7 @@ function SkillBar({ name, pct, index }) {
           style={{
             fontFamily: "'Share Tech Mono', monospace",
             fontSize: '0.72rem',
-            color: 'rgba(0,255,65,0.6)',
+            color: C.g(0.6),
           }}
         >
           {pct}%
@@ -63,7 +64,7 @@ function SkillBar({ name, pct, index }) {
         className="relative"
         style={{
           height: '3px',
-          backgroundColor: 'rgba(232,255,232,0.07)',
+          backgroundColor: C.w(0.07),
         }}
       >
         {/* Animated fill */}
@@ -74,8 +75,8 @@ function SkillBar({ name, pct, index }) {
           transition={{ duration: 0.8, ease: 'easeOut', delay: index * 0.06 }}
           className="absolute top-0 left-0 h-full"
           style={{
-            background: 'linear-gradient(90deg, #00FF41, #00FFFF)',
-            boxShadow: '0 0 10px rgba(0,255,65,0.8), 0 0 20px rgba(0,255,65,0.4)',
+            background: `linear-gradient(90deg, ${C.green}, ${C.cyan})`,
+            boxShadow: `0 0 10px ${C.g(0.8)}, 0 0 20px ${C.g(0.4)}`,
           }}
         >
           {/* Cyan square tip at the right end of the fill */}
@@ -88,7 +89,7 @@ function SkillBar({ name, pct, index }) {
               width: '6px',
               height: '6px',
               borderRadius: '0',
-              backgroundColor: '#00FFFF',
+              backgroundColor: C.cyan,
             }}
           />
         </motion.div>
@@ -103,8 +104,8 @@ function ChannelCard({ channel }) {
     <div
       className="p-6"
       style={{
-        border: '1px solid rgba(0,255,65,0.09)',
-        backgroundColor: 'rgba(0,255,65,0.012)',
+        border: `1px solid ${C.g(0.09)}`,
+        backgroundColor: C.g(0.012),
       }}
     >
       {/* Channel header: label + animated extending line */}
@@ -113,7 +114,7 @@ function ChannelCard({ channel }) {
           style={{
             fontFamily: "'Share Tech Mono', monospace",
             fontSize: '0.6rem',
-            color: '#00FF41',
+            color: C.green,
             letterSpacing: '0.35em',
             whiteSpace: 'nowrap',
             opacity: 0.85,
@@ -130,7 +131,7 @@ function ChannelCard({ channel }) {
           transition={{ duration: 0.7, ease: 'easeOut' }}
           style={{
             height: '1px',
-            backgroundColor: 'rgba(0,255,65,0.15)',
+            backgroundColor: C.border,
             transformOrigin: 'left',
           }}
         />
@@ -150,7 +151,7 @@ function Skills() {
     <section
       id="skills"
       className="relative min-h-screen py-24 px-6"
-      style={{ backgroundColor: '#020502' }}
+      style={{ backgroundColor: C.bg }}
     >
       {/* Decorative background number — anchored to section, not clipped */}
       <span
@@ -158,7 +159,7 @@ function Skills() {
         style={{
           fontFamily: "'Bebas Neue', sans-serif",
           fontSize: 'clamp(8rem, 18vw, 16rem)',
-          color: 'rgba(0,255,65,0.03)',
+          color: C.g(0.03),
           lineHeight: 1,
           right: '1.5vw',
           bottom: '-1vw',

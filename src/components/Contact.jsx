@@ -4,34 +4,35 @@ import { motion } from 'framer-motion'
 import SectionHeader from './SectionHeader'
 import { useLang } from '../context/LangContext'
 import { LINKS } from '../config/links'
+import { C } from '../theme/colors'
 
 // Simulated terminal card — static display, not interactive
 function Terminal({ t }) {
   return (
     <div
       style={{
-        backgroundColor: 'rgba(2,5,2,0.95)',
-        borderTop: '1px solid rgba(0,255,65,0.15)',
-        borderLeft: '3px solid #00FF41',
-        borderRight: '1px solid rgba(0,255,65,0.08)',
-        borderBottom: '1px solid rgba(0,255,65,0.08)',
-        boxShadow: '-4px 0 15px rgba(0,255,65,0.2)',
+        backgroundColor: C.terminalBg,
+        borderTop: `1px solid ${C.border}`,
+        borderLeft: `3px solid ${C.green}`,
+        borderRight: `1px solid ${C.g(0.08)}`,
+        borderBottom: `1px solid ${C.g(0.08)}`,
+        boxShadow: `-4px 0 15px ${C.g(0.2)}`,
       }}
     >
       {/* Window bar: colored dots + terminal title */}
       <div
         className="flex items-center gap-2 px-4 py-3"
-        style={{ borderBottom: '1px solid rgba(0,255,65,0.1)' }}
+        style={{ borderBottom: `1px solid ${C.g(0.1)}` }}
       >
-        <span style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: '#FF003C', display: 'inline-block' }} />
+        <span style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: C.red, display: 'inline-block' }} />
         <span style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: '#FFD700', display: 'inline-block' }} />
-        <span style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: '#00FF41', display: 'inline-block' }} />
+        <span style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: C.green, display: 'inline-block' }} />
         <span
           className="ml-2"
           style={{
             fontFamily: "'Share Tech Mono', monospace",
             fontSize: '0.65rem',
-            color: 'rgba(232,255,232,0.35)',
+            color: C.textFaint,
             letterSpacing: '0.05em',
           }}
         >
@@ -48,27 +49,27 @@ function Terminal({ t }) {
           lineHeight: '1.9',
         }}
       >
-        <p style={{ color: 'rgba(232,255,232,0.45)' }}>$ ping --target lautaro.velo</p>
-        <p style={{ color: '#E8FFE8', paddingLeft: '1rem' }}>
+        <p style={{ color: C.w(0.45) }}>$ ping --target lautaro.velo</p>
+        <p style={{ color: C.white, paddingLeft: '1rem' }}>
           {t.contact.handshake}
         </p>
 
-        <p className="mt-2" style={{ color: 'rgba(232,255,232,0.45)' }}>
+        <p className="mt-2" style={{ color: C.w(0.45) }}>
           $ mail --to {LINKS.email}
         </p>
-        <p style={{ color: '#00FFFF', paddingLeft: '1rem' }}>{t.contact.channelOpen}</p>
+        <p style={{ color: C.cyan, paddingLeft: '1rem' }}>{t.contact.channelOpen}</p>
 
-        <p className="mt-2" style={{ color: 'rgba(232,255,232,0.45)' }}>
+        <p className="mt-2" style={{ color: C.w(0.45) }}>
           $ connect --discord {LINKS.discord}
         </p>
-        <p style={{ color: '#00FFFF', paddingLeft: '1rem' }}>{t.contact.ready}</p>
+        <p style={{ color: C.cyan, paddingLeft: '1rem' }}>{t.contact.ready}</p>
 
-        <p className="mt-2" style={{ color: 'rgba(232,255,232,0.45)' }}>
+        <p className="mt-2" style={{ color: C.w(0.45) }}>
           $ open {LINKS.github.replace('https://', '')}
         </p>
-        <p style={{ color: '#00FFFF', paddingLeft: '1rem' }}>{t.contact.reposAvailable}</p>
+        <p style={{ color: C.cyan, paddingLeft: '1rem' }}>{t.contact.reposAvailable}</p>
 
-        <p className="mt-3" style={{ color: '#00FF41' }}>
+        <p className="mt-3" style={{ color: C.green }}>
           $ <span className="terminal-cursor">█</span>
         </p>
       </div>
@@ -106,9 +107,9 @@ function ContactForm() {
 
   const baseInputStyle = {
     width: '100%',
-    backgroundColor: 'rgba(2,5,2,0.85)',
-    border: '1px solid rgba(0,255,65,0.14)',
-    color: '#E8FFE8',
+    backgroundColor: C.cardBg,
+    border: `1px solid ${C.g(0.14)}`,
+    color: C.white,
     fontFamily: "'Share Tech Mono', monospace",
     fontSize: '0.78rem',
     padding: '0.65rem 0.8rem',
@@ -119,7 +120,7 @@ function ContactForm() {
   const labelStyle = {
     fontFamily: "'Share Tech Mono', monospace",
     fontSize: '0.6rem',
-    color: 'rgba(0,255,65,0.6)',
+    color: C.g(0.6),
     display: 'block',
     marginBottom: '0.4rem',
     letterSpacing: '0.05em',
@@ -127,13 +128,13 @@ function ContactForm() {
 
   // Applies stronger glow on focus
   function onFocus(e) {
-    e.target.style.border = '1px solid rgba(0,255,65,0.5)'
-    e.target.style.boxShadow = '0 0 0 1px rgba(0,255,65,0.5), 0 0 20px rgba(0,255,65,0.1)'
+    e.target.style.border = `1px solid ${C.borderStrong}`
+    e.target.style.boxShadow = `0 0 0 1px ${C.borderStrong}, 0 0 20px ${C.g(0.1)}`
   }
 
   // Removes glow on blur
   function onBlur(e) {
-    e.target.style.border = '1px solid rgba(0,255,65,0.14)'
+    e.target.style.border = `1px solid ${C.g(0.14)}`
     e.target.style.boxShadow = 'none'
   }
 
@@ -200,8 +201,8 @@ function ContactForm() {
           type="submit"
           disabled={status === 'sending' || status === 'transmitted'}
           style={{
-            backgroundColor: status === 'transmitted' ? '#00FFFF' : '#00FF41',
-            color: '#020502',
+            backgroundColor: status === 'transmitted' ? C.cyan : C.green,
+            color: C.bg,
             fontFamily: "'Share Tech Mono', monospace",
             fontSize: '0.85rem',
             fontWeight: 700,
@@ -223,7 +224,7 @@ function ContactForm() {
       {/* Placeholder italic + color — needs CSS, not achievable inline */}
       <style>{`
         .contact-input::placeholder {
-          color: rgba(232, 255, 232, 0.2);
+          color: ${C.w(0.2)};
           font-style: italic;
         }
       `}</style>
@@ -238,7 +239,7 @@ function Contact() {
     <section
       id="contact"
       className="relative min-h-screen py-24 px-6"
-      style={{ backgroundColor: '#020502' }}
+      style={{ backgroundColor: C.bg }}
     >
       {/* Decorative background number — anchored to section, not clipped */}
       <span
@@ -246,7 +247,7 @@ function Contact() {
         style={{
           fontFamily: "'Bebas Neue', sans-serif",
           fontSize: 'clamp(8rem, 18vw, 16rem)',
-          color: 'rgba(0,255,65,0.03)',
+          color: C.g(0.03),
           lineHeight: 1,
           right: '1.5vw',
           bottom: '-1vw',

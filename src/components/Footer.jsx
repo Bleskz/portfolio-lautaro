@@ -1,11 +1,12 @@
 // Footer — full-width two-column layout: copyright left, links right
 import { LINKS } from '../config/links'
+import { C } from '../theme/colors'
 
 function Footer() {
   const linkStyle = {
     fontFamily: "'Share Tech Mono', monospace",
     fontSize: '0.62rem',
-    color: 'rgba(232,255,232,0.35)',
+    color: C.textFaint,
     textDecoration: 'none',
     letterSpacing: '0.08em',
     transition: 'color 0.2s, text-shadow 0.2s',
@@ -14,13 +15,13 @@ function Footer() {
 
   // Applies green glow on hover
   function onEnter(e) {
-    e.currentTarget.style.color = '#00FF41'
-    e.currentTarget.style.textShadow = '0 0 10px rgba(0,255,65,0.6)'
+    e.currentTarget.style.color = C.green
+    e.currentTarget.style.textShadow = `0 0 10px ${C.g(0.6)}`
   }
 
   // Removes glow on mouse leave
   function onLeave(e) {
-    e.currentTarget.style.color = 'rgba(232,255,232,0.35)'
+    e.currentTarget.style.color = C.textFaint
     e.currentTarget.style.textShadow = 'none'
   }
 
@@ -29,8 +30,8 @@ function Footer() {
       style={{
         width: '100%',
         padding: '1.8rem clamp(1rem, 4vw, 3rem)',
-        borderTop: '1px solid rgba(0,255,65,0.1)',
-        backgroundColor: '#020502',
+        borderTop: `1px solid ${C.g(0.1)}`,
+        backgroundColor: C.bg,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
@@ -44,7 +45,7 @@ function Footer() {
           style={{
             fontFamily: "'Share Tech Mono', monospace",
             fontSize: '0.62rem',
-            color: 'rgba(232,255,232,0.55)',
+            color: C.textDim,
             letterSpacing: '0.05em',
           }}
         >
@@ -54,7 +55,7 @@ function Footer() {
           style={{
             fontFamily: "'Share Tech Mono', monospace",
             fontSize: '0.62rem',
-            color: '#00FF41',
+            color: C.green,
             letterSpacing: '0.05em',
           }}
         >
@@ -88,7 +89,7 @@ function Footer() {
         </a>
         {/* Discord: not an interactive link — displayed as label only */}
         <span
-          style={{ ...linkStyle, cursor: 'default', color: 'rgba(232,255,232,0.25)' }}
+          style={{ ...linkStyle, cursor: 'default', color: C.w(0.25) }}
           title="Discord: Bleskz"
         >
           DISCORD

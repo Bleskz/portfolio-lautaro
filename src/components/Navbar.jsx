@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useLang } from '../context/LangContext'
+import useReducedMotion from '../hooks/useReducedMotion'
+import { C } from '../theme/colors'
 
 // Scrolls smoothly to a section — uses Lenis if available, falls back to native
 function scrollTo(id, lenisRef) {
@@ -33,9 +35,9 @@ function LangSelector({ lang, changeLang }) {
             fontFamily: "'Share Tech Mono', monospace",
             fontSize: '0.58rem',
             letterSpacing: '0.1em',
-            background: lang === l ? 'rgba(0,255,65,0.15)' : 'transparent',
-            border: `1px solid ${lang === l ? 'rgba(0,255,65,0.5)' : 'rgba(0,255,65,0.15)'}`,
-            color: lang === l ? '#00FF41' : 'rgba(0,255,65,0.4)',
+            background: lang === l ? C.g(0.15) : 'transparent',
+            border: `1px solid ${lang === l ? C.borderStrong : C.border}`,
+            color: lang === l ? C.green : C.g(0.4),
             cursor: 'pointer',
             padding: '0.4rem 0.6rem',
             textTransform: 'uppercase',
@@ -45,14 +47,14 @@ function LangSelector({ lang, changeLang }) {
           }}
           onMouseEnter={(e) => {
             if (l !== lang) {
-              e.currentTarget.style.color = '#00FF41'
-              e.currentTarget.style.borderColor = 'rgba(0,255,65,0.35)'
+              e.currentTarget.style.color = C.green
+              e.currentTarget.style.borderColor = C.g(0.35)
             }
           }}
           onMouseLeave={(e) => {
             if (l !== lang) {
-              e.currentTarget.style.color = 'rgba(0,255,65,0.4)'
-              e.currentTarget.style.borderColor = 'rgba(0,255,65,0.15)'
+              e.currentTarget.style.color = C.g(0.4)
+              e.currentTarget.style.borderColor = C.border
             }
           }}
         >
@@ -67,6 +69,7 @@ function LangSelector({ lang, changeLang }) {
 function Navbar({ lenisRef }) {
   const { lang, changeLang, t } = useLang()
   const [mobileOpen, setMobileOpen] = useState(false)
+  const reducedMotion = useReducedMotion()
 
   const NAV_LINKS = [
     { num: '01.', label: t.nav.home,     id: 'home'     },
@@ -94,8 +97,8 @@ function Navbar({ lenisRef }) {
           left: 0,
           right: 0,
           zIndex: 50,
-          backgroundColor: 'rgba(2,5,2,0.92)',
-          borderBottom: '1px solid rgba(0,255,65,0.12)',
+          backgroundColor: C.b(0.92),
+          borderBottom: `1px solid ${C.g(0.12)}`,
           backdropFilter: 'blur(4px)',
           WebkitBackdropFilter: 'blur(4px)',
           padding: '0.9rem clamp(1rem, 4vw, 3rem)',
@@ -106,17 +109,17 @@ function Navbar({ lenisRef }) {
       >
         {/* LEFT — Signal indicator */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.55rem' }}>
-          {/* Blinking green dot — always visible */}
+          {/* Blinking green dot — always visible, paused when reduced motion is on */}
           <motion.span
-            animate={{ opacity: [1, 0.15, 1] }}
-            transition={{ duration: 1.2, repeat: Infinity, ease: 'easeInOut' }}
+            animate={reducedMotion ? { opacity: 1 } : { opacity: [1, 0.15, 1] }}
+            transition={{ duration: 1.2, repeat: reducedMotion ? 0 : Infinity, ease: 'easeInOut' }}
             aria-hidden="true"
             style={{
               display: 'inline-block',
               width: '7px',
               height: '7px',
               borderRadius: '50%',
-              backgroundColor: '#00FF41',
+              backgroundColor: C.green,
               flexShrink: 0,
             }}
           />
@@ -127,7 +130,7 @@ function Navbar({ lenisRef }) {
               fontFamily: "'Share Tech Mono', monospace",
               fontSize: '0.68rem',
               letterSpacing: '0.2em',
-              color: '#00FF41',
+              color: C.green,
               whiteSpace: 'nowrap',
             }}
           >
@@ -139,7 +142,7 @@ function Navbar({ lenisRef }) {
               fontFamily: "'Share Tech Mono', monospace",
               fontSize: '0.68rem',
               letterSpacing: '0.2em',
-              color: '#00FF41',
+              color: C.green,
               whiteSpace: 'nowrap',
             }}
           >
@@ -173,7 +176,7 @@ function Navbar({ lenisRef }) {
             aria-expanded={mobileOpen}
             style={{
               background: 'none',
-              border: '1px solid rgba(0,255,65,0.25)',
+              border: `1px solid ${C.g(0.25)}`,
               cursor: 'pointer',
               padding: '0.45rem 0.55rem',
               display: 'flex',
@@ -181,9 +184,9 @@ function Navbar({ lenisRef }) {
               gap: '4px',
             }}
           >
-            <span style={{ display: 'block', width: '18px', height: '2px', backgroundColor: '#00FF41', transition: 'transform 0.2s, opacity 0.2s', transform: mobileOpen ? 'rotate(45deg) translateY(6px)' : 'none' }} />
-            <span style={{ display: 'block', width: '18px', height: '2px', backgroundColor: '#00FF41', transition: 'opacity 0.2s', opacity: mobileOpen ? 0 : 1 }} />
-            <span style={{ display: 'block', width: '18px', height: '2px', backgroundColor: '#00FF41', transition: 'transform 0.2s, opacity 0.2s', transform: mobileOpen ? 'rotate(-45deg) translateY(-6px)' : 'none' }} />
+            <span style={{ display: 'block', width: '18px', height: '2px', backgroundColor: C.green, transition: 'transform 0.2s, opacity 0.2s', transform: mobileOpen ? 'rotate(45deg) translateY(6px)' : 'none' }} />
+            <span style={{ display: 'block', width: '18px', height: '2px', backgroundColor: C.green, transition: 'opacity 0.2s', opacity: mobileOpen ? 0 : 1 }} />
+            <span style={{ display: 'block', width: '18px', height: '2px', backgroundColor: C.green, transition: 'transform 0.2s, opacity 0.2s', transform: mobileOpen ? 'rotate(-45deg) translateY(-6px)' : 'none' }} />
           </button>
         </div>
       </motion.nav>
@@ -203,8 +206,8 @@ function Navbar({ lenisRef }) {
               left: 0,
               right: 0,
               zIndex: 49,
-              backgroundColor: 'rgba(2,5,2,0.97)',
-              borderBottom: '1px solid rgba(0,255,65,0.15)',
+              backgroundColor: C.b(0.97),
+              borderBottom: `1px solid ${C.g(0.15)}`,
               backdropFilter: 'blur(4px)',
               WebkitBackdropFilter: 'blur(4px)',
               padding: '1.5rem clamp(1rem, 4vw, 3rem)',
@@ -220,7 +223,7 @@ function Navbar({ lenisRef }) {
                 style={{
                   background: 'none',
                   border: 'none',
-                  borderBottom: '1px solid rgba(0,255,65,0.07)',
+                  borderBottom: `1px solid ${C.g(0.07)}`,
                   cursor: 'pointer',
                   fontFamily: "'Share Tech Mono', monospace",
                   fontSize: '0.85rem',
@@ -234,8 +237,8 @@ function Navbar({ lenisRef }) {
                   textAlign: 'left',
                 }}
               >
-                <span style={{ color: '#00FF41', fontSize: '0.65rem' }}>{num}</span>
-                <span style={{ color: 'rgba(232,255,232,0.7)' }}>{label}</span>
+                <span style={{ color: C.green, fontSize: '0.65rem' }}>{num}</span>
+                <span style={{ color: C.w(0.7) }}>{label}</span>
               </button>
             ))}
             <div style={{ paddingTop: '1rem' }}>
@@ -272,26 +275,26 @@ function NavLink({ num, label, id, lenisRef }) {
       }}
       className="nav-link-btn"
     >
-      <span style={{ color: '#00FF41' }}>{num}</span>
+      <span style={{ color: C.green }}>{num}</span>
       <span
         style={{
-          color: 'rgba(232,255,232,0.55)',
+          color: C.textDim,
           transition: 'color 0.2s, text-shadow 0.2s',
         }}
         onMouseEnter={e => {
-          e.currentTarget.style.color = '#00FF41'
-          e.currentTarget.style.textShadow = '0 0 10px #00FF41'
+          e.currentTarget.style.color = C.green
+          e.currentTarget.style.textShadow = `0 0 10px ${C.green}`
         }}
         onMouseLeave={e => {
-          e.currentTarget.style.color = 'rgba(232,255,232,0.55)'
+          e.currentTarget.style.color = C.textDim
           e.currentTarget.style.textShadow = 'none'
         }}
         onFocus={e => {
-          e.currentTarget.style.color = '#00FF41'
-          e.currentTarget.style.textShadow = '0 0 10px #00FF41'
+          e.currentTarget.style.color = C.green
+          e.currentTarget.style.textShadow = `0 0 10px ${C.green}`
         }}
         onBlur={e => {
-          e.currentTarget.style.color = 'rgba(232,255,232,0.55)'
+          e.currentTarget.style.color = C.textDim
           e.currentTarget.style.textShadow = 'none'
         }}
       >
@@ -311,8 +314,8 @@ function CTAButton({ label, onClick }) {
         fontFamily: "'Share Tech Mono', monospace",
         fontSize: '0.68rem',
         letterSpacing: '0.15em',
-        backgroundColor: '#00FF41',
-        color: '#020502',
+        backgroundColor: C.green,
+        color: C.bg,
         border: 'none',
         cursor: 'pointer',
         padding: '0.45rem 1rem',
@@ -320,19 +323,19 @@ function CTAButton({ label, onClick }) {
         whiteSpace: 'nowrap',
       }}
       onMouseEnter={e => {
-        e.currentTarget.style.backgroundColor = '#00FFFF'
-        e.currentTarget.style.boxShadow = '0 0 20px rgba(0,255,255,0.4)'
+        e.currentTarget.style.backgroundColor = C.cyan
+        e.currentTarget.style.boxShadow = `0 0 20px ${C.c(0.4)}`
       }}
       onMouseLeave={e => {
-        e.currentTarget.style.backgroundColor = '#00FF41'
+        e.currentTarget.style.backgroundColor = C.green
         e.currentTarget.style.boxShadow = 'none'
       }}
       onFocus={e => {
-        e.currentTarget.style.backgroundColor = '#00FFFF'
-        e.currentTarget.style.boxShadow = '0 0 20px rgba(0,255,255,0.4)'
+        e.currentTarget.style.backgroundColor = C.cyan
+        e.currentTarget.style.boxShadow = `0 0 20px ${C.c(0.4)}`
       }}
       onBlur={e => {
-        e.currentTarget.style.backgroundColor = '#00FF41'
+        e.currentTarget.style.backgroundColor = C.green
         e.currentTarget.style.boxShadow = 'none'
       }}
     >

@@ -1,29 +1,23 @@
 // Individual project card with animated left accent bar, pulsing freq, and action buttons
 import { motion } from 'framer-motion'
 import { useLang } from '../context/LangContext'
+import useReducedMotion from '../hooks/useReducedMotion'
+import { C } from '../theme/colors'
 
-// Stack chip — improved contrast: subtle background + stronger border
+// Stack chip — subtle background + stronger border on hover
 function StackChip({ label }) {
   return (
     <motion.span
       className="px-2 py-1 cursor-default"
+      whileHover={{ background: C.g(0.1), borderColor: C.g(0.55) }}
       style={{
         fontFamily: "'Share Tech Mono', monospace",
         fontSize: '0.62rem',
-        color: '#00FF41',
-        border: '1px solid rgba(0,255,65,0.3)',
-        background: 'rgba(0,255,65,0.05)',
+        color: C.green,
+        border: `1px solid ${C.g(0.3)}`,
+        background: C.g(0.05),
         letterSpacing: '0.05em',
         display: 'inline-block',
-        transition: 'background 0.2s, border-color 0.2s',
-      }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.background = 'rgba(0,255,65,0.1)'
-        e.currentTarget.style.borderColor = 'rgba(0,255,65,0.55)'
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.background = 'rgba(0,255,65,0.05)'
-        e.currentTarget.style.borderColor = 'rgba(0,255,65,0.3)'
       }}
     >
       {label}
@@ -31,16 +25,17 @@ function StackChip({ label }) {
   )
 }
 
-// Freq label — pulses opacity between 0.35 and 1 on a 2.5s loop
+// Freq label — pulses opacity between 0.35 and 1 on a 2.5s loop; static under reduced motion
 function FreqLabel({ freq }) {
+  const reducedMotion = useReducedMotion()
   return (
     <motion.span
-      animate={{ opacity: [0.35, 1] }}
-      transition={{ duration: 2.5, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }}
+      animate={reducedMotion ? { opacity: 0.7 } : { opacity: [0.35, 1] }}
+      transition={{ duration: 2.5, repeat: reducedMotion ? 0 : Infinity, repeatType: 'reverse', ease: 'easeInOut' }}
       style={{
         fontFamily: "'Share Tech Mono', monospace",
         fontSize: '0.6rem',
-        color: '#00FFFF',
+        color: C.cyan,
         letterSpacing: '0.06em',
       }}
     >
@@ -67,12 +62,12 @@ function ProjectCard({ sigId, type, freq, name, codename, description, stack, co
       transition={{ duration: 0.4, delay: index * 0.06 }}
       whileHover={{
         scale: 1.005,
-        backgroundColor: 'rgba(0,255,65,0.04)',
-        boxShadow: 'inset 0 0 60px rgba(0,255,65,0.03)',
+        backgroundColor: C.g(0.04),
+        boxShadow: `inset 0 0 60px ${C.g(0.03)}`,
         transition: { duration: 0.2 },
       }}
       style={{
-        backgroundColor: '#020502',
+        backgroundColor: C.bg,
         padding: 'clamp(1.25rem, 5vw, 2.5rem)',
         position: 'relative',
         overflow: 'hidden',
@@ -88,8 +83,8 @@ function ProjectCard({ sigId, type, freq, name, codename, description, stack, co
           left: 0,
           top: 0,
           width: '3px',
-          backgroundColor: '#00FF41',
-          boxShadow: '0 0 12px #00FF41',
+          backgroundColor: C.green,
+          boxShadow: `0 0 12px ${C.green}`,
         }}
       />
 
@@ -99,7 +94,7 @@ function ProjectCard({ sigId, type, freq, name, codename, description, stack, co
           style={{
             fontFamily: "'Share Tech Mono', monospace",
             fontSize: '0.6rem',
-            color: 'rgba(0,255,65,0.5)',
+            color: C.g(0.5),
             letterSpacing: '0.06em',
           }}
         >
@@ -113,7 +108,7 @@ function ProjectCard({ sigId, type, freq, name, codename, description, stack, co
         style={{
           fontFamily: "'Bebas Neue', sans-serif",
           fontSize: '1.9rem',
-          color: '#E8FFE8',
+          color: C.white,
           lineHeight: 1.05,
         }}
       >
@@ -125,7 +120,7 @@ function ProjectCard({ sigId, type, freq, name, codename, description, stack, co
         style={{
           fontFamily: "'Share Tech Mono', monospace",
           fontSize: '0.6rem',
-          color: 'rgba(0,255,65,0.65)',
+          color: C.g(0.65),
           letterSpacing: '0.06em',
           marginTop: '0.2rem',
         }}
@@ -138,7 +133,7 @@ function ProjectCard({ sigId, type, freq, name, codename, description, stack, co
         style={{
           fontFamily: "'Space Mono', monospace",
           fontSize: '0.76rem',
-          color: 'rgba(232,255,232,0.5)',
+          color: C.w(0.5),
           lineHeight: 1.7,
           marginTop: '0.75rem',
         }}
@@ -161,21 +156,21 @@ function ProjectCard({ sigId, type, freq, name, codename, description, stack, co
           style={{
             fontFamily: "'Share Tech Mono', monospace",
             fontSize: '0.62rem',
-            color: '#00FF41',
+            color: C.green,
             background: 'transparent',
-            border: '1px solid rgba(0,255,65,0.28)',
+            border: `1px solid ${C.g(0.28)}`,
             padding: '0.45rem 0.9rem',
             cursor: 'pointer',
             letterSpacing: '0.06em',
             transition: 'background 0.2s, border-color 0.2s',
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.background = 'rgba(0,255,65,0.07)'
-            e.currentTarget.style.borderColor = 'rgba(0,255,65,0.55)'
+            e.currentTarget.style.background = C.g(0.07)
+            e.currentTarget.style.borderColor = C.g(0.55)
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.background = 'transparent'
-            e.currentTarget.style.borderColor = 'rgba(0,255,65,0.28)'
+            e.currentTarget.style.borderColor = C.g(0.28)
           }}
         >
           {t.projects.viewCode}
@@ -189,9 +184,9 @@ function ProjectCard({ sigId, type, freq, name, codename, description, stack, co
           style={{
             fontFamily: "'Share Tech Mono', monospace",
             fontSize: '0.62rem',
-            color: demoUrl === '#' ? 'rgba(2,5,2,0.6)' : '#020502',
-            background: demoUrl === '#' ? 'rgba(0,255,65,0.35)' : '#00FF41',
-            border: `1px solid ${demoUrl === '#' ? 'rgba(0,255,65,0.2)' : '#00FF41'}`,
+            color: demoUrl === '#' ? C.b(0.6) : C.bg,
+            background: demoUrl === '#' ? C.g(0.35) : C.green,
+            border: `1px solid ${demoUrl === '#' ? C.g(0.2) : C.green}`,
             padding: '0.45rem 0.9rem',
             cursor: demoUrl === '#' ? 'not-allowed' : 'pointer',
             opacity: demoUrl === '#' ? 0.5 : 1,
@@ -201,15 +196,15 @@ function ProjectCard({ sigId, type, freq, name, codename, description, stack, co
           }}
           onMouseEnter={(e) => {
             if (demoUrl !== '#') {
-              e.currentTarget.style.background = '#00FFFF'
-              e.currentTarget.style.borderColor = '#00FFFF'
-              e.currentTarget.style.boxShadow = '0 0 14px rgba(0,255,255,0.5)'
+              e.currentTarget.style.background = C.cyan
+              e.currentTarget.style.borderColor = C.cyan
+              e.currentTarget.style.boxShadow = `0 0 14px ${C.c(0.5)}`
             }
           }}
           onMouseLeave={(e) => {
             if (demoUrl !== '#') {
-              e.currentTarget.style.background = '#00FF41'
-              e.currentTarget.style.borderColor = '#00FF41'
+              e.currentTarget.style.background = C.green
+              e.currentTarget.style.borderColor = C.green
               e.currentTarget.style.boxShadow = 'none'
             }
           }}
