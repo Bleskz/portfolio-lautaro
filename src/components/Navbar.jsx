@@ -1,4 +1,5 @@
-import { motion } from 'framer-motion'
+import { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useLang } from '../context/LangContext'
 
 // Scrolls smoothly to a section — uses Lenis if available, falls back to native
@@ -12,17 +13,22 @@ function scrollTo(id, lenisRef) {
   }
 }
 
+// Language labels for aria-label accessibility
+const LANG_LABELS = { en: 'English', es: 'Español', pt: 'Português', fr: 'Français' }
+
 // Available language codes
 const LANGS = ['en', 'es', 'pt', 'fr']
 
 // Language switcher buttons — EN / ES / PT / FR
 function LangSelector({ lang, changeLang }) {
   return (
-    <div style={{ display: 'flex', gap: '0.25rem' }}>
+    <div style={{ display: 'flex', gap: '0.25rem' }} role="group" aria-label="Language selector">
       {LANGS.map((l) => (
         <button
           key={l}
           onClick={() => changeLang(l)}
+          aria-pressed={lang === l}
+          aria-label={`Switch to ${LANG_LABELS[l]}`}
           style={{
             fontFamily: "'Share Tech Mono', monospace",
             fontSize: '0.58rem',
@@ -31,9 +37,11 @@ function LangSelector({ lang, changeLang }) {
             border: `1px solid ${lang === l ? 'rgba(0,255,65,0.5)' : 'rgba(0,255,65,0.15)'}`,
             color: lang === l ? '#00FF41' : 'rgba(0,255,65,0.4)',
             cursor: 'pointer',
-            padding: '0.22rem 0.4rem',
+            padding: '0.4rem 0.6rem',
             textTransform: 'uppercase',
             transition: 'background 0.2s, border-color 0.2s, color 0.2s',
+            minWidth: '2rem',
+            minHeight: '2rem',
           }}
           onMouseEnter={(e) => {
             if (l !== lang) {
@@ -58,6 +66,7 @@ function LangSelector({ lang, changeLang }) {
 // Fixed top navbar with signal indicator, nav links, lang selector, and CTA button
 function Navbar({ lenisRef }) {
   const { lang, changeLang, t } = useLang()
+  const [mobileOpen, setMobileOpen] = useState(false)
 
   const NAV_LINKS = [
     { num: '01.', label: t.nav.home,     id: 'home'     },
@@ -67,89 +76,178 @@ function Navbar({ lenisRef }) {
     { num: '05.', label: t.nav.contact,  id: 'contact'  },
   ]
 
+  // Closes mobile menu and scrolls to section
+  function handleMobileNav(id) {
+    setMobileOpen(false)
+    setTimeout(() => scrollTo(id, lenisRef), 300)
+  }
+
   return (
-    <motion.nav
-      initial={{ y: -60, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.45, ease: 'easeOut' }}
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        zIndex: 50,
-        backgroundColor: 'rgba(2,5,2,0.92)',
-        borderBottom: '1px solid rgba(0,255,65,0.12)',
-        backdropFilter: 'blur(4px)',
-        WebkitBackdropFilter: 'blur(4px)',
-        /* horizontal padding shrinks on small screens */
-        padding: '0.9rem clamp(1rem, 4vw, 3rem)',
-        display: 'grid',
-        gridTemplateColumns: '1fr auto 1fr',
-        alignItems: 'center',
-      }}
-    >
-      {/* LEFT — Signal indicator */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.55rem' }}>
-        {/* Blinking green dot — always visible */}
-        <motion.span
-          animate={{ opacity: [1, 0.15, 1] }}
-          transition={{ duration: 1.2, repeat: Infinity, ease: 'easeInOut' }}
-          style={{
-            display: 'inline-block',
-            width: '7px',
-            height: '7px',
-            borderRadius: '50%',
-            backgroundColor: '#00FF41',
-            flexShrink: 0,
-          }}
-        />
-        {/* "SIGNAL_ACTIVE // " — hidden on small screens to save space */}
-        <span
-          className="hidden sm:inline"
-          style={{
-            fontFamily: "'Share Tech Mono', monospace",
-            fontSize: '0.68rem',
-            letterSpacing: '0.2em',
-            color: '#00FF41',
-            whiteSpace: 'nowrap',
-          }}
-        >
-          SIGNAL_ACTIVE //{'  '}
-        </span>
-        {/* "LV.DEV" — always visible */}
-        <span
-          style={{
-            fontFamily: "'Share Tech Mono', monospace",
-            fontSize: '0.68rem',
-            letterSpacing: '0.2em',
-            color: '#00FF41',
-            whiteSpace: 'nowrap',
-          }}
-        >
-          LV.DEV
-        </span>
-      </div>
-
-      {/* CENTER — Nav links (hidden below md / 768px) */}
-      <div
-        className="hidden md:flex"
-        style={{ gap: '2rem', alignItems: 'center' }}
+    <>
+      <motion.nav
+        initial={{ y: -60, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.45, ease: 'easeOut' }}
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          zIndex: 50,
+          backgroundColor: 'rgba(2,5,2,0.92)',
+          borderBottom: '1px solid rgba(0,255,65,0.12)',
+          backdropFilter: 'blur(4px)',
+          WebkitBackdropFilter: 'blur(4px)',
+          padding: '0.9rem clamp(1rem, 4vw, 3rem)',
+          display: 'grid',
+          gridTemplateColumns: '1fr auto 1fr',
+          alignItems: 'center',
+        }}
       >
-        {NAV_LINKS.map(({ num, label, id }) => (
-          <NavLink key={id} num={num} label={label} id={id} lenisRef={lenisRef} />
-        ))}
-      </div>
-
-      {/* RIGHT — Lang selector + CTA button (CTA hidden on mobile) */}
-      <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '0.75rem' }}>
-        <LangSelector lang={lang} changeLang={changeLang} />
-        {/* CTA hidden on mobile — not enough space */}
-        <div className="hidden md:block">
-          <CTAButton label={t.nav.cta} onClick={() => scrollTo('contact', lenisRef)} />
+        {/* LEFT — Signal indicator */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.55rem' }}>
+          {/* Blinking green dot — always visible */}
+          <motion.span
+            animate={{ opacity: [1, 0.15, 1] }}
+            transition={{ duration: 1.2, repeat: Infinity, ease: 'easeInOut' }}
+            aria-hidden="true"
+            style={{
+              display: 'inline-block',
+              width: '7px',
+              height: '7px',
+              borderRadius: '50%',
+              backgroundColor: '#00FF41',
+              flexShrink: 0,
+            }}
+          />
+          {/* "SIGNAL_ACTIVE // " — hidden on small screens to save space */}
+          <span
+            className="hidden sm:inline"
+            style={{
+              fontFamily: "'Share Tech Mono', monospace",
+              fontSize: '0.68rem',
+              letterSpacing: '0.2em',
+              color: '#00FF41',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            SIGNAL_ACTIVE //{'  '}
+          </span>
+          {/* "LV.DEV" — always visible */}
+          <span
+            style={{
+              fontFamily: "'Share Tech Mono', monospace",
+              fontSize: '0.68rem',
+              letterSpacing: '0.2em',
+              color: '#00FF41',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            LV.DEV
+          </span>
         </div>
-      </div>
-    </motion.nav>
+
+        {/* CENTER — Nav links (hidden below md / 768px) */}
+        <nav
+          className="hidden md:flex"
+          aria-label="Main navigation"
+          style={{ gap: '2rem', alignItems: 'center' }}
+        >
+          {NAV_LINKS.map(({ num, label, id }) => (
+            <NavLink key={id} num={num} label={label} id={id} lenisRef={lenisRef} />
+          ))}
+        </nav>
+
+        {/* RIGHT — Lang selector + CTA button + hamburger */}
+        <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '0.75rem' }}>
+          <LangSelector lang={lang} changeLang={changeLang} />
+          {/* CTA hidden on mobile — not enough space */}
+          <div className="hidden md:block">
+            <CTAButton label={t.nav.cta} onClick={() => scrollTo('contact', lenisRef)} />
+          </div>
+          {/* Hamburger button — visible only on mobile */}
+          <button
+            className="flex md:hidden"
+            onClick={() => setMobileOpen((v) => !v)}
+            aria-label={mobileOpen ? 'Close navigation menu' : 'Open navigation menu'}
+            aria-expanded={mobileOpen}
+            style={{
+              background: 'none',
+              border: '1px solid rgba(0,255,65,0.25)',
+              cursor: 'pointer',
+              padding: '0.45rem 0.55rem',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '4px',
+            }}
+          >
+            <span style={{ display: 'block', width: '18px', height: '2px', backgroundColor: '#00FF41', transition: 'transform 0.2s, opacity 0.2s', transform: mobileOpen ? 'rotate(45deg) translateY(6px)' : 'none' }} />
+            <span style={{ display: 'block', width: '18px', height: '2px', backgroundColor: '#00FF41', transition: 'opacity 0.2s', opacity: mobileOpen ? 0 : 1 }} />
+            <span style={{ display: 'block', width: '18px', height: '2px', backgroundColor: '#00FF41', transition: 'transform 0.2s, opacity 0.2s', transform: mobileOpen ? 'rotate(-45deg) translateY(-6px)' : 'none' }} />
+          </button>
+        </div>
+      </motion.nav>
+
+      {/* Mobile menu — slides down from navbar */}
+      <AnimatePresence>
+        {mobileOpen && (
+          <motion.div
+            key="mobile-menu"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+            style={{
+              position: 'fixed',
+              top: '3.5rem',
+              left: 0,
+              right: 0,
+              zIndex: 49,
+              backgroundColor: 'rgba(2,5,2,0.97)',
+              borderBottom: '1px solid rgba(0,255,65,0.15)',
+              backdropFilter: 'blur(4px)',
+              WebkitBackdropFilter: 'blur(4px)',
+              padding: '1.5rem clamp(1rem, 4vw, 3rem)',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '0',
+            }}
+          >
+            {NAV_LINKS.map(({ num, label, id }) => (
+              <button
+                key={id}
+                onClick={() => handleMobileNav(id)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  borderBottom: '1px solid rgba(0,255,65,0.07)',
+                  cursor: 'pointer',
+                  fontFamily: "'Share Tech Mono', monospace",
+                  fontSize: '0.85rem',
+                  letterSpacing: '0.15em',
+                  textTransform: 'uppercase',
+                  padding: '1rem 0',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.6rem',
+                  width: '100%',
+                  textAlign: 'left',
+                }}
+              >
+                <span style={{ color: '#00FF41', fontSize: '0.65rem' }}>{num}</span>
+                <span style={{ color: 'rgba(232,255,232,0.7)' }}>{label}</span>
+              </button>
+            ))}
+            <div style={{ paddingTop: '1rem' }}>
+              <CTAButton
+                label={t.nav.cta}
+                onClick={() => handleMobileNav('contact')}
+              />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   )
 }
 
@@ -188,6 +286,14 @@ function NavLink({ num, label, id, lenisRef }) {
           e.currentTarget.style.color = 'rgba(232,255,232,0.55)'
           e.currentTarget.style.textShadow = 'none'
         }}
+        onFocus={e => {
+          e.currentTarget.style.color = '#00FF41'
+          e.currentTarget.style.textShadow = '0 0 10px #00FF41'
+        }}
+        onBlur={e => {
+          e.currentTarget.style.color = 'rgba(232,255,232,0.55)'
+          e.currentTarget.style.textShadow = 'none'
+        }}
       >
         {label}
       </span>
@@ -218,6 +324,14 @@ function CTAButton({ label, onClick }) {
         e.currentTarget.style.boxShadow = '0 0 20px rgba(0,255,255,0.4)'
       }}
       onMouseLeave={e => {
+        e.currentTarget.style.backgroundColor = '#00FF41'
+        e.currentTarget.style.boxShadow = 'none'
+      }}
+      onFocus={e => {
+        e.currentTarget.style.backgroundColor = '#00FFFF'
+        e.currentTarget.style.boxShadow = '0 0 20px rgba(0,255,255,0.4)'
+      }}
+      onBlur={e => {
         e.currentTarget.style.backgroundColor = '#00FF41'
         e.currentTarget.style.boxShadow = 'none'
       }}

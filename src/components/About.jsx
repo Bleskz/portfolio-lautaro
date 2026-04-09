@@ -2,6 +2,7 @@
 import { motion } from 'framer-motion'
 import SectionHeader from './SectionHeader'
 import { useLang } from '../context/LangContext'
+import { LINKS } from '../config/links'
 
 const STACK_TAGS = [
   'REACT', 'NODE.JS', 'ELECTRON', 'CHROME EXT API', 'SQLITE',
@@ -18,8 +19,8 @@ function About() {
     { key: 'ORIGIN',     value: 'Neuquen, Argentina',          cyan: false, link: null },
     { key: 'STATUS',     value: 'BUILDING_SOMETHING_RN',       cyan: true,  link: null },
     { key: 'EXPERIENCE', value: t.about.experience,            cyan: false, link: null },
-    { key: 'GITHUB',     value: 'github.com/Bleskz',           cyan: false, link: 'https://github.com/Bleskz' },
-    { key: 'DISCORD',    value: 'Bleskz',                      cyan: false, link: null },
+    { key: 'GITHUB',     value: 'github.com/Bleskz',           cyan: false, link: LINKS.github },
+    { key: 'DISCORD',    value: LINKS.discord,                 cyan: false, link: null },
   ]
 
   return (

@@ -184,26 +184,34 @@ function ProjectCard({ sigId, type, freq, name, codename, description, stack, co
         {/* LIVE_DEMO button */}
         <button
           onClick={() => openLink(demoUrl)}
+          disabled={demoUrl === '#'}
+          aria-label={demoUrl === '#' ? `${t.projects.liveDemo} — not available` : t.projects.liveDemo}
           style={{
             fontFamily: "'Share Tech Mono', monospace",
             fontSize: '0.62rem',
-            color: '#020502',
-            background: '#00FF41',
-            border: '1px solid #00FF41',
+            color: demoUrl === '#' ? 'rgba(2,5,2,0.6)' : '#020502',
+            background: demoUrl === '#' ? 'rgba(0,255,65,0.35)' : '#00FF41',
+            border: `1px solid ${demoUrl === '#' ? 'rgba(0,255,65,0.2)' : '#00FF41'}`,
             padding: '0.45rem 0.9rem',
-            cursor: demoUrl === '#' ? 'default' : 'pointer',
+            cursor: demoUrl === '#' ? 'not-allowed' : 'pointer',
+            opacity: demoUrl === '#' ? 0.5 : 1,
             letterSpacing: '0.06em',
             transition: 'background 0.2s, border-color 0.2s, color 0.2s, box-shadow 0.2s',
+            pointerEvents: demoUrl === '#' ? 'none' : 'auto',
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.background = '#00FFFF'
-            e.currentTarget.style.borderColor = '#00FFFF'
-            e.currentTarget.style.boxShadow = '0 0 14px rgba(0,255,255,0.5)'
+            if (demoUrl !== '#') {
+              e.currentTarget.style.background = '#00FFFF'
+              e.currentTarget.style.borderColor = '#00FFFF'
+              e.currentTarget.style.boxShadow = '0 0 14px rgba(0,255,255,0.5)'
+            }
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.background = '#00FF41'
-            e.currentTarget.style.borderColor = '#00FF41'
-            e.currentTarget.style.boxShadow = 'none'
+            if (demoUrl !== '#') {
+              e.currentTarget.style.background = '#00FF41'
+              e.currentTarget.style.borderColor = '#00FF41'
+              e.currentTarget.style.boxShadow = 'none'
+            }
           }}
         >
           {t.projects.liveDemo}

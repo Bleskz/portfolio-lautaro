@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import SectionHeader from './SectionHeader'
 import { useLang } from '../context/LangContext'
+import { LINKS } from '../config/links'
 
 // Simulated terminal card — static display, not interactive
 function Terminal({ t }) {
@@ -53,17 +54,17 @@ function Terminal({ t }) {
         </p>
 
         <p className="mt-2" style={{ color: 'rgba(232,255,232,0.45)' }}>
-          $ mail --to bleslautaro@gmail.com
+          $ mail --to {LINKS.email}
         </p>
         <p style={{ color: '#00FFFF', paddingLeft: '1rem' }}>{t.contact.channelOpen}</p>
 
         <p className="mt-2" style={{ color: 'rgba(232,255,232,0.45)' }}>
-          $ connect --discord Bleskz
+          $ connect --discord {LINKS.discord}
         </p>
         <p style={{ color: '#00FFFF', paddingLeft: '1rem' }}>{t.contact.ready}</p>
 
         <p className="mt-2" style={{ color: 'rgba(232,255,232,0.45)' }}>
-          $ open github.com/Bleskz
+          $ open {LINKS.github.replace('https://', '')}
         </p>
         <p style={{ color: '#00FFFF', paddingLeft: '1rem' }}>{t.contact.reposAvailable}</p>
 
@@ -89,20 +90,18 @@ function Terminal({ t }) {
 // Contact form with focus glow and success state on submit
 function ContactForm() {
   const { t } = useLang()
-  const [status, setStatus] = useState('idle') // 'idle' | 'transmitted'
+  const [status, setStatus] = useState('idle') // 'idle' | 'sending' | 'transmitted'
   const [form, setForm] = useState({ name: '', email: '', message: '' })
 
-  // Handles form submission: shows transmitted state, resets after 3s
+  // Handles form submission: shows sending → transmitted state, resets after 3s
   async function handleSubmit(e) {
     e.preventDefault()
-    try {
-      setStatus('transmitted')
-      await new Promise((r) => setTimeout(r, 3000))
-      setStatus('idle')
-      setForm({ name: '', email: '', message: '' })
-    } catch (err) {
-      console.error('Form reset error:', err)
-    }
+    setStatus('sending')
+    await new Promise((r) => setTimeout(r, 3000))
+    setStatus('transmitted')
+    await new Promise((r) => setTimeout(r, 2000))
+    setStatus('idle')
+    setForm({ name: '', email: '', message: '' })
   }
 
   const baseInputStyle = {
@@ -140,10 +139,16 @@ function ContactForm() {
 
   return (
     <>
+      {/* Accessible status region — announced by screen readers on change */}
+      <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
+        {status === 'sending' ? 'Transmitting message...' : status === 'transmitted' ? 'Message transmitted successfully.' : ''}
+      </div>
+
       <form onSubmit={handleSubmit} className="flex flex-col gap-5">
         <div>
-          <label style={labelStyle}>// SENDER_ID</label>
+          <label htmlFor="contact-name" style={labelStyle}>// SENDER_ID</label>
           <input
+            id="contact-name"
             type="text"
             placeholder={t.contact.namePlaceholder}
             value={form.name}
@@ -152,12 +157,15 @@ function ContactForm() {
             onFocus={onFocus}
             onBlur={onBlur}
             className="contact-input"
+            required
+            disabled={status === 'sending' || status === 'transmitted'}
           />
         </div>
 
         <div>
-          <label style={labelStyle}>// RETURN_FREQ</label>
+          <label htmlFor="contact-email" style={labelStyle}>// RETURN_FREQ</label>
           <input
+            id="contact-email"
             type="email"
             placeholder="your@email.com"
             value={form.email}
@@ -166,12 +174,15 @@ function ContactForm() {
             onFocus={onFocus}
             onBlur={onBlur}
             className="contact-input"
+            required
+            disabled={status === 'sending' || status === 'transmitted'}
           />
         </div>
 
         <div>
-          <label style={labelStyle}>// PAYLOAD</label>
+          <label htmlFor="contact-message" style={labelStyle}>// PAYLOAD</label>
           <textarea
+            id="contact-message"
             rows={5}
             placeholder={t.contact.msgPlaceholder}
             value={form.message}
@@ -180,11 +191,14 @@ function ContactForm() {
             onFocus={onFocus}
             onBlur={onBlur}
             className="contact-input"
+            required
+            disabled={status === 'sending' || status === 'transmitted'}
           />
         </div>
 
         <button
           type="submit"
+          disabled={status === 'sending' || status === 'transmitted'}
           style={{
             backgroundColor: status === 'transmitted' ? '#00FFFF' : '#00FF41',
             color: '#020502',
@@ -193,15 +207,16 @@ function ContactForm() {
             fontWeight: 700,
             padding: '0.85rem 2rem',
             border: 'none',
-            cursor: 'pointer',
+            cursor: status !== 'idle' ? 'not-allowed' : 'pointer',
+            opacity: status !== 'idle' ? 0.7 : 1,
             clipPath:
               'polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px))',
-            transition: 'background-color 0.3s',
+            transition: 'background-color 0.3s, opacity 0.2s',
             letterSpacing: '0.1em',
             alignSelf: 'flex-start',
           }}
         >
-          {status === 'transmitted' ? t.contact.submitted : t.contact.submit}
+          {status === 'sending' ? 'TRANSMITTING...' : status === 'transmitted' ? t.contact.submitted : t.contact.submit}
         </button>
       </form>
 

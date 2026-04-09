@@ -1,4 +1,6 @@
 // Footer — full-width two-column layout: copyright left, links right
+import { LINKS } from '../config/links'
+
 function Footer() {
   const linkStyle = {
     fontFamily: "'Share Tech Mono', monospace",
@@ -26,7 +28,7 @@ function Footer() {
     <footer
       style={{
         width: '100%',
-        padding: '1.8rem 3rem',
+        padding: '1.8rem clamp(1rem, 4vw, 3rem)',
         borderTop: '1px solid rgba(0,255,65,0.1)',
         backgroundColor: '#020502',
         display: 'flex',
@@ -42,11 +44,11 @@ function Footer() {
           style={{
             fontFamily: "'Share Tech Mono', monospace",
             fontSize: '0.62rem',
-            color: 'rgba(232,255,232,0.28)',
+            color: 'rgba(232,255,232,0.55)',
             letterSpacing: '0.05em',
           }}
         >
-          © 2026 LAUTARO VELO{' '}
+          © {new Date().getFullYear()} LAUTARO VELO{' '}
         </span>
         <span
           style={{
@@ -63,27 +65,31 @@ function Footer() {
       {/* RIGHT — external links row */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
         <a
-          href="https://github.com/Bleskz"
+          href={LINKS.github}
           target="_blank"
           rel="noopener noreferrer"
           style={linkStyle}
           onMouseEnter={onEnter}
           onMouseLeave={onLeave}
+          onFocus={onEnter}
+          onBlur={onLeave}
         >
           GITHUB
         </a>
         <a
-          href="mailto:bleslautaro@gmail.com"
+          href={LINKS.emailHref}
           style={linkStyle}
           onMouseEnter={onEnter}
           onMouseLeave={onLeave}
+          onFocus={onEnter}
+          onBlur={onLeave}
         >
           EMAIL
         </a>
+        {/* Discord: not an interactive link — displayed as label only */}
         <span
-          style={linkStyle}
-          onMouseEnter={onEnter}
-          onMouseLeave={onLeave}
+          style={{ ...linkStyle, cursor: 'default', color: 'rgba(232,255,232,0.25)' }}
+          title="Discord: Bleskz"
         >
           DISCORD
         </span>

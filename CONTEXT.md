@@ -133,9 +133,40 @@ Key changes:
 Files created: src/i18n/translations.js, src/context/LangContext.jsx
 Files modified: src/App.jsx, src/components/Navbar.jsx, src/components/Hero.jsx, src/components/About.jsx, src/components/Projects.jsx, src/components/ProjectCard.jsx, src/components/Skills.jsx, src/components/Contact.jsx
 
-## Known Issues
+## Phase 12 — Audit & Fixes ✓
+Comprehensive codebase audit (bugs, performance, UI/UX, a11y, code quality, security).
+33 issues found across 6 categories. 7 critical/important fixes applied immediately.
 
-None
+Bugs fixed:
+- useLenis.js: variable scope bug — `let rafId` now declared before `raf()` function (was causing ReferenceError on first rAF call)
+- Contact.jsx: removed `console.error` debugging artifact
+
+Accessibility:
+- Contact form: labels now use `htmlFor` + inputs have `id` (SENDER_ID→contact-name, RETURN_FREQ→contact-email, PAYLOAD→contact-message)
+- Contact form: all inputs have `required` attribute
+- Contact form: `aria-live="polite"` region for screen reader status announcements
+- Navbar: language buttons now have `aria-pressed` + `aria-label="Switch to English"` etc.
+- Navbar: touch targets increased (padding 0.4rem 0.6rem, minWidth/minHeight 2rem)
+- index.css: global `:focus-visible` outline (2px solid #00FF41) for keyboard nav
+- Footer: GitHub + Email links now have `onFocus/onBlur` handlers (keyboard accessible)
+
+UI/UX:
+- Navbar: hamburger menu added for mobile (md: breakpoint) — AnimatePresence slide-down, animated 3-bar → X icon, closes on link tap
+- Contact form: added 'sending' state with "TRANSMITTING..." text + disabled inputs/button during submit
+- Footer: padding changed to `clamp(1rem, 4vw, 3rem)` to prevent mobile overflow
+- Footer: copyright year now dynamic `new Date().getFullYear()` instead of hardcoded 2026
+- Footer: copyright text contrast raised from `rgba(232,255,232,0.28)` to `0.55` (WCAG AA compliant)
+- Footer: Discord styled as non-interactive label (cursor: default, lower opacity, no hover)
+- ProjectCard: LIVE_DEMO disabled state — opacity 0.5, `not-allowed` cursor, `pointer-events: none`, `aria-label` announces unavailability
+
+Code quality:
+- Created `src/config/links.js` with centralized LINKS constant (github, email, discord)
+- About.jsx, Projects.jsx, Contact.jsx, Footer.jsx: all hardcoded URLs replaced with LINKS imports
+
+Files created: src/config/links.js
+Files modified: src/hooks/useLenis.js, src/components/Contact.jsx, src/components/Footer.jsx,
+               src/components/Navbar.jsx, src/components/ProjectCard.jsx, src/components/About.jsx,
+               src/components/Projects.jsx, src/index.css
 
 ---
 
@@ -164,3 +195,4 @@ Phase 8 — Deploy to Vercel:
 - [2026-04-08] Phase 7 complete. Footer (two-column, hover glow links), scroll flash CRT effect, meta tags, performance audit. Build: zero errors, 344kB/107kB gzipped.
 - [2026-04-08] Phase 8 complete. GitHub repo creado (Bleskz/portfolio-lautaro), deploy a Vercel. LIVE: https://portfolio-lautaro-steel.vercel.app
 - [2026-04-08] Phase 10 complete. Lenis smooth inertia scroll instalado. Nav links actualizados a lenis.scrollTo(). Build limpio.
+- [2026-04-09] Phase 12 complete. Audit completo: 33 issues detectados, 7 críticos/importantes resueltos. Bug de rafId en useLenis, menú mobile, a11y en formulario, focus-visible, links centralizados en config/links.js, disabled state en LIVE_DEMO.

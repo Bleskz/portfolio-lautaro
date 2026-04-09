@@ -16,12 +16,13 @@ function useLenis() {
     lenisRef.current = lenis
 
     // Run the animation frame loop so Lenis updates every frame
+    let rafId
     function raf(time) {
       lenis.raf(time)
       rafId = requestAnimationFrame(raf)
     }
 
-    let rafId = requestAnimationFrame(raf)
+    rafId = requestAnimationFrame(raf)
 
     return () => {
       cancelAnimationFrame(rafId)

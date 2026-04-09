@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import SectionHeader from './SectionHeader'
 import ProjectCard from './ProjectCard'
 import { useLang } from '../context/LangContext'
+import { LINKS } from '../config/links'
 
 // Static project data — names and codenames are never translated
 const PROJECTS_BASE = [
@@ -14,7 +15,7 @@ const PROJECTS_BASE = [
     name: 'TabFlow',
     codename: 'TABFLOW_V1.EXE',
     stack: ['CHROME API', 'VANILLA JS', 'HTML/CSS'],
-    codeUrl: 'https://github.com/Bleskz/tabflow',
+    codeUrl: `${LINKS.github}/tabflow`,
     demoUrl: '#',
   },
   {
@@ -25,7 +26,7 @@ const PROJECTS_BASE = [
     name: 'Steam Analyzer',
     codename: 'STEAM_ANALYZER.SYS',
     stack: ['REACT', 'STEAM API', 'TAILWIND', 'NODE.JS'],
-    codeUrl: 'https://github.com/Bleskz/steam-analyzer',
+    codeUrl: `${LINKS.github}/steam-analyzer`,
     demoUrl: '#',
   },
   {
@@ -36,7 +37,7 @@ const PROJECTS_BASE = [
     name: 'CoreTracker',
     codename: 'CORETRACK_DESKTOP.EXE',
     stack: ['ELECTRON', 'REACT', 'SQLITE', 'NODE.JS'],
-    codeUrl: 'https://github.com/Bleskz/coretracker',
+    codeUrl: `${LINKS.github}/coretracker`,
     demoUrl: '#',
   },
   {
@@ -47,7 +48,7 @@ const PROJECTS_BASE = [
     name: 'TabFlow Landing',
     codename: 'TABFLOW_LANDING.HTML',
     stack: ['HTML', 'CSS', 'VANILLA JS', 'RESPONSIVE'],
-    codeUrl: 'https://github.com/Bleskz/tabflow-landing',
+    codeUrl: `${LINKS.github}/tabflow-landing`,
     demoUrl: '#',
   },
 ]
