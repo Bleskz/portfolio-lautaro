@@ -19,10 +19,11 @@ function fadeUp(delay) {
   }
 }
 
-// Floating ambient particles — data bits drifting upward in the background
+// Floating ambient particles — data bits drifting upward through the hero section
 function HeroParticles({ reducedMotion }) {
   if (reducedMotion) return null
 
+  // Each particle starts at bottom, rises to top of section; delay staggers position mid-cycle
   const particles = [
     { left: '7%',  delay: 0,   dur: 9  },
     { left: '14%', delay: 2.5, dur: 11 },
@@ -41,29 +42,29 @@ function HeroParticles({ reducedMotion }) {
   return (
     <div
       aria-hidden="true"
-      style={{ position: 'absolute', inset: 0, pointerEvents: 'none', overflow: 'hidden', zIndex: 0 }}
+      style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 0 }}
     >
       {particles.map((p, i) => (
         <motion.div
           key={i}
-          initial={{ y: '100vh', opacity: 0 }}
-          animate={{ y: '-5vh', opacity: [0, 0.55, 0.55, 0] }}
+          // Start at bottom of section (y:0) and rise 110vh — section overflow:hidden clips the rest
+          animate={{ y: [0, '-110vh'], opacity: [0, 0.7, 0.7, 0] }}
           transition={{
             duration: p.dur,
             repeat: Infinity,
             delay: p.delay,
             ease: 'linear',
-            times: [0, 0.08, 0.88, 1],
+            times: [0, 0.06, 0.92, 1],
           }}
           style={{
             position: 'absolute',
             left: p.left,
             bottom: 0,
-            width: '2px',
-            height: '2px',
+            width: '3px',
+            height: '3px',
             borderRadius: '50%',
             backgroundColor: C.green,
-            boxShadow: `0 0 4px ${C.green}`,
+            boxShadow: `0 0 6px ${C.green}, 0 0 12px ${C.g(0.5)}`,
           }}
         />
       ))}
@@ -77,10 +78,10 @@ function HeroDecor({ reducedMotion }) {
   const dashLen = 1200
 
   return (
-    // Float wrapper — gentle levitation loop after draw completes
+    // Float wrapper — gentle levitation loop
     <motion.div
       animate={reducedMotion ? {} : { y: [0, -16, 0] }}
-      transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut', delay: 2.5 }}
+      transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut', delay: 0.2 }}
       style={{ position: 'relative', width: '100%', maxWidth: '460px' }}
     >
       <svg
@@ -319,18 +320,18 @@ function Hero() {
       {/* Ambient particles — data bits rising from bottom */}
       <HeroParticles reducedMotion={reducedMotion} />
 
-      {/* Hero-wide slow scanline sweep — very faint band drifting down the section */}
+      {/* Hero-wide slow scanline sweep — soft green band drifting down the section */}
       {!reducedMotion && (
         <motion.div
           aria-hidden="true"
-          animate={{ y: ['-100%', '120vh'] }}
-          transition={{ duration: 14, repeat: Infinity, ease: 'linear', delay: 2 }}
+          animate={{ y: ['-40%', '120vh'] }}
+          transition={{ duration: 10, repeat: Infinity, ease: 'linear', delay: 1 }}
           style={{
             position: 'absolute',
             left: 0,
             right: 0,
-            height: '35%',
-            background: 'linear-gradient(transparent 0%, rgba(0,255,65,0.018) 50%, transparent 100%)',
+            height: '30%',
+            background: 'linear-gradient(transparent 0%, rgba(0,255,65,0.04) 50%, transparent 100%)',
             pointerEvents: 'none',
             zIndex: 0,
           }}
