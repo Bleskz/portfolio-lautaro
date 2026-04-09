@@ -86,6 +86,8 @@ function DataStreams() {
     { left: '97%',  delay: 2,   speed: 15, charCount: 9,  baseOpacity: 0.18 },
     { left: '87%',  delay: 7,   speed: 12, charCount: 6,  baseOpacity: 0.14 },
     { left: '10%',  delay: 3,   speed: 17, charCount: 11, baseOpacity: 0.16 },
+    { left: '57%',  delay: 2.5, speed: 19, charCount: 8,  baseOpacity: 0.12 },
+    { left: '66%',  delay: 6,   speed: 16, charCount: 10, baseOpacity: 0.10 },
   ]
 
   return (
