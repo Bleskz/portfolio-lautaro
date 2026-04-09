@@ -19,19 +19,76 @@ function fadeUp(delay) {
   }
 }
 
-// Decorative right-column SVG — wireframe diamond with drawing animation
+// Floating ambient particles — data bits drifting upward in the background
+function HeroParticles({ reducedMotion }) {
+  if (reducedMotion) return null
+
+  const particles = [
+    { left: '7%',  delay: 0,   dur: 9  },
+    { left: '14%', delay: 2.5, dur: 11 },
+    { left: '23%', delay: 5,   dur: 8  },
+    { left: '37%', delay: 1,   dur: 13 },
+    { left: '51%', delay: 3.5, dur: 10 },
+    { left: '63%', delay: 7,   dur: 9  },
+    { left: '74%', delay: 0.5, dur: 12 },
+    { left: '83%', delay: 4,   dur: 8  },
+    { left: '91%', delay: 2,   dur: 11 },
+    { left: '44%', delay: 6,   dur: 10 },
+    { left: '58%', delay: 1.5, dur: 14 },
+    { left: '29%', delay: 8,   dur: 9  },
+  ]
+
+  return (
+    <div
+      aria-hidden="true"
+      style={{ position: 'absolute', inset: 0, pointerEvents: 'none', overflow: 'hidden', zIndex: 0 }}
+    >
+      {particles.map((p, i) => (
+        <motion.div
+          key={i}
+          initial={{ y: '100vh', opacity: 0 }}
+          animate={{ y: '-5vh', opacity: [0, 0.55, 0.55, 0] }}
+          transition={{
+            duration: p.dur,
+            repeat: Infinity,
+            delay: p.delay,
+            ease: 'linear',
+            times: [0, 0.08, 0.88, 1],
+          }}
+          style={{
+            position: 'absolute',
+            left: p.left,
+            bottom: 0,
+            width: '2px',
+            height: '2px',
+            borderRadius: '50%',
+            backgroundColor: C.green,
+            boxShadow: `0 0 4px ${C.green}`,
+          }}
+        />
+      ))}
+    </div>
+  )
+}
+
+// Decorative right-column SVG — wireframe diamond with drawing animation + continuous life
 function HeroDecor({ reducedMotion }) {
   // Diamond M200,24 L380,240 L200,456 L20,240 Z — perimeter ≈ 1125px
   const dashLen = 1200
 
   return (
-    <div style={{ position: 'relative', width: '100%', maxWidth: '460px' }}>
+    // Float wrapper — gentle levitation loop after draw completes
+    <motion.div
+      animate={reducedMotion ? {} : { y: [0, -16, 0] }}
+      transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut', delay: 2.5 }}
+      style={{ position: 'relative', width: '100%', maxWidth: '460px' }}
+    >
       <svg
         viewBox="0 0 400 480"
         style={{ width: '100%', overflow: 'visible' }}
         aria-hidden="true"
       >
-        {/* Outer diamond — stroke draws from start on load */}
+        {/* Outer diamond — stroke draws on load */}
         <motion.path
           d="M 200,24 L 380,240 L 200,456 L 20,240 Z"
           fill="none"
@@ -44,16 +101,36 @@ function HeroDecor({ reducedMotion }) {
           style={{ filter: 'drop-shadow(0 0 5px rgba(0,255,65,0.55))' }}
         />
 
-        {/* Inner diamond — thinner, more faint, draws slightly later */}
+        {/* Outer diamond glow pulse — breathes after the draw completes */}
+        {!reducedMotion && (
+          <motion.path
+            d="M 200,24 L 380,240 L 200,456 L 20,240 Z"
+            fill="none"
+            stroke="#00FF41"
+            strokeWidth="4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: [0, 0.18, 0, 0.22, 0] }}
+            transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut', delay: 2.3 }}
+            style={{ filter: 'drop-shadow(0 0 10px rgba(0,255,65,0.9))' }}
+          />
+        )}
+
+        {/* Inner diamond — draws then breathes opacity */}
         <motion.path
           d="M 200,90 L 320,240 L 200,390 L 80,240 Z"
           fill="none"
-          stroke="rgba(0,255,65,0.18)"
+          stroke="#00FF41"
           strokeWidth="1"
           strokeDasharray="900"
-          initial={{ strokeDashoffset: 900 }}
-          animate={{ strokeDashoffset: 0 }}
-          transition={{ duration: 1.4, ease: 'easeInOut', delay: 1.0 }}
+          initial={{ strokeDashoffset: 900, strokeOpacity: 0.18 }}
+          animate={{
+            strokeDashoffset: 0,
+            strokeOpacity: reducedMotion ? 0.18 : [0.18, 0.38, 0.12, 0.38, 0.18],
+          }}
+          transition={{
+            strokeDashoffset: { duration: 1.4, ease: 'easeInOut', delay: 1.0 },
+            strokeOpacity: { duration: 5, repeat: Infinity, ease: 'easeInOut', delay: 2.6 },
+          }}
         />
 
         {/* Pulsing ring at center — disabled under reduced motion */}
@@ -97,21 +174,33 @@ function HeroDecor({ reducedMotion }) {
           transition={{ delay: 1.9, duration: 0.3 }}
         />
 
-        {/* Corner tick marks at diamond vertices */}
+        {/* Corner tick marks — fade in then pulse continuously */}
         {[
-          { x: 200, y: 24, r: 0 },
-          { x: 380, y: 240, r: 0 },
-          { x: 200, y: 456, r: 0 },
-          { x: 20, y: 240, r: 0 },
+          { x: 200, y: 24 },
+          { x: 380, y: 240 },
+          { x: 200, y: 456 },
+          { x: 20, y: 240 },
         ].map((pt, i) => (
           <motion.circle
             key={i}
             cx={pt.x} cy={pt.y} r="3"
             fill="#00FF41"
-            opacity="0"
             initial={{ opacity: 0 }}
-            animate={{ opacity: 0.6 }}
-            transition={{ delay: 1.6 + i * 0.08, duration: 0.2 }}
+            animate={reducedMotion
+              ? { opacity: 0.6 }
+              : { opacity: [0, 0.7, 0.35, 0.9, 0.35] }
+            }
+            transition={reducedMotion
+              ? { delay: 1.6 + i * 0.08, duration: 0.2 }
+              : {
+                  delay: 1.6 + i * 0.08,
+                  duration: 3,
+                  times: [0, 0.12, 0.45, 0.75, 1],
+                  repeat: Infinity,
+                  repeatType: 'mirror',
+                  ease: 'easeInOut',
+                }
+            }
           />
         ))}
       </svg>
@@ -130,7 +219,7 @@ function HeroDecor({ reducedMotion }) {
           pointerEvents: 'none',
         }}
       />
-    </div>
+    </motion.div>
   )
 }
 
@@ -226,6 +315,27 @@ function Hero() {
           animation-delay: 1.18s;
         }
       `}</style>
+
+      {/* Ambient particles — data bits rising from bottom */}
+      <HeroParticles reducedMotion={reducedMotion} />
+
+      {/* Hero-wide slow scanline sweep — very faint band drifting down the section */}
+      {!reducedMotion && (
+        <motion.div
+          aria-hidden="true"
+          animate={{ y: ['-100%', '120vh'] }}
+          transition={{ duration: 14, repeat: Infinity, ease: 'linear', delay: 2 }}
+          style={{
+            position: 'absolute',
+            left: 0,
+            right: 0,
+            height: '35%',
+            background: 'linear-gradient(transparent 0%, rgba(0,255,65,0.018) 50%, transparent 100%)',
+            pointerEvents: 'none',
+            zIndex: 0,
+          }}
+        />
+      )}
 
       {/* Background grid — reduced opacity, mask fades left (text) side, lives on the right */}
       <div
