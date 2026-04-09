@@ -73,7 +73,7 @@ function ProjectCard({ sigId, type, freq, name, codename, description, stack, co
       }}
       style={{
         backgroundColor: '#020502',
-        padding: '2.5rem',
+        padding: 'clamp(1.25rem, 5vw, 2.5rem)',
         position: 'relative',
         overflow: 'hidden',
       }}

@@ -169,10 +169,10 @@ function Hero() {
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
-        paddingTop: '130px',
+        paddingTop: 'clamp(5.5rem, 18vw, 130px)',
         paddingBottom: '5rem',
-        paddingLeft: 'clamp(1.5rem, 6vw, 7rem)',
-        paddingRight: 'clamp(1.5rem, 6vw, 7rem)',
+        paddingLeft: 'clamp(1.25rem, 6vw, 7rem)',
+        paddingRight: 'clamp(1.25rem, 6vw, 7rem)',
       }}
     >
       {/* Global CSS — glitch keyframes + pseudo-element layer on .glitch-line */}
@@ -268,18 +268,17 @@ function Hero() {
         01
       </div>
 
-      {/* ── MAIN CONTENT — two-column on desktop ── */}
+      {/* ── MAIN CONTENT — stacks vertically on mobile, two-column on desktop ── */}
       <div
+        className="flex flex-col lg:flex-row lg:items-center"
         style={{
           position: 'relative',
           zIndex: 1,
-          display: 'flex',
-          alignItems: 'center',
           gap: '2rem',
         }}
       >
-        {/* Left column — 55% — all existing content */}
-        <div style={{ flex: '0 0 55%', maxWidth: '55%' }}>
+        {/* Left column — full width on mobile, 55% on desktop */}
+        <div className="w-full lg:w-[55%] lg:shrink-0">
 
           {/* 1. Tag line (delay 0.2s) */}
           <motion.div
@@ -306,9 +305,6 @@ function Hero() {
                 fontSize: '0.72rem',
                 color: '#00FF41',
                 letterSpacing: '0.28em',
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
               }}
             >
               ▸&nbsp;&nbsp;SIGNAL DETECTED&nbsp;&nbsp;//&nbsp;&nbsp;INITIALIZING TRANSMISSION
@@ -326,7 +322,7 @@ function Hero() {
               data-text="LAUTARO"
               style={{
                 fontFamily: "'Bebas Neue', cursive",
-                fontSize: 'clamp(5rem, 13vw, 12rem)',
+                fontSize: 'clamp(3.5rem, 14vw, 12rem)',
                 color: '#F0FFF0',
                 textShadow: '0 0 40px rgba(0,255,65,0.08)',
               }}
@@ -338,7 +334,7 @@ function Hero() {
               data-text="VELO"
               style={{
                 fontFamily: "'Bebas Neue', cursive",
-                fontSize: 'clamp(5rem, 13vw, 12rem)',
+                fontSize: 'clamp(3.5rem, 14vw, 12rem)',
                 color: '#F0FFF0',
                 textShadow: '0 0 40px rgba(0,255,65,0.08)',
               }}

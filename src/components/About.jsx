@@ -109,7 +109,7 @@ function About() {
                       fontFamily: "'Share Tech Mono', monospace",
                       fontSize: '0.72rem',
                       color: '#00FF41',
-                      minWidth: '120px',
+                      minWidth: '90px',
                       flexShrink: 0,
                     }}
                   >

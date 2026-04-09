@@ -82,7 +82,8 @@ function Navbar({ lenisRef }) {
         borderBottom: '1px solid rgba(0,255,65,0.12)',
         backdropFilter: 'blur(4px)',
         WebkitBackdropFilter: 'blur(4px)',
-        padding: '1.1rem 3rem',
+        /* horizontal padding shrinks on small screens */
+        padding: '0.9rem clamp(1rem, 4vw, 3rem)',
         display: 'grid',
         gridTemplateColumns: '1fr auto 1fr',
         alignItems: 'center',
@@ -90,7 +91,7 @@ function Navbar({ lenisRef }) {
     >
       {/* LEFT — Signal indicator */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.55rem' }}>
-        {/* Blinking green dot */}
+        {/* Blinking green dot — always visible */}
         <motion.span
           animate={{ opacity: [1, 0.15, 1] }}
           transition={{ duration: 1.2, repeat: Infinity, ease: 'easeInOut' }}
@@ -103,6 +104,20 @@ function Navbar({ lenisRef }) {
             flexShrink: 0,
           }}
         />
+        {/* "SIGNAL_ACTIVE // " — hidden on small screens to save space */}
+        <span
+          className="hidden sm:inline"
+          style={{
+            fontFamily: "'Share Tech Mono', monospace",
+            fontSize: '0.68rem',
+            letterSpacing: '0.2em',
+            color: '#00FF41',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          SIGNAL_ACTIVE //{'  '}
+        </span>
+        {/* "LV.DEV" — always visible */}
         <span
           style={{
             fontFamily: "'Share Tech Mono', monospace",
@@ -112,7 +127,7 @@ function Navbar({ lenisRef }) {
             whiteSpace: 'nowrap',
           }}
         >
-          SIGNAL_ACTIVE // LV.DEV
+          LV.DEV
         </span>
       </div>
 
@@ -126,10 +141,13 @@ function Navbar({ lenisRef }) {
         ))}
       </div>
 
-      {/* RIGHT — Lang selector + CTA button */}
+      {/* RIGHT — Lang selector + CTA button (CTA hidden on mobile) */}
       <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '0.75rem' }}>
         <LangSelector lang={lang} changeLang={changeLang} />
-        <CTAButton label={t.nav.cta} onClick={() => scrollTo('contact', lenisRef)} />
+        {/* CTA hidden on mobile — not enough space */}
+        <div className="hidden md:block">
+          <CTAButton label={t.nav.cta} onClick={() => scrollTo('contact', lenisRef)} />
+        </div>
       </div>
     </motion.nav>
   )
