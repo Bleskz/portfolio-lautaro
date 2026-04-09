@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import { useLang } from '../context/LangContext'
 import useReducedMotion from '../hooks/useReducedMotion'
@@ -19,54 +19,81 @@ function fadeUp(delay) {
   }
 }
 
-// Floating ambient particles — data bits drifting upward through the hero section
-function HeroParticles() {
+// Characters used in data stream columns — hex digits + terminal symbols
+const STREAM_CHARS = '0123456789ABCDEF01./:#><|_~'
 
-  // Each particle starts at bottom, rises to top of section; delay staggers position mid-cycle
-  const particles = [
-    { left: '7%',  delay: 0,   dur: 9  },
-    { left: '14%', delay: 2.5, dur: 11 },
-    { left: '23%', delay: 5,   dur: 8  },
-    { left: '37%', delay: 1,   dur: 13 },
-    { left: '51%', delay: 3.5, dur: 10 },
-    { left: '63%', delay: 7,   dur: 9  },
-    { left: '74%', delay: 0.5, dur: 12 },
-    { left: '83%', delay: 4,   dur: 8  },
-    { left: '91%', delay: 2,   dur: 11 },
-    { left: '44%', delay: 6,   dur: 10 },
-    { left: '58%', delay: 1.5, dur: 14 },
-    { left: '29%', delay: 8,   dur: 9  },
+// Single falling column — characters randomly flicker as it scrolls down
+function DataColumn({ left, delay, speed, charCount, baseOpacity }) {
+  const [chars, setChars] = useState(
+    () => Array.from({ length: charCount }, () => STREAM_CHARS[Math.floor(Math.random() * STREAM_CHARS.length)])
+  )
+
+  // Randomly mutate ~35% of characters every 120ms — creates flicker effect
+  useEffect(() => {
+    const id = setInterval(() => {
+      setChars(prev => prev.map(c =>
+        Math.random() > 0.65 ? STREAM_CHARS[Math.floor(Math.random() * STREAM_CHARS.length)] : c
+      ))
+    }, 120)
+    return () => clearInterval(id)
+  }, [])
+
+  return (
+    <motion.div
+      animate={{ y: ['-15vh', '115vh'] }}
+      transition={{ duration: speed, repeat: Infinity, ease: 'linear', delay }}
+      style={{
+        position: 'absolute',
+        left,
+        top: 0,
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '3px',
+        fontFamily: "'Share Tech Mono', monospace",
+        fontSize: '0.58rem',
+        letterSpacing: '0.05em',
+        userSelect: 'none',
+        pointerEvents: 'none',
+      }}
+    >
+      {chars.map((char, i) => {
+        const isHead = i === charCount - 1
+        const relPos = i / charCount
+        return (
+          <span
+            key={i}
+            style={{
+              color: isHead ? '#FFFFFF' : C.green,
+              opacity: isHead ? baseOpacity * 2.8 : baseOpacity * (0.2 + relPos * 0.8),
+              textShadow: isHead ? `0 0 8px ${C.green}, 0 0 16px ${C.green}` : 'none',
+            }}
+          >
+            {char}
+          </span>
+        )
+      })}
+    </motion.div>
+  )
+}
+
+// Multiple data stream columns along the edges — avoids the main text area
+function DataStreams() {
+  const columns = [
+    { left: '2%',   delay: 0,   speed: 14, charCount: 10, baseOpacity: 0.22 },
+    { left: '5.5%', delay: 4,   speed: 11, charCount: 7,  baseOpacity: 0.15 },
+    { left: '91%',  delay: 1.5, speed: 16, charCount: 12, baseOpacity: 0.20 },
+    { left: '94%',  delay: 5,   speed: 13, charCount: 8,  baseOpacity: 0.17 },
+    { left: '97%',  delay: 2,   speed: 15, charCount: 9,  baseOpacity: 0.18 },
+    { left: '87%',  delay: 7,   speed: 12, charCount: 6,  baseOpacity: 0.14 },
+    { left: '10%',  delay: 3,   speed: 17, charCount: 11, baseOpacity: 0.16 },
   ]
 
   return (
     <div
       aria-hidden="true"
-      style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 0 }}
+      style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 0, overflow: 'hidden' }}
     >
-      {particles.map((p, i) => (
-        <motion.div
-          key={i}
-          // Start at bottom of section (y:0) and rise 110vh — section overflow:hidden clips the rest
-          animate={{ y: [0, '-110vh'], opacity: [0, 0.7, 0.7, 0] }}
-          transition={{
-            duration: p.dur,
-            repeat: Infinity,
-            delay: p.delay,
-            ease: 'linear',
-            times: [0, 0.06, 0.92, 1],
-          }}
-          style={{
-            position: 'absolute',
-            left: p.left,
-            bottom: 0,
-            width: '3px',
-            height: '3px',
-            borderRadius: '50%',
-            backgroundColor: C.green,
-            boxShadow: `0 0 6px ${C.green}, 0 0 12px ${C.g(0.5)}`,
-          }}
-        />
-      ))}
+      {columns.map((col, i) => <DataColumn key={i} {...col} />)}
     </div>
   )
 }
@@ -316,8 +343,8 @@ function Hero() {
         }
       `}</style>
 
-      {/* Ambient particles — data bits rising from bottom */}
-      <HeroParticles />
+      {/* Data streams — falling columns of hex/terminal chars along the edges */}
+      <DataStreams />
 
       {/* Hero-wide slow scanline sweep — soft green band drifting down the section */}
       <motion.div
