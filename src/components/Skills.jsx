@@ -1,5 +1,6 @@
 // Skills section — FREQ_STACK: three-column channel cards with animated progress bars
-import { motion } from 'framer-motion'
+import { useRef, useState, useEffect } from 'react'
+import { motion, useInView } from 'framer-motion'
 import SectionHeader from './SectionHeader'
 import { useLang } from '../context/LangContext'
 import { C } from '../theme/colors'
@@ -34,61 +35,83 @@ const channels = [
   },
 ]
 
-// Renders a single skill row: name, percentage label, and animated gradient bar
+// Renders a single skill row: name, counting percentage, and animated gradient bar
 function SkillBar({ name, pct, index }) {
+  const ref = useRef(null)
+  const inView = useInView(ref, { once: true, amount: 0.05 })
+  const [count, setCount] = useState(0)
+
+  // Count up from 0 to pct using rAF when bar enters viewport
+  useEffect(() => {
+    if (!inView) return
+    const duration = 800 + index * 60
+    const startTime = performance.now()
+    let raf
+    function tick(now) {
+      const progress = Math.min((now - startTime) / duration, 1)
+      const eased = 1 - Math.pow(1 - progress, 3)
+      setCount(Math.round(eased * pct))
+      if (progress < 1) raf = requestAnimationFrame(tick)
+    }
+    raf = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(raf)
+  }, [inView, pct, index])
+
   return (
-    <div className="mb-5">
+    <div className="mb-5" ref={ref}>
       <div className="flex justify-between mb-1">
-        <span
-          style={{
-            fontFamily: "'Share Tech Mono', monospace",
-            fontSize: '0.72rem',
-            color: C.white,
-          }}
-        >
+        <span style={{ fontFamily: "'Share Tech Mono', monospace", fontSize: '0.72rem', color: C.white }}>
           {name}
         </span>
-        <span
-          style={{
-            fontFamily: "'Share Tech Mono', monospace",
-            fontSize: '0.72rem',
-            color: C.g(0.6),
-          }}
-        >
-          {pct}%
+        <span style={{ fontFamily: "'Share Tech Mono', monospace", fontSize: '0.72rem', color: C.g(0.6) }}>
+          {count}%
         </span>
       </div>
 
       {/* Track */}
-      <div
-        className="relative"
-        style={{
-          height: '3px',
-          backgroundColor: C.w(0.07),
-        }}
-      >
+      <div className="relative" style={{ height: '3px', backgroundColor: C.w(0.07) }}>
         {/* Animated fill */}
         <motion.div
           initial={{ width: '0%' }}
-          whileInView={{ width: `${pct}%` }}
-          viewport={{ once: true, amount: 0.05 }}
+          animate={inView ? { width: `${pct}%` } : { width: '0%' }}
           transition={{ duration: 0.8, ease: 'easeOut', delay: index * 0.06 }}
           className="absolute top-0 left-0 h-full"
           style={{
             background: `linear-gradient(90deg, ${C.green}, ${C.cyan})`,
             boxShadow: `0 0 10px ${C.g(0.8)}, 0 0 20px ${C.g(0.4)}`,
+            overflow: 'hidden',
           }}
         >
-          {/* Cyan square tip at the right end of the fill */}
-          <span
+          {/* Scanning highlight — sweeps the bar every few seconds */}
+          {inView && (
+            <motion.div
+              animate={{ x: ['-100%', '400%'] }}
+              transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut', delay: index * 0.25 + 1.2 }}
+              style={{
+                position: 'absolute',
+                top: 0, left: 0,
+                width: '30%',
+                height: '100%',
+                background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.45), transparent)',
+                pointerEvents: 'none',
+              }}
+            />
+          )}
+
+          {/* Cyan tip — pulses after bar finishes filling */}
+          <motion.span
             className="absolute"
+            animate={inView
+              ? { opacity: [1, 0.2, 1], boxShadow: [`0 0 4px ${C.cyan}`, `0 0 12px ${C.cyan}`, `0 0 4px ${C.cyan}`] }
+              : { opacity: 0 }
+            }
+            transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut', delay: index * 0.06 + 1 }}
             style={{
               right: '-3px',
               top: '50%',
               transform: 'translateY(-50%)',
               width: '6px',
               height: '6px',
-              borderRadius: '0',
               backgroundColor: C.cyan,
             }}
           />
