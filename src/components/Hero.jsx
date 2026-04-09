@@ -20,8 +20,7 @@ function fadeUp(delay) {
 }
 
 // Floating ambient particles — data bits drifting upward through the hero section
-function HeroParticles({ reducedMotion }) {
-  if (reducedMotion) return null
+function HeroParticles() {
 
   // Each particle starts at bottom, rises to top of section; delay staggers position mid-cycle
   const particles = [
@@ -80,7 +79,7 @@ function HeroDecor({ reducedMotion }) {
   return (
     // Float wrapper — gentle levitation loop
     <motion.div
-      animate={reducedMotion ? {} : { y: [0, -16, 0] }}
+      animate={{ y: [0, -16, 0] }}
       transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut', delay: 0.2 }}
       style={{ position: 'relative', width: '100%', maxWidth: '460px' }}
     >
@@ -318,25 +317,23 @@ function Hero() {
       `}</style>
 
       {/* Ambient particles — data bits rising from bottom */}
-      <HeroParticles reducedMotion={reducedMotion} />
+      <HeroParticles />
 
       {/* Hero-wide slow scanline sweep — soft green band drifting down the section */}
-      {!reducedMotion && (
-        <motion.div
-          aria-hidden="true"
-          animate={{ y: ['-40%', '120vh'] }}
-          transition={{ duration: 10, repeat: Infinity, ease: 'linear', delay: 1 }}
-          style={{
-            position: 'absolute',
-            left: 0,
-            right: 0,
-            height: '30%',
-            background: 'linear-gradient(transparent 0%, rgba(0,255,65,0.04) 50%, transparent 100%)',
-            pointerEvents: 'none',
-            zIndex: 0,
-          }}
-        />
-      )}
+      <motion.div
+        aria-hidden="true"
+        animate={{ y: ['-40%', '120vh'] }}
+        transition={{ duration: 10, repeat: Infinity, ease: 'linear', delay: 1 }}
+        style={{
+          position: 'absolute',
+          left: 0,
+          right: 0,
+          height: '30%',
+          background: 'linear-gradient(transparent 0%, rgba(0,255,65,0.04) 50%, transparent 100%)',
+          pointerEvents: 'none',
+          zIndex: 0,
+        }}
+      />
 
       {/* Background grid — reduced opacity, mask fades left (text) side, lives on the right */}
       <div
