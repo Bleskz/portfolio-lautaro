@@ -79,43 +79,43 @@ function SkillBar({ name, pct, index }) {
           style={{
             background: `linear-gradient(90deg, ${C.green}, ${C.cyan})`,
             boxShadow: `0 0 10px ${C.g(0.8)}, 0 0 20px ${C.g(0.4)}`,
-            overflow: 'hidden',
           }}
         >
-          {/* Scanning highlight — sweeps the bar every few seconds */}
+          {/* Glow pulse — white overlay flashes on the fill, visible even at 3px height */}
           {inView && (
             <motion.div
-              animate={{ x: ['-100%', '400%'] }}
-              transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut', delay: index * 0.25 + 1.2 }}
+              animate={{ opacity: [0, 0.7, 0] }}
+              transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut', delay: index * 0.2 + 1 }}
               style={{
-                position: 'absolute',
-                top: 0, left: 0,
-                width: '30%',
-                height: '100%',
-                background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.45), transparent)',
+                position: 'absolute', inset: 0,
+                background: 'rgba(255,255,255,0.55)',
                 pointerEvents: 'none',
               }}
             />
           )}
-
-          {/* Cyan tip — pulses after bar finishes filling */}
-          <motion.span
-            className="absolute"
-            animate={inView
-              ? { opacity: [1, 0.2, 1], boxShadow: [`0 0 4px ${C.cyan}`, `0 0 12px ${C.cyan}`, `0 0 4px ${C.cyan}`] }
-              : { opacity: 0 }
-            }
-            transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut', delay: index * 0.06 + 1 }}
-            style={{
-              right: '-3px',
-              top: '50%',
-              transform: 'translateY(-50%)',
-              width: '6px',
-              height: '6px',
-              backgroundColor: C.cyan,
-            }}
-          />
         </motion.div>
+
+        {/* Cyan tip — sibling of fill so overflow:hidden on fill can't clip it */}
+        <motion.div
+          style={{
+            position: 'absolute',
+            top: '50%',
+            transform: 'translateY(-50%)',
+            width: '6px',
+            height: '6px',
+            backgroundColor: C.cyan,
+            boxShadow: `0 0 8px ${C.cyan}`,
+            opacity: 0,
+          }}
+          animate={inView ? {
+            left: `calc(${pct}% - 3px)`,
+            opacity: [0.2, 1, 0.2],
+          } : {}}
+          transition={{
+            left: { duration: 0.8, ease: 'easeOut', delay: index * 0.06 },
+            opacity: { duration: 1.5, repeat: Infinity, ease: 'easeInOut', delay: index * 0.06 + 0.9 },
+          }}
+        />
       </div>
     </div>
   )
