@@ -78,7 +78,7 @@ function Navbar({ lenisRef }) {
     const ids = ['home', 'about', 'projects', 'skills', 'contact']
 
     function onScroll() {
-      const mid = window.innerHeight / 2
+      const mid = window.innerHeight * 0.25
       let closest = ids[0]
       let closestDist = Infinity
       for (const id of ids) {
