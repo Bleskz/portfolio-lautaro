@@ -1,0 +1,189 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <!-- Subtle grid pattern -->
+    <pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse">
+      <path d="M 60 0 L 0 0 0 60" fill="none" stroke="#00FF41" stroke-width="0.6" opacity="0.025"/>
+    </pattern>
+
+    <!-- Left radial glow -->
+    <radialGradient id="glowLeft" cx="28%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#00FF41" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#020502" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Right area darkening (keeps diamond readable) -->
+    <radialGradient id="glowRight" cx="82%" cy="50%" r="35%">
+      <stop offset="0%" stop-color="#00FF41" stop-opacity="0.04"/>
+      <stop offset="100%" stop-color="#020502" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Glow filter for diamond -->
+    <filter id="greenGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- ── BACKGROUND ── -->
+  <rect width="1200" height="630" fill="#020502"/>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+  <rect width="1200" height="630" fill="url(#glowLeft)"/>
+  <rect width="1200" height="630" fill="url(#glowRight)"/>
+
+  <!-- Top border line -->
+  <rect x="0" y="0" width="1200" height="2" fill="#00FF41" opacity="0.65"/>
+  <!-- Bottom border line -->
+  <rect x="0" y="628" width="1200" height="2" fill="#00FF41" opacity="0.65"/>
+  <!-- Left accent bar -->
+  <rect x="0" y="0" width="4" height="630" fill="#00FF41" opacity="0.15"/>
+
+  <!-- ── TOP LABEL ── -->
+  <line x1="80" y1="66" x2="44" y2="66" stroke="#00FF41" stroke-width="1" opacity="0.55"/>
+  <text x="90" y="71"
+    font-family="'Courier New', Courier, monospace"
+    font-size="13"
+    fill="#00FF41"
+    letter-spacing="3.5"
+    opacity="0.8">▸  SIGNAL_DETECTED  //  PORTFOLIO.LAUTARO_VELO</text>
+
+  <!-- ── MAIN NAME ── -->
+  <!-- Name glow layer (blurred) -->
+  <text x="72" y="298"
+    font-family="Impact, 'Arial Black', Arial, sans-serif"
+    font-size="175"
+    fill="#00FF41"
+    opacity="0.04"
+    filter="url(#greenGlow)">LAUTARO</text>
+  <text x="72" y="458"
+    font-family="Impact, 'Arial Black', Arial, sans-serif"
+    font-size="175"
+    fill="#00FF41"
+    opacity="0.04"
+    filter="url(#greenGlow)">VELO</text>
+
+  <!-- Name main text -->
+  <text x="72" y="298"
+    font-family="Impact, 'Arial Black', Arial, sans-serif"
+    font-size="175"
+    fill="#F0FFF0"
+    letter-spacing="2"
+    opacity="0.96">LAUTARO</text>
+  <text x="72" y="458"
+    font-family="Impact, 'Arial Black', Arial, sans-serif"
+    font-size="175"
+    fill="#F0FFF0"
+    letter-spacing="2"
+    opacity="0.96">VELO</text>
+
+  <!-- Divider line after name -->
+  <line x1="72" y1="482" x2="480" y2="482" stroke="#00FF41" stroke-width="0.8" opacity="0.3"/>
+
+  <!-- ── SUBTITLE ── -->
+  <text x="72" y="516"
+    font-family="'Courier New', Courier, monospace"
+    font-size="19.5"
+    fill="#00FF41"
+    letter-spacing="2.5"
+    opacity="0.85">// Fullstack Developer — Neuquen, Argentina</text>
+
+  <!-- Stack tags -->
+  <text x="72" y="564"
+    font-family="'Courier New', Courier, monospace"
+    font-size="13.5"
+    fill="#E8FFE8"
+    letter-spacing="1.5"
+    opacity="0.25">TabFlow  ·  Steam Analyzer  ·  CoreTracker  ·  React  ·  Node.js  ·  Electron</text>
+
+  <!-- ── DIAMOND DECORATION (right side, center x=990, y=315) ── -->
+  <g filter="url(#greenGlow)">
+    <!-- Outer diamond -->
+    <polygon points="990,110 1165,315 990,520 815,315"
+      fill="none"
+      stroke="#00FF41"
+      stroke-width="1.5"
+      opacity="0.55"/>
+    <!-- Outer diamond glow echo -->
+    <polygon points="990,110 1165,315 990,520 815,315"
+      fill="none"
+      stroke="#00FF41"
+      stroke-width="4"
+      opacity="0.07"/>
+  </g>
+
+  <!-- Inner diamond -->
+  <polygon points="990,180 1080,315 990,450 900,315"
+    fill="none"
+    stroke="#00FF41"
+    stroke-width="0.8"
+    opacity="0.2"/>
+
+  <!-- Center circle -->
+  <circle cx="990" cy="315" r="14"
+    fill="none"
+    stroke="#00FF41"
+    stroke-width="1"
+    opacity="0.45"/>
+
+  <!-- Crosshair lines -->
+  <line x1="990" y1="293" x2="990" y2="337" stroke="#00FF41" stroke-width="0.8" opacity="0.28"/>
+  <line x1="968" y1="315" x2="1012" y2="315" stroke="#00FF41" stroke-width="0.8" opacity="0.28"/>
+
+  <!-- Corner accent dots -->
+  <circle cx="990" cy="110" r="3.5" fill="#00FF41" opacity="0.75"/>
+  <circle cx="1165" cy="315" r="3.5" fill="#00FF41" opacity="0.75"/>
+  <circle cx="990" cy="520" r="3.5" fill="#00FF41" opacity="0.75"/>
+  <circle cx="815" cy="315" r="3.5" fill="#00FF41" opacity="0.75"/>
+
+  <!-- Orbit dots around center -->
+  <circle cx="990" cy="263" r="2.2" fill="#00FF41" opacity="0.4"/>
+  <circle cx="1035" cy="289" r="2.2" fill="#00FF41" opacity="0.4"/>
+  <circle cx="1035" cy="341" r="2.2" fill="#00FF41" opacity="0.4"/>
+  <circle cx="990" cy="367" r="2.2" fill="#00FF41" opacity="0.4"/>
+  <circle cx="945" cy="341" r="2.2" fill="#00FF41" opacity="0.4"/>
+
+  <!-- ── DATA STREAM (decorative, right edge) ── -->
+  <g font-family="'Courier New', Courier, monospace" font-size="10" fill="#00FF41">
+    <!-- Column 1 -->
+    <text x="1138" y="95"  opacity="0.18">0A</text>
+    <text x="1138" y="110" opacity="0.14">FF</text>
+    <text x="1138" y="125" opacity="0.10">23</text>
+    <text x="1138" y="140" opacity="0.07">B1</text>
+    <text x="1138" y="155" opacity="0.04">7E</text>
+    <!-- Column 2 -->
+    <text x="1155" y="480" opacity="0.07">C4</text>
+    <text x="1155" y="495" opacity="0.10">90</text>
+    <text x="1155" y="510" opacity="0.14">11</text>
+    <text x="1155" y="525" opacity="0.18">AD</text>
+    <text x="1155" y="540" opacity="0.22">3F</text>
+    <!-- Edge column -->
+    <text x="1178" y="200" opacity="0.12">_</text>
+    <text x="1178" y="215" opacity="0.09">0</text>
+    <text x="1178" y="230" opacity="0.06">1</text>
+  </g>
+
+  <!-- Horizontal scan line (decorative) -->
+  <line x1="72" y1="315" x2="700" y2="315"
+    stroke="#00FF41"
+    stroke-width="0.4"
+    opacity="0.04"/>
+
+  <!-- ── BOTTOM URL ── -->
+  <text x="1150" y="608"
+    font-family="'Courier New', Courier, monospace"
+    font-size="12"
+    fill="#00FF41"
+    text-anchor="end"
+    letter-spacing="1"
+    opacity="0.35">portfolio-lautaro-steel.vercel.app</text>
+
+  <!-- Section number watermark -->
+  <text x="620" y="630"
+    font-family="Impact, 'Arial Black', Arial, sans-serif"
+    font-size="320"
+    fill="#00FF41"
+    opacity="0.012"
+    text-anchor="middle">01</text>
+</svg>

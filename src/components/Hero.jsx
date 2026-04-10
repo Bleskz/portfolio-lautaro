@@ -252,6 +252,54 @@ function HeroDecor({ reducedMotion }) {
   )
 }
 
+// Roles cycled by the typewriter — tech terms, no translation needed
+const ROLES = [
+  'Fullstack Developer',
+  'Chrome Extension Dev',
+  'Desktop App Builder',
+  'React + Node.js Dev',
+]
+
+// Cycles through ROLES with a character-by-character type → wait → erase loop
+function TypewriterRole() {
+  const [roleIdx, setRoleIdx] = useState(0)
+  const [displayed, setDisplayed] = useState('')
+  const [phase, setPhase] = useState('typing') // 'typing' | 'waiting' | 'erasing'
+
+  useEffect(() => {
+    const role = ROLES[roleIdx]
+
+    if (phase === 'typing') {
+      if (displayed.length < role.length) {
+        const t = setTimeout(() => setDisplayed(role.slice(0, displayed.length + 1)), 65)
+        return () => clearTimeout(t)
+      }
+      const t = setTimeout(() => setPhase('erasing'), 2200)
+      return () => clearTimeout(t)
+    }
+
+    if (phase === 'erasing') {
+      if (displayed.length > 0) {
+        const t = setTimeout(() => setDisplayed(displayed.slice(0, -1)), 32)
+        return () => clearTimeout(t)
+      }
+      setRoleIdx((i) => (i + 1) % ROLES.length)
+      setPhase('typing')
+    }
+  }, [phase, displayed, roleIdx])
+
+  return (
+    <span>
+      <span style={{ color: C.cyan }}>{displayed}</span>
+      <span
+        aria-hidden="true"
+        className="typewriter-cursor"
+        style={{ color: C.green, marginLeft: '1px' }}
+      >▌</span>
+    </span>
+  )
+}
+
 // Full-screen hero section — SIGNAL DETECTED
 function Hero() {
   const nameRef = useRef(null)
@@ -342,6 +390,13 @@ function Hero() {
           color: rgba(232, 255, 232, 0.5);
           animation: glitch2 3s infinite;
           animation-delay: 1.18s;
+        }
+        .typewriter-cursor {
+          animation: cursor-blink 0.9s step-end infinite;
+        }
+        @keyframes cursor-blink {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0; }
         }
       `}</style>
 
@@ -485,7 +540,7 @@ function Hero() {
             </div>
           </motion.div>
 
-          {/* 3. Subtitle (delay 0.6s) */}
+          {/* 3. Subtitle with typewriter role (delay 0.6s) */}
           <motion.p
             {...fadeUp(0.6)}
             style={{
@@ -497,7 +552,8 @@ function Hero() {
               marginBottom: '2.5rem',
             }}
           >
-            {t.hero.subtitle1}<br />
+            <span style={{ color: C.w(0.45) }}>// </span><TypewriterRole /><span style={{ color: C.w(0.45) }}> — from Neuquen, AR</span>
+            <br />
             {t.hero.subtitle2}
           </motion.p>
 

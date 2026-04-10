@@ -174,16 +174,32 @@ function ContactForm() {
   const { t } = useLang()
   const [status, setStatus] = useState('idle') // 'idle' | 'sending' | 'transmitted'
   const [form, setForm] = useState({ name: '', email: '', message: '' })
+  const [error, setError] = useState(null)
 
-  // Handles form submission: shows sending → transmitted state, resets after 3s
+  // Submits form to Formspree — shows sending → transmitted or error state
   async function handleSubmit(e) {
     e.preventDefault()
     setStatus('sending')
-    await new Promise((r) => setTimeout(r, 3000))
-    setStatus('transmitted')
-    await new Promise((r) => setTimeout(r, 2000))
-    setStatus('idle')
-    setForm({ name: '', email: '', message: '' })
+    setError(null)
+
+    try {
+      const res = await fetch('https://formspree.io/f/xaqlgeob', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ name: form.name, email: form.email, message: form.message }),
+      })
+
+      if (!res.ok) throw new Error('non-ok response')
+
+      setStatus('transmitted')
+      setTimeout(() => {
+        setStatus('idle')
+        setForm({ name: '', email: '', message: '' })
+      }, 3000)
+    } catch {
+      setError('TRANSMISSION FAILED — check your connection and retry.')
+      setStatus('idle')
+    }
   }
 
   const disabled = status === 'sending' || status === 'transmitted'
@@ -245,6 +261,19 @@ function ContactForm() {
         >
           {status === 'sending' ? 'TRANSMITTING...' : status === 'transmitted' ? t.contact.submitted : t.contact.submit}
         </button>
+
+        {/* Error message — visible only when a transmission error occurs */}
+        {error && (
+          <p style={{
+            fontFamily: "'Share Tech Mono', monospace",
+            fontSize: '0.72rem',
+            color: '#FF003C',
+            letterSpacing: '0.05em',
+            marginTop: '0.5rem',
+          }}>
+            ✗ {error}
+          </p>
+        )}
       </form>
 
       {/* Placeholder italic + color + cursor blink */}
