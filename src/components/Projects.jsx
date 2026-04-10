@@ -1,5 +1,6 @@
 // Projects section — PROJECT_LOGS: live status bar + 2×2 card grid
 import { useState, useEffect, memo } from 'react'
+import { motion } from 'framer-motion'
 import SectionHeader from './SectionHeader'
 import ProjectCard from './ProjectCard'
 import { useLang } from '../context/LangContext'
@@ -117,7 +118,11 @@ function Projects() {
         />
 
         {/* Log status bar */}
-        <div
+        <motion.div
+          initial={{ opacity: 0, y: -8 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.5 }}
+          transition={{ duration: 0.35 }}
           className="flex items-center justify-between mb-2 px-3 py-1.5 flex-wrap gap-2"
           style={{
             fontFamily: "'Share Tech Mono', monospace",
@@ -135,7 +140,7 @@ function Projects() {
           <span style={{ color: '#00FF41' }}>
             STATUS: ALL_ONLINE
           </span>
-        </div>
+        </motion.div>
 
         {/* 2×2 card grid — gap creates green gutter effect */}
         <div

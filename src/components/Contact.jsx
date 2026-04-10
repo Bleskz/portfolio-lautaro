@@ -40,39 +40,41 @@ function Terminal({ t }) {
         </span>
       </div>
 
-      {/* Terminal output lines */}
-      <div
+      {/* Terminal output lines — stagger each line like a terminal printing */}
+      <motion.div
         className="p-5"
+        variants={{ visible: { transition: { staggerChildren: 0.12 } } }}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.3 }}
         style={{
           fontFamily: "'Share Tech Mono', monospace",
           fontSize: '0.76rem',
           lineHeight: '1.9',
         }}
       >
-        <p style={{ color: C.w(0.45) }}>$ ping --target lautaro.velo</p>
-        <p style={{ color: C.white, paddingLeft: '1rem' }}>
-          {t.contact.handshake}
-        </p>
-
-        <p className="mt-2" style={{ color: C.w(0.45) }}>
-          $ mail --to {LINKS.email}
-        </p>
-        <p style={{ color: C.cyan, paddingLeft: '1rem' }}>{t.contact.channelOpen}</p>
-
-        <p className="mt-2" style={{ color: C.w(0.45) }}>
-          $ connect --discord {LINKS.discord}
-        </p>
-        <p style={{ color: C.cyan, paddingLeft: '1rem' }}>{t.contact.ready}</p>
-
-        <p className="mt-2" style={{ color: C.w(0.45) }}>
-          $ open {LINKS.github.replace('https://', '')}
-        </p>
-        <p style={{ color: C.cyan, paddingLeft: '1rem' }}>{t.contact.reposAvailable}</p>
-
-        <p className="mt-3" style={{ color: C.green }}>
-          $ <span className="terminal-cursor">█</span>
-        </p>
-      </div>
+        {[
+          <p style={{ color: C.w(0.45) }}>$ ping --target lautaro.velo</p>,
+          <p style={{ color: C.white, paddingLeft: '1rem' }}>{t.contact.handshake}</p>,
+          <p className="mt-2" style={{ color: C.w(0.45) }}>$ mail --to {LINKS.email}</p>,
+          <p style={{ color: C.cyan, paddingLeft: '1rem' }}>{t.contact.channelOpen}</p>,
+          <p className="mt-2" style={{ color: C.w(0.45) }}>$ connect --discord {LINKS.discord}</p>,
+          <p style={{ color: C.cyan, paddingLeft: '1rem' }}>{t.contact.ready}</p>,
+          <p className="mt-2" style={{ color: C.w(0.45) }}>$ open {LINKS.github.replace('https://', '')}</p>,
+          <p style={{ color: C.cyan, paddingLeft: '1rem' }}>{t.contact.reposAvailable}</p>,
+          <p className="mt-3" style={{ color: C.green }}>$ <span className="terminal-cursor">█</span></p>,
+        ].map((line, i) => (
+          <motion.div
+            key={i}
+            variants={{
+              hidden: { opacity: 0, x: -8 },
+              visible: { opacity: 1, x: 0, transition: { duration: 0.2 } },
+            }}
+          >
+            {line}
+          </motion.div>
+        ))}
+      </motion.div>
 
       {/* Blinking cursor animation — explicit exception to Framer Motion rule per spec */}
       <style>{`
@@ -211,35 +213,49 @@ function ContactForm() {
         {status === 'sending' ? 'Transmitting message...' : status === 'transmitted' ? 'Message transmitted successfully.' : ''}
       </div>
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-        <TerminalField
-          id="contact-name"
-          label="// SENDER_ID"
-          placeholder={t.contact.namePlaceholder}
-          value={form.name}
-          onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-          disabled={disabled}
-        />
-        <TerminalField
-          id="contact-email"
-          type="email"
-          label="// RETURN_FREQ"
-          placeholder="your@email.com"
-          value={form.email}
-          onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
-          disabled={disabled}
-        />
-        <TerminalField
-          id="contact-message"
-          as="textarea"
-          rows={5}
-          label="// PAYLOAD"
-          placeholder={t.contact.msgPlaceholder}
-          value={form.message}
-          onChange={(e) => setForm((f) => ({ ...f, message: e.target.value }))}
-          disabled={disabled}
-        />
+      <motion.form
+        onSubmit={handleSubmit}
+        className="flex flex-col gap-5"
+        variants={{ visible: { transition: { staggerChildren: 0.08 } } }}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.1 }}
+      >
+        <motion.div variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0, transition: { duration: 0.3 } } }}>
+          <TerminalField
+            id="contact-name"
+            label="// SENDER_ID"
+            placeholder={t.contact.namePlaceholder}
+            value={form.name}
+            onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
+            disabled={disabled}
+          />
+        </motion.div>
+        <motion.div variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0, transition: { duration: 0.3 } } }}>
+          <TerminalField
+            id="contact-email"
+            type="email"
+            label="// RETURN_FREQ"
+            placeholder="your@email.com"
+            value={form.email}
+            onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
+            disabled={disabled}
+          />
+        </motion.div>
+        <motion.div variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0, transition: { duration: 0.3 } } }}>
+          <TerminalField
+            id="contact-message"
+            as="textarea"
+            rows={5}
+            label="// PAYLOAD"
+            placeholder={t.contact.msgPlaceholder}
+            value={form.message}
+            onChange={(e) => setForm((f) => ({ ...f, message: e.target.value }))}
+            disabled={disabled}
+          />
+        </motion.div>
 
+        <motion.div variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0, transition: { duration: 0.3 } } }}>
         <button
           type="submit"
           disabled={disabled}
@@ -274,7 +290,8 @@ function ContactForm() {
             ✗ {error}
           </p>
         )}
-      </form>
+        </motion.div>
+      </motion.form>
 
       {/* Placeholder italic + color + cursor blink */}
       <style>{`

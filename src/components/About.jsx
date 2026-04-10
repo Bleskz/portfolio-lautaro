@@ -97,11 +97,21 @@ function About() {
               <div className="flex-1" />
             </div>
 
-            {/* Data rows */}
-            <div className="px-5 py-3">
+            {/* Data rows — stagger each row like a terminal scan */}
+            <motion.div
+              className="px-5 py-3"
+              variants={{ visible: { transition: { staggerChildren: 0.07 } } }}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.05 }}
+            >
               {TERMINAL_ROWS.map((row) => (
-                <div
+                <motion.div
                   key={row.key}
+                  variants={{
+                    hidden: { opacity: 0, x: -10 },
+                    visible: { opacity: 1, x: 0, transition: { duration: 0.25 } },
+                  }}
                   className="flex items-start py-2.5"
                   style={{ borderBottom: `1px solid ${C.g(0.07)}` }}
                 >
@@ -158,9 +168,9 @@ function About() {
                       {row.value}
                     </span>
                   )}
-                </div>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           </motion.div>
 
           {/* RIGHT — Quote, bio paragraphs, stack tags */}
@@ -172,11 +182,19 @@ function About() {
             className="flex flex-col gap-8 justify-center"
           >
             {/* Display quote */}
-            <div>
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.05 }}
+              transition={{ duration: 0.4, delay: 0.15 }}
+            >
               {/* Thin horizontal green line above the quote */}
-              <div
+              <motion.div
+                initial={{ width: 0 }}
+                whileInView={{ width: '60px' }}
+                viewport={{ once: true, amount: 0.05 }}
+                transition={{ duration: 0.4, delay: 0.1 }}
                 style={{
-                  width: '60px',
                   height: '2px',
                   backgroundColor: C.green,
                   marginBottom: '1rem',
@@ -201,11 +219,15 @@ function About() {
                 </span>
                 {' '}{t.about.quotePart2}
               </p>
-            </div>
+            </motion.div>
 
-            {/* Bio paragraphs */}
+            {/* Bio paragraphs — each fades up with a slight stagger */}
             <div className="flex flex-col gap-4">
-              <p
+              <motion.p
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.05 }}
+                transition={{ duration: 0.4, delay: 0.2 }}
                 style={{
                   fontFamily: "'Space Mono', monospace",
                   fontSize: '0.8rem',
@@ -214,8 +236,12 @@ function About() {
                 }}
               >
                 {t.about.bio1}
-              </p>
-              <p
+              </motion.p>
+              <motion.p
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.05 }}
+                transition={{ duration: 0.4, delay: 0.3 }}
                 style={{
                   fontFamily: "'Space Mono', monospace",
                   fontSize: '0.8rem',
@@ -224,7 +250,7 @@ function About() {
                 }}
               >
                 {t.about.bio2}
-              </p>
+              </motion.p>
             </div>
 
             {/* Stack tags with stagger animation */}

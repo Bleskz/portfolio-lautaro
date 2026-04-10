@@ -121,10 +121,14 @@ function SkillBar({ name, pct, index }) {
   )
 }
 
-// Renders a channel card with animated header line and all skill bars
-function ChannelCard({ channel }) {
+// Renders a channel card with animated header line and all skill bars — slides up on entry
+function ChannelCard({ channel, index }) {
   return (
-    <div
+    <motion.div
+      initial={{ opacity: 0, y: 28 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.05 }}
+      transition={{ duration: 0.4, delay: index * 0.1 }}
       className="p-6"
       style={{
         border: `1px solid ${C.g(0.09)}`,
@@ -163,7 +167,7 @@ function ChannelCard({ channel }) {
       {channel.skills.map((skill, i) => (
         <SkillBar key={skill.name} name={skill.name} pct={skill.pct} index={i} />
       ))}
-    </div>
+    </motion.div>
   )
 }
 
@@ -201,8 +205,8 @@ function Skills() {
         />
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {channels.map((channel) => (
-            <ChannelCard key={channel.name} channel={channel} />
+          {channels.map((channel, i) => (
+            <ChannelCard key={channel.name} channel={channel} index={i} />
           ))}
         </div>
       </div>
