@@ -139,8 +139,8 @@ async function getLibrary(steamId) {
     file: 'CoreTracker/database.js',
     code:
 `// Register new well sample
-async function addSample(data) {
-  const db = await getDatabase()
+function addSample(data) {
+  const db = getDatabase()
   const stmt = db.prepare(
     'INSERT INTO samples ' +
     '(well_id, depth, type, date) ' +
