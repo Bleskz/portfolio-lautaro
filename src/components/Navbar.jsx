@@ -73,20 +73,31 @@ function Navbar({ lenisRef }) {
   const [activeId, setActiveId] = useState('home')
   const [glitchId, setGlitchId] = useState(null)
 
-  // Track which section is in view via IntersectionObserver
+  // Track active section: whichever section's top is closest to (but above) the middle of the viewport
   useEffect(() => {
     const ids = ['home', 'about', 'projects', 'skills', 'contact']
-    const observers = ids.map(id => {
-      const el = document.getElementById(id)
-      if (!el) return null
-      const obs = new IntersectionObserver(
-        ([entry]) => { if (entry.isIntersecting) setActiveId(id) },
-        { threshold: 0.25 }
-      )
-      obs.observe(el)
-      return obs
-    })
-    return () => observers.forEach(o => o?.disconnect())
+
+    function onScroll() {
+      const mid = window.innerHeight / 2
+      let closest = ids[0]
+      let closestDist = Infinity
+      for (const id of ids) {
+        const el = document.getElementById(id)
+        if (!el) continue
+        const rect = el.getBoundingClientRect()
+        // Distance from top of section to mid-screen, only count sections that have started
+        const dist = Math.abs(rect.top - mid)
+        if (dist < closestDist) {
+          closestDist = dist
+          closest = id
+        }
+      }
+      setActiveId(closest)
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true })
+    onScroll() // run once on mount
+    return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
   // Trigger a short glitch on the link that just became active
