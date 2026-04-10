@@ -1,5 +1,5 @@
 // Contact section — OPEN_CHANNEL: static terminal simulation + contact form
-import { useState } from 'react'
+import { useState, useId } from 'react'
 import { motion } from 'framer-motion'
 import SectionHeader from './SectionHeader'
 import { useLang } from '../context/LangContext'
@@ -88,7 +88,88 @@ function Terminal({ t }) {
   )
 }
 
-// Contact form with focus glow and success state on submit
+// Input/textarea with a blinking terminal cursor when the field is empty and unfocused
+function TerminalField({ id, as: Tag = 'input', label, placeholder, value, onChange, disabled, type, rows }) {
+  const [focused, setFocused] = useState(false)
+  const showCursor = value === '' && !focused
+
+  const baseInputStyle = {
+    width: '100%',
+    backgroundColor: C.cardBg,
+    border: `1px solid ${C.g(0.14)}`,
+    color: C.white,
+    fontFamily: "'Share Tech Mono', monospace",
+    fontSize: '0.78rem',
+    padding: '0.65rem 0.8rem',
+    outline: 'none',
+    transition: 'border-color 0.2s, box-shadow 0.2s',
+    ...(Tag === 'textarea' ? { resize: 'vertical' } : {}),
+  }
+
+  function onFocus(e) {
+    setFocused(true)
+    e.target.style.border = `1px solid ${C.borderStrong}`
+    e.target.style.boxShadow = `0 0 0 1px ${C.borderStrong}, 0 0 20px ${C.g(0.1)}`
+  }
+
+  function onBlur(e) {
+    setFocused(false)
+    e.target.style.border = `1px solid ${C.g(0.14)}`
+    e.target.style.boxShadow = 'none'
+  }
+
+  return (
+    <div>
+      <label htmlFor={id} style={{
+        fontFamily: "'Share Tech Mono', monospace",
+        fontSize: '0.6rem',
+        color: C.g(0.6),
+        display: 'block',
+        marginBottom: '0.4rem',
+        letterSpacing: '0.05em',
+      }}>
+        {label}
+      </label>
+      <div style={{ position: 'relative' }}>
+        <Tag
+          id={id}
+          type={type}
+          rows={rows}
+          placeholder={showCursor ? '' : placeholder}
+          value={value}
+          onChange={onChange}
+          onFocus={onFocus}
+          onBlur={onBlur}
+          disabled={disabled}
+          required
+          className="contact-input"
+          style={baseInputStyle}
+        />
+        {/* Blinking terminal cursor — visible only when field is empty and unfocused */}
+        {showCursor && (
+          <span
+            aria-hidden="true"
+            style={{
+              position: 'absolute',
+              left: '0.8rem',
+              top: Tag === 'textarea' ? '0.65rem' : '50%',
+              transform: Tag === 'textarea' ? 'none' : 'translateY(-50%)',
+              fontFamily: "'Share Tech Mono', monospace",
+              fontSize: '0.78rem',
+              color: C.w(0.25),
+              pointerEvents: 'none',
+              fontStyle: 'italic',
+            }}
+          >
+            {placeholder}&nbsp;<span className="terminal-cursor" style={{ color: C.green, fontStyle: 'normal' }}>▌</span>
+          </span>
+        )}
+      </div>
+    </div>
+  )
+}
+
+// Contact form with terminal cursor fields and success state on submit
 function ContactForm() {
   const { t } = useLang()
   const [status, setStatus] = useState('idle') // 'idle' | 'sending' | 'transmitted'
@@ -105,38 +186,7 @@ function ContactForm() {
     setForm({ name: '', email: '', message: '' })
   }
 
-  const baseInputStyle = {
-    width: '100%',
-    backgroundColor: C.cardBg,
-    border: `1px solid ${C.g(0.14)}`,
-    color: C.white,
-    fontFamily: "'Share Tech Mono', monospace",
-    fontSize: '0.78rem',
-    padding: '0.65rem 0.8rem',
-    outline: 'none',
-    transition: 'border-color 0.2s, box-shadow 0.2s',
-  }
-
-  const labelStyle = {
-    fontFamily: "'Share Tech Mono', monospace",
-    fontSize: '0.6rem',
-    color: C.g(0.6),
-    display: 'block',
-    marginBottom: '0.4rem',
-    letterSpacing: '0.05em',
-  }
-
-  // Applies stronger glow on focus
-  function onFocus(e) {
-    e.target.style.border = `1px solid ${C.borderStrong}`
-    e.target.style.boxShadow = `0 0 0 1px ${C.borderStrong}, 0 0 20px ${C.g(0.1)}`
-  }
-
-  // Removes glow on blur
-  function onBlur(e) {
-    e.target.style.border = `1px solid ${C.g(0.14)}`
-    e.target.style.boxShadow = 'none'
-  }
+  const disabled = status === 'sending' || status === 'transmitted'
 
   return (
     <>
@@ -146,60 +196,37 @@ function ContactForm() {
       </div>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-        <div>
-          <label htmlFor="contact-name" style={labelStyle}>// SENDER_ID</label>
-          <input
-            id="contact-name"
-            type="text"
-            placeholder={t.contact.namePlaceholder}
-            value={form.name}
-            onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-            style={baseInputStyle}
-            onFocus={onFocus}
-            onBlur={onBlur}
-            className="contact-input"
-            required
-            disabled={status === 'sending' || status === 'transmitted'}
-          />
-        </div>
-
-        <div>
-          <label htmlFor="contact-email" style={labelStyle}>// RETURN_FREQ</label>
-          <input
-            id="contact-email"
-            type="email"
-            placeholder="your@email.com"
-            value={form.email}
-            onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
-            style={baseInputStyle}
-            onFocus={onFocus}
-            onBlur={onBlur}
-            className="contact-input"
-            required
-            disabled={status === 'sending' || status === 'transmitted'}
-          />
-        </div>
-
-        <div>
-          <label htmlFor="contact-message" style={labelStyle}>// PAYLOAD</label>
-          <textarea
-            id="contact-message"
-            rows={5}
-            placeholder={t.contact.msgPlaceholder}
-            value={form.message}
-            onChange={(e) => setForm((f) => ({ ...f, message: e.target.value }))}
-            style={{ ...baseInputStyle, resize: 'vertical' }}
-            onFocus={onFocus}
-            onBlur={onBlur}
-            className="contact-input"
-            required
-            disabled={status === 'sending' || status === 'transmitted'}
-          />
-        </div>
+        <TerminalField
+          id="contact-name"
+          label="// SENDER_ID"
+          placeholder={t.contact.namePlaceholder}
+          value={form.name}
+          onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
+          disabled={disabled}
+        />
+        <TerminalField
+          id="contact-email"
+          type="email"
+          label="// RETURN_FREQ"
+          placeholder="your@email.com"
+          value={form.email}
+          onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
+          disabled={disabled}
+        />
+        <TerminalField
+          id="contact-message"
+          as="textarea"
+          rows={5}
+          label="// PAYLOAD"
+          placeholder={t.contact.msgPlaceholder}
+          value={form.message}
+          onChange={(e) => setForm((f) => ({ ...f, message: e.target.value }))}
+          disabled={disabled}
+        />
 
         <button
           type="submit"
-          disabled={status === 'sending' || status === 'transmitted'}
+          disabled={disabled}
           style={{
             backgroundColor: status === 'transmitted' ? C.cyan : C.green,
             color: C.bg,
@@ -208,10 +235,9 @@ function ContactForm() {
             fontWeight: 700,
             padding: '0.85rem 2rem',
             border: 'none',
-            cursor: status !== 'idle' ? 'not-allowed' : 'pointer',
-            opacity: status !== 'idle' ? 0.7 : 1,
-            clipPath:
-              'polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px))',
+            cursor: disabled ? 'not-allowed' : 'pointer',
+            opacity: disabled ? 0.7 : 1,
+            clipPath: 'polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px))',
             transition: 'background-color 0.3s, opacity 0.2s',
             letterSpacing: '0.1em',
             alignSelf: 'flex-start',
@@ -221,7 +247,7 @@ function ContactForm() {
         </button>
       </form>
 
-      {/* Placeholder italic + color — needs CSS, not achievable inline */}
+      {/* Placeholder italic + color + cursor blink */}
       <style>{`
         .contact-input::placeholder {
           color: ${C.w(0.2)};

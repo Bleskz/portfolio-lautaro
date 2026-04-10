@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useLang } from '../context/LangContext'
 import useReducedMotion from '../hooks/useReducedMotion'
@@ -70,6 +70,32 @@ function Navbar({ lenisRef }) {
   const { lang, changeLang, t } = useLang()
   const [mobileOpen, setMobileOpen] = useState(false)
   const reducedMotion = useReducedMotion()
+  const [activeId, setActiveId] = useState('home')
+  const [glitchId, setGlitchId] = useState(null)
+
+  // Track which section is in view via IntersectionObserver
+  useEffect(() => {
+    const ids = ['home', 'about', 'projects', 'skills', 'contact']
+    const observers = ids.map(id => {
+      const el = document.getElementById(id)
+      if (!el) return null
+      const obs = new IntersectionObserver(
+        ([entry]) => { if (entry.isIntersecting) setActiveId(id) },
+        { threshold: 0.25 }
+      )
+      obs.observe(el)
+      return obs
+    })
+    return () => observers.forEach(o => o?.disconnect())
+  }, [])
+
+  // Trigger a short glitch on the link that just became active
+  useEffect(() => {
+    if (reducedMotion) return
+    setGlitchId(activeId)
+    const t = setTimeout(() => setGlitchId(null), 350)
+    return () => clearTimeout(t)
+  }, [activeId, reducedMotion])
 
   const NAV_LINKS = [
     { num: '01.', label: t.nav.home,     id: 'home'     },
@@ -157,7 +183,8 @@ function Navbar({ lenisRef }) {
           style={{ gap: '2rem', alignItems: 'center' }}
         >
           {NAV_LINKS.map(({ num, label, id }) => (
-            <NavLink key={id} num={num} label={label} id={id} lenisRef={lenisRef} />
+            <NavLink key={id} num={num} label={label} id={id} lenisRef={lenisRef}
+              active={activeId === id} glitch={glitchId === id} />
           ))}
         </nav>
 
@@ -254,8 +281,8 @@ function Navbar({ lenisRef }) {
   )
 }
 
-// Single nav link with hover effect
-function NavLink({ num, label, id, lenisRef }) {
+// Single nav link — highlights when section is active, glitches on transition
+function NavLink({ num, label, id, lenisRef, active, glitch }) {
   return (
     <motion.button
       onClick={() => scrollTo(id, lenisRef)}
@@ -273,33 +300,31 @@ function NavLink({ num, label, id, lenisRef }) {
         alignItems: 'center',
         gap: '0.3rem',
       }}
-      className="nav-link-btn"
     >
       <span style={{ color: C.green }}>{num}</span>
-      <span
+      <motion.span
+        animate={glitch
+          ? { x: [-4, 3, -1, 0], color: [C.cyan, C.cyan, C.green, active ? C.green : C.textDim] }
+          : { x: 0, color: active ? C.green : C.textDim }
+        }
+        transition={glitch
+          ? { duration: 0.18, ease: 'easeOut' }
+          : { duration: 0.25 }
+        }
         style={{
-          color: C.textDim,
-          transition: 'color 0.2s, text-shadow 0.2s',
+          display: 'inline-block',
+          textShadow: active ? `0 0 10px ${C.g(0.6)}` : 'none',
+          transition: 'text-shadow 0.25s',
         }}
         onMouseEnter={e => {
-          e.currentTarget.style.color = C.green
           e.currentTarget.style.textShadow = `0 0 10px ${C.green}`
         }}
         onMouseLeave={e => {
-          e.currentTarget.style.color = C.textDim
-          e.currentTarget.style.textShadow = 'none'
-        }}
-        onFocus={e => {
-          e.currentTarget.style.color = C.green
-          e.currentTarget.style.textShadow = `0 0 10px ${C.green}`
-        }}
-        onBlur={e => {
-          e.currentTarget.style.color = C.textDim
-          e.currentTarget.style.textShadow = 'none'
+          e.currentTarget.style.textShadow = active ? `0 0 10px ${C.g(0.6)}` : 'none'
         }}
       >
         {label}
-      </span>
+      </motion.span>
     </motion.button>
   )
 }

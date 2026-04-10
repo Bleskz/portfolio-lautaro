@@ -1,16 +1,28 @@
-// Reusable section header: vertical tag, split-color title, subtitle, decorative number
-import { motion } from 'framer-motion'
+// Reusable section header: vertical tag, split-color title with glitch-on-enter, subtitle
+import { useRef, useEffect } from 'react'
+import { motion, useAnimation, useInView } from 'framer-motion'
 import { C } from '../theme/colors'
 
 function SectionHeader({ tag, title, accent, subtitle }) {
-  return (
-    <div className="relative mb-16">
+  const ref = useRef(null)
+  const inView = useInView(ref, { once: true, amount: 0.05 })
+  const controls = useAnimation()
 
+  // Sequence: fade-in → quick glitch x-shift once the header enters viewport
+  useEffect(() => {
+    if (!inView) return
+    async function sequence() {
+      await controls.start({ opacity: 1, y: 0, transition: { duration: 0.4, ease: 'easeOut' } })
+      await controls.start({ x: [-6, 5, -2, 0], transition: { duration: 0.18, ease: 'easeOut' } })
+    }
+    sequence()
+  }, [inView, controls])
+
+  return (
+    <div className="relative mb-16" ref={ref}>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.05 }}
-        transition={{ duration: 0.4 }}
+        animate={controls}
         className="flex items-start gap-6"
       >
         {/* Vertical tag rotated on the left */}
