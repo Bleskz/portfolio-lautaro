@@ -255,9 +255,9 @@ function HeroDecor({ reducedMotion }) {
 // Roles cycled by the typewriter — tech terms, no translation needed
 const ROLES = [
   'Fullstack Developer',
-  'Chrome Extension Dev',
-  'Desktop App Builder',
-  'React + Node.js Dev',
+  'React + Node.js',
+  'Ships Real Products',
+  'Open to Work',
 ]
 
 // Cycles through ROLES with a character-by-character type → wait → erase loop
