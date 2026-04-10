@@ -100,151 +100,155 @@ function DataStreams() {
   )
 }
 
-// Oscilloscope signal monitor — right column decoration, replaces diamond
-function OscilloscopeDecor({ reducedMotion }) {
-  const cycleW = 100
-  const amp    = 55
-  const HW     = cycleW / 2
-  const k      = 0.3528  // cubic bezier sine approximation constant
-
-  // Main wave path — 6 cycles wide for a seamless horizontal scroll loop
-  let mainWave = 'M 0,0'
-  for (let i = 0; i < 6; i++) {
-    const x = i * cycleW
-    mainWave += ` C ${x + k * HW},${-amp} ${x + HW - k * HW},${-amp} ${x + HW},0`
-    mainWave += ` C ${x + HW + k * HW},${amp} ${x + cycleW - k * HW},${amp} ${x + cycleW},0`
+// Real code snippets from each project — cycled in the live panel
+const CODE_SNIPPETS = [
+  {
+    file: 'TabFlow/background.js',
+    code:
+`// Save current tab session
+async function saveSession(name) {
+  const tabs = await chrome.tabs.query({
+    currentWindow: true
+  })
+  const session = {
+    name,
+    tabs: tabs.map(t => ({
+      url:   t.url,
+      title: t.title,
+    }))
   }
+  await chrome.storage.local.set({
+    [name]: session
+  })
+}`,
+  },
+  {
+    file: 'SteamAnalyzer/api.js',
+    code:
+`// Fetch player game library
+async function getLibrary(steamId) {
+  const url = '/api/steam/' + steamId
+  const res = await fetch(url)
+  const { games } = await res.json()
+  return games.sort(
+    (a, b) => b.playtime - a.playtime
+  )
+}`,
+  },
+  {
+    file: 'CoreTracker/database.js',
+    code:
+`// Register new well sample
+async function addSample(data) {
+  const db = await getDatabase()
+  const stmt = db.prepare(
+    'INSERT INTO samples ' +
+    '(well_id, depth, type, date) ' +
+    'VALUES (?, ?, ?, ?)'
+  )
+  return stmt.run(
+    data.wellId, data.depth,
+    data.type,   Date.now()
+  )
+}`,
+  },
+]
 
-  // Secondary wave — different period, faint cyan, interference look
-  const cW2  = 155
-  const amp2 = 22
-  const HW2  = cW2 / 2
-  let secondWave = 'M 0,0'
-  for (let i = 0; i < 5; i++) {
-    const x = i * cW2
-    secondWave += ` C ${x + k * HW2},${-amp2} ${x + HW2 - k * HW2},${-amp2} ${x + HW2},0`
-    secondWave += ` C ${x + HW2 + k * HW2},${amp2} ${x + cW2 - k * HW2},${amp2} ${x + cW2},0`
+// Colors a single line — comments green, everything else near-white
+function CodeLine({ line }) {
+  if (line.trimStart().startsWith('//')) {
+    return <span style={{ color: C.green, opacity: 0.55 }}>{line}</span>
   }
+  return <span style={{ color: 'rgba(232,255,232,0.78)' }}>{line}</span>
+}
 
-  const sx  = 10
-  const sy  = 50
-  const sw  = 400
-  const sh  = 260
-  const sCY = sy + sh / 2  // center Y = 180
+// Terminal panel — types real project code on a loop while the page is open
+function LiveCodePanel() {
+  const [idx, setIdx] = useState(0)
+  const [charCount, setCharCount] = useState(0)
+  const snippet = CODE_SNIPPETS[idx]
 
-  // Grid: 9 columns × 5 rows of phosphor dots
-  const gridXs = [0, 50, 100, 150, 200, 250, 300, 350, 400]
-  const gridYs = [-120, -60, 0, 60, 120]
+  // Advance one character at 28ms; when done, pause 2.8s then move to next snippet
+  useEffect(() => {
+    if (charCount < snippet.code.length) {
+      const t = setTimeout(() => setCharCount(c => c + 1), 28)
+      return () => clearTimeout(t)
+    }
+    const t = setTimeout(() => {
+      setCharCount(0)
+      setIdx(i => (i + 1) % CODE_SNIPPETS.length)
+    }, 2800)
+    return () => clearTimeout(t)
+  }, [charCount, idx])
+
+  const lines = snippet.code.slice(0, charCount).split('\n')
 
   return (
     <motion.div
-      animate={{ y: [0, -14, 0] }}
-      transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut', delay: 0.3 }}
-      style={{ position: 'relative', width: '100%', maxWidth: '460px' }}
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.45, delay: 0.5 }}
+      style={{ width: '100%', maxWidth: '460px' }}
     >
-      <svg viewBox="0 0 420 380" style={{ width: '100%', overflow: 'visible' }} aria-hidden="true">
-        <defs>
-          <clipPath id="osc-clip">
-            <rect x={sx} y={sy} width={sw} height={sh} />
-          </clipPath>
-          {/* Phosphor glow — blurred copy layered under the sharp wave */}
-          <filter id="osc-glow" x="-20%" y="-20%" width="140%" height="140%">
-            <feGaussianBlur in="SourceGraphic" stdDeviation="2.5" result="blur" />
-            <feMerge>
-              <feMergeNode in="blur" />
-              <feMergeNode in="SourceGraphic" />
-            </feMerge>
-          </filter>
-        </defs>
+      <div style={{
+        backgroundColor: 'rgba(2,5,2,0.92)',
+        border: '1px solid rgba(0,255,65,0.18)',
+        boxShadow: '0 0 30px rgba(0,255,65,0.05), inset 0 0 60px rgba(0,255,65,0.01)',
+      }}>
+        {/* Title bar */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          padding: '10px 14px',
+          borderBottom: '1px solid rgba(0,255,65,0.1)',
+        }}>
+          <span style={{ width: 10, height: 10, borderRadius: '50%', backgroundColor: C.red, display: 'inline-block', opacity: 0.8 }} />
+          <span style={{ width: 10, height: 10, borderRadius: '50%', backgroundColor: '#FFD700', display: 'inline-block', opacity: 0.8 }} />
+          <span style={{ width: 10, height: 10, borderRadius: '50%', backgroundColor: C.green, display: 'inline-block', opacity: 0.8 }} />
+          <span style={{
+            marginLeft: 6,
+            fontFamily: "'Share Tech Mono', monospace",
+            fontSize: '0.65rem',
+            color: 'rgba(0,255,65,0.5)',
+            letterSpacing: '0.04em',
+          }}>
+            ~/projects/{snippet.file}
+          </span>
+        </div>
 
-        {/* ── FRAME ── */}
-        {/* Outer bezel — title bar + screen in one rect */}
-        <rect x={sx} y={sy - 32} width={sw} height={sh + 32}
-          fill="none" stroke={C.green} strokeWidth="1.5" opacity="0.5" rx="2" />
-
-        {/* Title bar fill */}
-        <rect x={sx + 1} y={sy - 31} width={sw - 2} height={30}
-          fill="rgba(0,255,65,0.025)" />
-
-        {/* Window traffic-light dots */}
-        <circle cx={sx + 16} cy={sy - 16} r="5" fill="#FF003C" opacity="0.8" />
-        <circle cx={sx + 33} cy={sy - 16} r="5" fill="#FFD700" opacity="0.8" />
-        <circle cx={sx + 50} cy={sy - 16} r="5" fill={C.green} opacity="0.8" />
-
-        {/* Title */}
-        <text x={sx + 68} y={sy - 11}
-          fontFamily="'Share Tech Mono', 'Courier New', monospace"
-          fontSize="11.5" fill={C.green} opacity="0.55" letterSpacing="2">
-          SIGNAL_MONITOR.EXE
-        </text>
-
-        {/* ── SCREEN ── */}
-        <rect x={sx} y={sy} width={sw} height={sh} fill="rgba(0,255,65,0.012)" />
-
-        {/* Grid dots */}
-        {gridXs.map(gx =>
-          gridYs.map(gy => (
-            <circle
-              key={`${gx}-${gy}`}
-              cx={sx + gx} cy={sCY + gy}
-              r="1.3" fill={C.green} opacity="0.16"
-            />
-          ))
-        )}
-
-        {/* Center dashed baseline */}
-        <line x1={sx} y1={sCY} x2={sx + sw} y2={sCY}
-          stroke={C.green} strokeWidth="0.4" opacity="0.1" strokeDasharray="3 5" />
-
-        {/* ── WAVES — clipped to screen bounds ── */}
-        <g clipPath="url(#osc-clip)">
-          {/* Secondary wave: cyan, slower, interference layer */}
-          {!reducedMotion && (
-            <g transform={`translate(${sx}, ${sCY})`}>
-              <motion.g
-                animate={{ x: [0, -cW2] }}
-                transition={{ duration: 4.8, repeat: Infinity, ease: 'linear' }}
-              >
-                <path d={secondWave} fill="none" stroke={C.cyan} strokeWidth="1" opacity="0.18" />
-              </motion.g>
-            </g>
-          )}
-
-          {/* Main wave: green with phosphor glow */}
-          <g transform={`translate(${sx}, ${sCY})`}>
-            <motion.g
-              animate={reducedMotion ? {} : { x: [0, -cycleW] }}
-              transition={{ duration: 2.4, repeat: Infinity, ease: 'linear' }}
-            >
-              <path d={mainWave} fill="none" stroke={C.green} strokeWidth="2"
-                filter="url(#osc-glow)" opacity="0.92" />
-            </motion.g>
-          </g>
-        </g>
-
-        {/* ── BOTTOM READOUTS ── */}
-        <line x1={sx} y1={sy + sh + 14} x2={sx + sw} y2={sy + sh + 14}
-          stroke={C.green} strokeWidth="0.4" opacity="0.18" />
-
-        <text x={sx + 8} y={sy + sh + 32}
-          fontFamily="'Share Tech Mono', 'Courier New', monospace"
-          fontSize="10.5" fill={C.green} opacity="0.5" letterSpacing="0.8">CH1</text>
-        <text x={sx + 44} y={sy + sh + 32}
-          fontFamily="'Share Tech Mono', 'Courier New', monospace"
-          fontSize="10.5" fill={C.white} opacity="0.3" letterSpacing="0.5">TIME/DIV: 2ms</text>
-        <text x={sx + 192} y={sy + sh + 32}
-          fontFamily="'Share Tech Mono', 'Courier New', monospace"
-          fontSize="10.5" fill={C.white} opacity="0.3" letterSpacing="0.5">VOLT/DIV: 1V</text>
-        <text x={sx + 340} y={sy + sh + 32}
-          fontFamily="'Share Tech Mono', 'Courier New', monospace"
-          fontSize="10.5" fill={C.green} opacity="0.55" letterSpacing="0.5">● RUN</text>
-
-        <text x={sx + 8} y={sy + sh + 55}
-          fontFamily="'Share Tech Mono', 'Courier New', monospace"
-          fontSize="10" fill={C.green} opacity="0.25" letterSpacing="0.5">
-          FREQ: 1.00kHz  ·  AMP: ±1.0V  ·  TRIGGER: AUTO
-        </text>
-      </svg>
+        {/* Code area */}
+        <div style={{
+          padding: '14px 16px',
+          fontFamily: "'Share Tech Mono', monospace",
+          fontSize: '0.72rem',
+          lineHeight: 1.75,
+          minHeight: '310px',
+          overflow: 'hidden',
+        }}>
+          {lines.map((line, i) => (
+            <div key={i} style={{ display: 'flex', gap: '1.1rem' }}>
+              {/* Line number */}
+              <span style={{
+                color: 'rgba(0,255,65,0.2)',
+                userSelect: 'none',
+                flexShrink: 0,
+                minWidth: '1.4rem',
+                textAlign: 'right',
+              }}>
+                {i + 1}
+              </span>
+              {/* Code with cursor on last line */}
+              <span>
+                <CodeLine line={line} />
+                {i === lines.length - 1 && (
+                  <span aria-hidden="true" className="typewriter-cursor" style={{ color: C.green }}>▌</span>
+                )}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
     </motion.div>
   )
 }
@@ -630,7 +634,7 @@ function Hero() {
           className="hidden lg:flex"
           style={{ flex: '1', justifyContent: 'center', alignItems: 'center' }}
         >
-          <OscilloscopeDecor reducedMotion={reducedMotion} />
+          <LiveCodePanel />
         </div>
       </div>
 
