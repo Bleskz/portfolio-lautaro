@@ -106,17 +106,19 @@ function ProjectCard({ sigId, type, freq, name, codename, description, stack, co
         <FreqLabel freq={freq} />
       </div>
 
-      {/* Project name */}
-      <h3
+      {/* Project name — x-jitter + cyan flash on hover */}
+      <motion.h3
+        whileHover={{ x: [0, -4, 4, -2, 2, 0], color: [C.white, C.cyan, C.white], transition: { duration: 0.3 } }}
         style={{
           fontFamily: "'Bebas Neue', sans-serif",
           fontSize: '1.9rem',
           color: C.white,
           lineHeight: 1.05,
+          cursor: 'default',
         }}
       >
         {name}
-      </h3>
+      </motion.h3>
 
       {/* Codename */}
       <p

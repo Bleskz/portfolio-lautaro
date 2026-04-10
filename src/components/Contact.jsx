@@ -1,15 +1,62 @@
 // Contact section — OPEN_CHANNEL: static terminal simulation + contact form
-import { useState, useId } from 'react'
-import { motion } from 'framer-motion'
+import { useState, useEffect, useRef } from 'react'
+import { motion, useInView } from 'framer-motion'
 import SectionHeader from './SectionHeader'
 import { useLang } from '../context/LangContext'
 import { LINKS } from '../config/links'
 import { C } from '../theme/colors'
 
-// Simulated terminal card — static display, not interactive
+// Types text character by character when active — shows a cursor while typing
+function TypewriterText({ text, active, delay = 0, speed = 20, style }) {
+  const [displayed, setDisplayed] = useState('')
+  const [done, setDone] = useState(false)
+
+  useEffect(() => {
+    if (!active) return
+    let timeout, interval
+    timeout = setTimeout(() => {
+      let i = 0
+      interval = setInterval(() => {
+        i++
+        setDisplayed(text.slice(0, i))
+        if (i >= text.length) { clearInterval(interval); setDone(true) }
+      }, speed)
+    }, delay)
+    return () => { clearTimeout(timeout); clearInterval(interval) }
+  }, [active, text, delay, speed])
+
+  return (
+    <span style={style}>
+      {displayed}
+      {!done && active && <span style={{ color: C.green, fontStyle: 'normal' }}>▌</span>}
+    </span>
+  )
+}
+
+// Terminal simulation — commands type out sequentially, responses fade in after each
 function Terminal({ t }) {
+  const ref = useRef(null)
+  const inView = useInView(ref, { once: true, amount: 0.4 })
+
+  const speed = 20
+  const cmd1 = `$ ping --target lautaro.velo`
+  const cmd2 = `$ mail --to ${LINKS.email}`
+  const cmd3 = `$ connect --discord ${LINKS.discord}`
+  const cmd4 = `$ open ${LINKS.github.replace('https://', '')}`
+
+  // Each command starts after the previous finishes + 150ms buffer
+  const d1 = 0
+  const d2 = d1 + cmd1.length * speed + 150
+  const d3 = d2 + cmd2.length * speed + 150
+  const d4 = d3 + cmd3.length * speed + 150
+  const dCursor = d4 + cmd4.length * speed + 200
+
+  // Helper: delay in seconds for a response line after its command finishes
+  const resp = (start, cmd) => ({ delay: (start + cmd.length * speed + 60) / 1000, duration: 0.2 })
+
   return (
     <div
+      ref={ref}
       style={{
         backgroundColor: C.terminalBg,
         borderTop: `1px solid ${C.border}`,
@@ -29,52 +76,43 @@ function Terminal({ t }) {
         <span style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: C.green, display: 'inline-block' }} />
         <span
           className="ml-2"
-          style={{
-            fontFamily: "'Share Tech Mono', monospace",
-            fontSize: '0.65rem',
-            color: C.textFaint,
-            letterSpacing: '0.05em',
-          }}
+          style={{ fontFamily: "'Share Tech Mono', monospace", fontSize: '0.65rem', color: C.textFaint, letterSpacing: '0.05em' }}
         >
           CONTACT_PROTOCOL.TERMINAL
         </span>
       </div>
 
-      {/* Terminal output lines — stagger each line like a terminal printing */}
-      <motion.div
-        className="p-5"
-        variants={{ visible: { transition: { staggerChildren: 0.12 } } }}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.3 }}
-        style={{
-          fontFamily: "'Share Tech Mono', monospace",
-          fontSize: '0.76rem',
-          lineHeight: '1.9',
-        }}
-      >
-        {[
-          <p style={{ color: C.w(0.45) }}>$ ping --target lautaro.velo</p>,
-          <p style={{ color: C.white, paddingLeft: '1rem' }}>{t.contact.handshake}</p>,
-          <p className="mt-2" style={{ color: C.w(0.45) }}>$ mail --to {LINKS.email}</p>,
-          <p style={{ color: C.cyan, paddingLeft: '1rem' }}>{t.contact.channelOpen}</p>,
-          <p className="mt-2" style={{ color: C.w(0.45) }}>$ connect --discord {LINKS.discord}</p>,
-          <p style={{ color: C.cyan, paddingLeft: '1rem' }}>{t.contact.ready}</p>,
-          <p className="mt-2" style={{ color: C.w(0.45) }}>$ open {LINKS.github.replace('https://', '')}</p>,
-          <p style={{ color: C.cyan, paddingLeft: '1rem' }}>{t.contact.reposAvailable}</p>,
-          <p className="mt-3" style={{ color: C.green }}>$ <span className="terminal-cursor">█</span></p>,
-        ].map((line, i) => (
-          <motion.div
-            key={i}
-            variants={{
-              hidden: { opacity: 0, x: -8 },
-              visible: { opacity: 1, x: 0, transition: { duration: 0.2 } },
-            }}
-          >
-            {line}
-          </motion.div>
-        ))}
-      </motion.div>
+      {/* Terminal lines — commands type out, responses fade in after each command */}
+      <div className="p-5" style={{ fontFamily: "'Share Tech Mono', monospace", fontSize: '0.76rem', lineHeight: '1.9' }}>
+        <p style={{ color: C.w(0.45) }}>
+          <TypewriterText text={cmd1} active={inView} delay={d1} speed={speed} />
+        </p>
+        <motion.p initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} transition={resp(d1, cmd1)}
+          style={{ color: C.white, paddingLeft: '1rem' }}>{t.contact.handshake}</motion.p>
+
+        <p className="mt-2" style={{ color: C.w(0.45) }}>
+          <TypewriterText text={cmd2} active={inView} delay={d2} speed={speed} />
+        </p>
+        <motion.p initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} transition={resp(d2, cmd2)}
+          style={{ color: C.cyan, paddingLeft: '1rem' }}>{t.contact.channelOpen}</motion.p>
+
+        <p className="mt-2" style={{ color: C.w(0.45) }}>
+          <TypewriterText text={cmd3} active={inView} delay={d3} speed={speed} />
+        </p>
+        <motion.p initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} transition={resp(d3, cmd3)}
+          style={{ color: C.cyan, paddingLeft: '1rem' }}>{t.contact.ready}</motion.p>
+
+        <p className="mt-2" style={{ color: C.w(0.45) }}>
+          <TypewriterText text={cmd4} active={inView} delay={d4} speed={speed} />
+        </p>
+        <motion.p initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} transition={resp(d4, cmd4)}
+          style={{ color: C.cyan, paddingLeft: '1rem' }}>{t.contact.reposAvailable}</motion.p>
+
+        <motion.p className="mt-3" initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}}
+          transition={{ delay: dCursor / 1000, duration: 0.1 }} style={{ color: C.green }}>
+          $ <span className="terminal-cursor">█</span>
+        </motion.p>
+      </div>
 
       {/* Blinking cursor animation — explicit exception to Framer Motion rule per spec */}
       <style>{`
@@ -256,9 +294,11 @@ function ContactForm() {
         </motion.div>
 
         <motion.div variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0, transition: { duration: 0.3 } } }}>
-        <button
+        <motion.button
           type="submit"
           disabled={disabled}
+          whileHover={!disabled ? { x: [0, -3, 3, -2, 2, 0], transition: { duration: 0.25 } } : {}}
+          whileTap={!disabled ? { scale: 0.96 } : {}}
           style={{
             backgroundColor: status === 'transmitted' ? C.cyan : C.green,
             color: C.bg,
@@ -276,7 +316,7 @@ function ContactForm() {
           }}
         >
           {status === 'sending' ? 'TRANSMITTING...' : status === 'transmitted' ? t.contact.submitted : t.contact.submit}
-        </button>
+        </motion.button>
 
         {/* Error message — visible only when a transmission error occurs */}
         {error && (
@@ -313,21 +353,24 @@ function Contact() {
       className="relative min-h-screen py-24 px-6"
       style={{ backgroundColor: C.bg }}
     >
-      {/* Decorative background number — anchored to section, not clipped */}
-      <span
+      {/* Decorative background number — slow opacity pulse */}
+      <motion.span
         className="absolute select-none pointer-events-none"
+        animate={{ opacity: [0.03, 0.07, 0.03] }}
+        transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut', delay: 2.2 }}
         style={{
           fontFamily: "'Bebas Neue', sans-serif",
           fontSize: 'clamp(8rem, 18vw, 16rem)',
-          color: C.g(0.03),
+          color: C.green,
           lineHeight: 1,
           right: '1.5vw',
           bottom: '-1vw',
           zIndex: 0,
+          opacity: 0.03,
         }}
       >
         05
-      </span>
+      </motion.span>
 
       <div className="max-w-6xl mx-auto">
         <SectionHeader

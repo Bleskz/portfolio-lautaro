@@ -30,21 +30,24 @@ function About() {
       className="relative min-h-screen flex flex-col justify-center px-6 py-32"
       style={{ backgroundColor: C.bg }}
     >
-      {/* Decorative background number — anchored to section, not clipped */}
-      <span
+      {/* Decorative background number — slow opacity pulse */}
+      <motion.span
         className="absolute select-none pointer-events-none"
+        animate={{ opacity: [0.03, 0.07, 0.03] }}
+        transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut', delay: 0 }}
         style={{
           fontFamily: "'Bebas Neue', sans-serif",
           fontSize: 'clamp(8rem, 18vw, 16rem)',
-          color: C.g(0.03),
+          color: C.green,
           lineHeight: 1,
           right: '1.5vw',
           bottom: '-1vw',
           zIndex: 0,
+          opacity: 0.03,
         }}
       >
         02
-      </span>
+      </motion.span>
 
       <div className="max-w-6xl mx-auto w-full">
         <SectionHeader
@@ -68,8 +71,26 @@ function About() {
               border: `1px solid ${C.g(0.14)}`,
               borderRadius: '2px',
               boxShadow: `0 0 30px ${C.g(0.06)}, inset 0 0 20px ${C.g(0.02)}`,
+              position: 'relative',
+              overflow: 'hidden',
             }}
           >
+            {/* Scanline sweep — runs once on entry, top to bottom */}
+            <motion.div
+              initial={{ top: '-40%' }}
+              whileInView={{ top: '120%' }}
+              viewport={{ once: true, amount: 0.05 }}
+              transition={{ duration: 0.7, ease: 'linear', delay: 0.3 }}
+              style={{
+                position: 'absolute',
+                left: 0,
+                width: '100%',
+                height: '40%',
+                background: `linear-gradient(to bottom, transparent, ${C.g(0.1)}, transparent)`,
+                pointerEvents: 'none',
+                zIndex: 2,
+              }}
+            />
             {/* Terminal title bar */}
             <div
               className="flex items-center px-4 py-2.5"
@@ -209,14 +230,19 @@ function About() {
                 }}
               >
                 {t.about.quotePart1}{' '}
-                <span
-                  style={{
-                    color: C.green,
-                    textShadow: `0 0 25px ${C.g(0.6)}`,
+                <motion.span
+                  initial={{ opacity: 0 }}
+                  whileInView={{
+                    opacity: 1,
+                    x: [0, 5, -4, 3, -1, 0],
+                    color: [C.green, C.cyan, '#FF003C', C.cyan, C.green],
                   }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.45, delay: 0.35 }}
+                  style={{ color: C.green, textShadow: `0 0 25px ${C.g(0.6)}`, display: 'inline-block' }}
                 >
                   {t.about.quoteWord}
-                </span>
+                </motion.span>
                 {' '}{t.about.quotePart2}
               </p>
             </motion.div>

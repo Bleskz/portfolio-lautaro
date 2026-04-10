@@ -41,7 +41,7 @@ function SkillBar({ name, pct, index }) {
   const inView = useInView(ref, { once: true, amount: 0.05 })
   const [count, setCount] = useState(0)
 
-  // Count up from 0 to pct using rAF when bar enters viewport
+  // Count up from 0 to pct using rAF — randomly glitches to a noise digit during animation
   useEffect(() => {
     if (!inView) return
     const duration = 800 + index * 60
@@ -50,8 +50,11 @@ function SkillBar({ name, pct, index }) {
     function tick(now) {
       const progress = Math.min((now - startTime) / duration, 1)
       const eased = 1 - Math.pow(1 - progress, 3)
-      setCount(Math.round(eased * pct))
+      const target = Math.round(eased * pct)
+      const isGlitch = Math.random() < 0.18 && progress < 0.85
+      setCount(isGlitch ? Math.floor(Math.random() * 100) : target)
       if (progress < 1) raf = requestAnimationFrame(tick)
+      else setCount(pct)
     }
     raf = requestAnimationFrame(tick)
     return () => cancelAnimationFrame(raf)
@@ -180,21 +183,24 @@ function Skills() {
       className="relative min-h-screen py-24 px-6"
       style={{ backgroundColor: C.bg }}
     >
-      {/* Decorative background number — anchored to section, not clipped */}
-      <span
+      {/* Decorative background number — slow opacity pulse */}
+      <motion.span
         className="absolute select-none pointer-events-none"
+        animate={{ opacity: [0.03, 0.07, 0.03] }}
+        transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut', delay: 0.8 }}
         style={{
           fontFamily: "'Bebas Neue', sans-serif",
           fontSize: 'clamp(8rem, 18vw, 16rem)',
-          color: C.g(0.03),
+          color: C.green,
           lineHeight: 1,
           right: '1.5vw',
           bottom: '-1vw',
           zIndex: 0,
+          opacity: 0.03,
         }}
       >
         04
-      </span>
+      </motion.span>
 
       <div className="max-w-6xl mx-auto">
         <SectionHeader

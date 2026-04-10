@@ -1,6 +1,6 @@
 // Projects section — PROJECT_LOGS: live status bar + 2×2 card grid
-import { useState, useEffect, memo } from 'react'
-import { motion } from 'framer-motion'
+import { useState, useEffect, useRef, memo } from 'react'
+import { motion, useInView } from 'framer-motion'
 import SectionHeader from './SectionHeader'
 import ProjectCard from './ProjectCard'
 import { useLang } from '../context/LangContext'
@@ -66,6 +66,32 @@ function formatTimestamp(date) {
   return `${y}.${mo}.${d}_${h}:${mi}:${s}`
 }
 
+// Types "LISTING: 04 ACTIVE_SIGNALS" character by character when in view
+const StatusTypewriter = memo(function StatusTypewriter() {
+  const full = 'LISTING: 04 ACTIVE_SIGNALS'
+  const [text, setText] = useState('')
+  const ref = useRef(null)
+  const inView = useInView(ref, { once: true })
+
+  useEffect(() => {
+    if (!inView) return
+    let i = 0
+    const id = setInterval(() => {
+      i++
+      setText(full.slice(0, i))
+      if (i >= full.length) clearInterval(id)
+    }, 32)
+    return () => clearInterval(id)
+  }, [inView])
+
+  return (
+    <span ref={ref} style={{ color: 'rgba(0,255,65,0.5)' }}>
+      {text}
+      {text.length < full.length && <span style={{ color: '#00FF41' }}>▌</span>}
+    </span>
+  )
+})
+
 // Live clock that ticks every second — memoized to prevent re-renders of parent
 const LiveClock = memo(function LiveClock() {
   const [timestamp, setTimestamp] = useState(() => formatTimestamp(new Date()))
@@ -93,21 +119,24 @@ function Projects() {
       className="relative min-h-screen flex flex-col justify-center px-6 py-24"
       style={{ backgroundColor: '#020502' }}
     >
-      {/* Decorative background number — anchored to section, not clipped */}
-      <span
+      {/* Decorative background number — slow opacity pulse */}
+      <motion.span
         className="absolute select-none pointer-events-none"
+        animate={{ opacity: [0.03, 0.07, 0.03] }}
+        transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut', delay: 1.5 }}
         style={{
           fontFamily: "'Bebas Neue', sans-serif",
           fontSize: 'clamp(8rem, 18vw, 16rem)',
-          color: 'rgba(0,255,65,0.03)',
+          color: '#00FF41',
           lineHeight: 1,
           right: '1.5vw',
           bottom: '-1vw',
           zIndex: 0,
+          opacity: 0.03,
         }}
       >
         03
-      </span>
+      </motion.span>
 
       <div className="max-w-6xl mx-auto w-full">
         <SectionHeader
@@ -131,9 +160,7 @@ function Projects() {
             border: '1px solid rgba(0,255,65,0.1)',
           }}
         >
-          <span style={{ color: 'rgba(0,255,65,0.5)' }}>
-            LISTING: 04 ACTIVE_SIGNALS
-          </span>
+          <StatusTypewriter />
           <span style={{ color: 'rgba(0,255,65,0.5)' }}>
             TIMESTAMP: <LiveClock />
           </span>
