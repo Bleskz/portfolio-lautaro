@@ -100,154 +100,151 @@ function DataStreams() {
   )
 }
 
-// Decorative right-column SVG — wireframe diamond with drawing animation + continuous life
-function HeroDecor({ reducedMotion }) {
-  // Diamond M200,24 L380,240 L200,456 L20,240 Z — perimeter ≈ 1125px
-  const dashLen = 1200
+// Oscilloscope signal monitor — right column decoration, replaces diamond
+function OscilloscopeDecor({ reducedMotion }) {
+  const cycleW = 100
+  const amp    = 55
+  const HW     = cycleW / 2
+  const k      = 0.3528  // cubic bezier sine approximation constant
+
+  // Main wave path — 6 cycles wide for a seamless horizontal scroll loop
+  let mainWave = 'M 0,0'
+  for (let i = 0; i < 6; i++) {
+    const x = i * cycleW
+    mainWave += ` C ${x + k * HW},${-amp} ${x + HW - k * HW},${-amp} ${x + HW},0`
+    mainWave += ` C ${x + HW + k * HW},${amp} ${x + cycleW - k * HW},${amp} ${x + cycleW},0`
+  }
+
+  // Secondary wave — different period, faint cyan, interference look
+  const cW2  = 155
+  const amp2 = 22
+  const HW2  = cW2 / 2
+  let secondWave = 'M 0,0'
+  for (let i = 0; i < 5; i++) {
+    const x = i * cW2
+    secondWave += ` C ${x + k * HW2},${-amp2} ${x + HW2 - k * HW2},${-amp2} ${x + HW2},0`
+    secondWave += ` C ${x + HW2 + k * HW2},${amp2} ${x + cW2 - k * HW2},${amp2} ${x + cW2},0`
+  }
+
+  const sx  = 10
+  const sy  = 50
+  const sw  = 400
+  const sh  = 260
+  const sCY = sy + sh / 2  // center Y = 180
+
+  // Grid: 9 columns × 5 rows of phosphor dots
+  const gridXs = [0, 50, 100, 150, 200, 250, 300, 350, 400]
+  const gridYs = [-120, -60, 0, 60, 120]
 
   return (
-    // Float wrapper — gentle levitation loop
     <motion.div
-      animate={{ y: [0, -16, 0] }}
-      transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut', delay: 0.2 }}
+      animate={{ y: [0, -14, 0] }}
+      transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut', delay: 0.3 }}
       style={{ position: 'relative', width: '100%', maxWidth: '460px' }}
     >
-      <svg
-        viewBox="0 0 400 480"
-        style={{ width: '100%', overflow: 'visible' }}
-        aria-hidden="true"
-      >
-        {/* Outer diamond — stroke draws on load */}
-        <motion.path
-          d="M 200,24 L 380,240 L 200,456 L 20,240 Z"
-          fill="none"
-          stroke="#00FF41"
-          strokeWidth="1.5"
-          strokeDasharray={dashLen}
-          initial={{ strokeDashoffset: dashLen }}
-          animate={{ strokeDashoffset: 0 }}
-          transition={{ duration: 1.5, ease: 'easeInOut', delay: 0.5 }}
-          style={{ filter: 'drop-shadow(0 0 5px rgba(0,255,65,0.55))' }}
-        />
+      <svg viewBox="0 0 420 380" style={{ width: '100%', overflow: 'visible' }} aria-hidden="true">
+        <defs>
+          <clipPath id="osc-clip">
+            <rect x={sx} y={sy} width={sw} height={sh} />
+          </clipPath>
+          {/* Phosphor glow — blurred copy layered under the sharp wave */}
+          <filter id="osc-glow" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="2.5" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+        </defs>
 
-        {/* Outer diamond glow pulse — breathes after the draw completes */}
-        {!reducedMotion && (
-          <motion.path
-            d="M 200,24 L 380,240 L 200,456 L 20,240 Z"
-            fill="none"
-            stroke="#00FF41"
-            strokeWidth="4"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: [0, 0.18, 0, 0.22, 0] }}
-            transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut', delay: 2.3 }}
-            style={{ filter: 'drop-shadow(0 0 10px rgba(0,255,65,0.9))' }}
-          />
+        {/* ── FRAME ── */}
+        {/* Outer bezel — title bar + screen in one rect */}
+        <rect x={sx} y={sy - 32} width={sw} height={sh + 32}
+          fill="none" stroke={C.green} strokeWidth="1.5" opacity="0.5" rx="2" />
+
+        {/* Title bar fill */}
+        <rect x={sx + 1} y={sy - 31} width={sw - 2} height={30}
+          fill="rgba(0,255,65,0.025)" />
+
+        {/* Window traffic-light dots */}
+        <circle cx={sx + 16} cy={sy - 16} r="5" fill="#FF003C" opacity="0.8" />
+        <circle cx={sx + 33} cy={sy - 16} r="5" fill="#FFD700" opacity="0.8" />
+        <circle cx={sx + 50} cy={sy - 16} r="5" fill={C.green} opacity="0.8" />
+
+        {/* Title */}
+        <text x={sx + 68} y={sy - 11}
+          fontFamily="'Share Tech Mono', 'Courier New', monospace"
+          fontSize="11.5" fill={C.green} opacity="0.55" letterSpacing="2">
+          SIGNAL_MONITOR.EXE
+        </text>
+
+        {/* ── SCREEN ── */}
+        <rect x={sx} y={sy} width={sw} height={sh} fill="rgba(0,255,65,0.012)" />
+
+        {/* Grid dots */}
+        {gridXs.map(gx =>
+          gridYs.map(gy => (
+            <circle
+              key={`${gx}-${gy}`}
+              cx={sx + gx} cy={sCY + gy}
+              r="1.3" fill={C.green} opacity="0.16"
+            />
+          ))
         )}
 
-        {/* Inner diamond — draws then breathes opacity */}
-        <motion.path
-          d="M 200,90 L 320,240 L 200,390 L 80,240 Z"
-          fill="none"
-          stroke="#00FF41"
-          strokeWidth="1"
-          strokeDasharray="900"
-          initial={{ strokeDashoffset: 900, strokeOpacity: 0.18 }}
-          animate={{
-            strokeDashoffset: 0,
-            strokeOpacity: reducedMotion ? 0.18 : [0.18, 0.38, 0.12, 0.38, 0.18],
-          }}
-          transition={{
-            strokeDashoffset: { duration: 1.4, ease: 'easeInOut', delay: 1.0 },
-            strokeOpacity: { duration: 5, repeat: Infinity, ease: 'easeInOut', delay: 2.6 },
-          }}
-        />
+        {/* Center dashed baseline */}
+        <line x1={sx} y1={sCY} x2={sx + sw} y2={sCY}
+          stroke={C.green} strokeWidth="0.4" opacity="0.1" strokeDasharray="3 5" />
 
-        {/* Pulsing ring at center — disabled under reduced motion */}
-        <motion.circle
-          cx="200" cy="240" r="18"
-          fill="none"
-          stroke="#00FF41"
-          strokeWidth="1"
-          animate={reducedMotion ? { r: 16, opacity: 0.35 } : { r: [14, 22, 14], opacity: [0.2, 0.5, 0.2] }}
-          transition={{ duration: 3, repeat: reducedMotion ? 0 : Infinity, ease: 'easeInOut' }}
-        />
+        {/* ── WAVES — clipped to screen bounds ── */}
+        <g clipPath="url(#osc-clip)">
+          {/* Secondary wave: cyan, slower, interference layer */}
+          {!reducedMotion && (
+            <g transform={`translate(${sx}, ${sCY})`}>
+              <motion.g
+                animate={{ x: [0, -cW2] }}
+                transition={{ duration: 4.8, repeat: Infinity, ease: 'linear' }}
+              >
+                <path d={secondWave} fill="none" stroke={C.cyan} strokeWidth="1" opacity="0.18" />
+              </motion.g>
+            </g>
+          )}
 
-        {/* Dot cluster — 5 dots rotating around center — disabled under reduced motion */}
-        <motion.g
-          animate={reducedMotion ? { rotate: 0 } : { rotate: 360 }}
-          transition={{ duration: 22, repeat: reducedMotion ? 0 : Infinity, ease: 'linear' }}
-          style={{ transformOrigin: '200px 240px' }}
-        >
-          {[0, 72, 144, 216, 288].map((angle, i) => {
-            const rad = (angle * Math.PI) / 180
-            const r = 52
-            const cx = 200 + r * Math.cos(rad)
-            const cy = 240 + r * Math.sin(rad)
-            return <circle key={i} cx={cx} cy={cy} r="2.5" fill="#00FF41" opacity="0.45" />
-          })}
-        </motion.g>
+          {/* Main wave: green with phosphor glow */}
+          <g transform={`translate(${sx}, ${sCY})`}>
+            <motion.g
+              animate={reducedMotion ? {} : { x: [0, -cycleW] }}
+              transition={{ duration: 2.4, repeat: Infinity, ease: 'linear' }}
+            >
+              <path d={mainWave} fill="none" stroke={C.green} strokeWidth="2"
+                filter="url(#osc-glow)" opacity="0.92" />
+            </motion.g>
+          </g>
+        </g>
 
-        {/* Crosshair lines at center — appear after the diamond draws */}
-        <motion.line
-          x1="200" y1="222" x2="200" y2="258"
-          stroke="rgba(0,255,65,0.35)" strokeWidth="1"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.9, duration: 0.3 }}
-        />
-        <motion.line
-          x1="182" y1="240" x2="218" y2="240"
-          stroke="rgba(0,255,65,0.35)" strokeWidth="1"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.9, duration: 0.3 }}
-        />
+        {/* ── BOTTOM READOUTS ── */}
+        <line x1={sx} y1={sy + sh + 14} x2={sx + sw} y2={sy + sh + 14}
+          stroke={C.green} strokeWidth="0.4" opacity="0.18" />
 
-        {/* Corner tick marks — fade in then pulse continuously */}
-        {[
-          { x: 200, y: 24 },
-          { x: 380, y: 240 },
-          { x: 200, y: 456 },
-          { x: 20, y: 240 },
-        ].map((pt, i) => (
-          <motion.circle
-            key={i}
-            cx={pt.x} cy={pt.y} r="3"
-            fill="#00FF41"
-            initial={{ opacity: 0 }}
-            animate={reducedMotion
-              ? { opacity: 0.6 }
-              : { opacity: [0, 0.7, 0.35, 0.9, 0.35] }
-            }
-            transition={reducedMotion
-              ? { delay: 1.6 + i * 0.08, duration: 0.2 }
-              : {
-                  delay: 1.6 + i * 0.08,
-                  duration: 3,
-                  times: [0, 0.12, 0.45, 0.75, 1],
-                  repeat: Infinity,
-                  repeatType: 'mirror',
-                  ease: 'easeInOut',
-                }
-            }
-          />
-        ))}
+        <text x={sx + 8} y={sy + sh + 32}
+          fontFamily="'Share Tech Mono', 'Courier New', monospace"
+          fontSize="10.5" fill={C.green} opacity="0.5" letterSpacing="0.8">CH1</text>
+        <text x={sx + 44} y={sy + sh + 32}
+          fontFamily="'Share Tech Mono', 'Courier New', monospace"
+          fontSize="10.5" fill={C.white} opacity="0.3" letterSpacing="0.5">TIME/DIV: 2ms</text>
+        <text x={sx + 192} y={sy + sh + 32}
+          fontFamily="'Share Tech Mono', 'Courier New', monospace"
+          fontSize="10.5" fill={C.white} opacity="0.3" letterSpacing="0.5">VOLT/DIV: 1V</text>
+        <text x={sx + 340} y={sy + sh + 32}
+          fontFamily="'Share Tech Mono', 'Courier New', monospace"
+          fontSize="10.5" fill={C.green} opacity="0.55" letterSpacing="0.5">● RUN</text>
+
+        <text x={sx + 8} y={sy + sh + 55}
+          fontFamily="'Share Tech Mono', 'Courier New', monospace"
+          fontSize="10" fill={C.green} opacity="0.25" letterSpacing="0.5">
+          FREQ: 1.00kHz  ·  AMP: ±1.0V  ·  TRIGGER: AUTO
+        </text>
       </svg>
-
-      {/* Horizontal scanning line — disabled under reduced motion */}
-      <motion.div
-        animate={reducedMotion ? { y: '50%', opacity: 0 } : { y: ['0%', '100%'] }}
-        transition={{ duration: 4.5, repeat: reducedMotion ? 0 : Infinity, ease: 'linear', delay: 2.2 }}
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: '8%',
-          right: '8%',
-          height: '1px',
-          background: 'linear-gradient(90deg, transparent, rgba(0,255,65,0.22), transparent)',
-          pointerEvents: 'none',
-        }}
-      />
     </motion.div>
   )
 }
@@ -633,7 +630,7 @@ function Hero() {
           className="hidden lg:flex"
           style={{ flex: '1', justifyContent: 'center', alignItems: 'center' }}
         >
-          <HeroDecor reducedMotion={reducedMotion} />
+          <OscilloscopeDecor reducedMotion={reducedMotion} />
         </div>
       </div>
 
