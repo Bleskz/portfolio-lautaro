@@ -83,7 +83,7 @@ function Terminal({ t }) {
       </div>
 
       {/* Terminal lines — commands type out, responses fade in after each command */}
-      <div className="p-5" style={{ fontFamily: "'Share Tech Mono', monospace", fontSize: '0.76rem', lineHeight: '1.9' }}>
+      <div className="p-4 sm:p-5" style={{ fontFamily: "'Share Tech Mono', monospace", fontSize: 'clamp(0.62rem, 2vw, 0.76rem)', lineHeight: '1.9', overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
         <p style={{ color: C.w(0.45) }}>
           <TypewriterText text={cmd1} active={inView} delay={d1} speed={speed} />
         </p>
@@ -350,7 +350,7 @@ function Contact() {
   return (
     <section
       id="contact"
-      className="relative min-h-screen py-24 px-6"
+      className="relative min-h-screen py-12 md:py-24 px-4 sm:px-6"
       style={{ backgroundColor: C.bg }}
     >
       {/* Decorative background number — slow opacity pulse */}

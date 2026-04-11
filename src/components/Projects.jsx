@@ -116,7 +116,7 @@ function Projects() {
   return (
     <section
       id="projects"
-      className="relative min-h-screen flex flex-col justify-center px-6 py-24"
+      className="relative min-h-screen flex flex-col justify-center px-4 sm:px-6 py-12 md:py-24"
       style={{ backgroundColor: '#020502' }}
     >
       {/* Decorative background number — slow opacity pulse */}

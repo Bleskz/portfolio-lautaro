@@ -4,7 +4,7 @@ import { C } from '../theme/colors'
 
 function SectionHeader({ tag, title, accent, subtitle }) {
   return (
-    <div className="relative mb-16">
+    <div className="relative mb-8 md:mb-16">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}

@@ -86,8 +86,6 @@ function DataStreams() {
     { left: '97%',  delay: 2,   speed: 15, charCount: 9,  baseOpacity: 0.18 },
     { left: '87%',  delay: 7,   speed: 12, charCount: 6,  baseOpacity: 0.14 },
     { left: '10%',  delay: 3,   speed: 17, charCount: 11, baseOpacity: 0.16 },
-    { left: '57%',  delay: 2.5, speed: 19, charCount: 8,  baseOpacity: 0.12 },
-    { left: '66%',  delay: 6,   speed: 16, charCount: 10, baseOpacity: 0.10 },
   ]
 
   return (
@@ -399,6 +397,13 @@ function Hero() {
           0%, 100% { opacity: 1; }
           50% { opacity: 0; }
         }
+        /* Mobile: reduce tagline letter-spacing so it fits on small screens */
+        @media (max-width: 640px) {
+          .hero-tagline {
+            font-size: 0.6rem !important;
+            letter-spacing: 0.1em !important;
+          }
+        }
       `}</style>
 
       {/* Data streams — falling columns of hex/terminal chars along the edges */}
@@ -486,6 +491,7 @@ function Hero() {
               alignItems: 'center',
               gap: '1rem',
               marginBottom: '1.5rem',
+              overflow: 'hidden',
             }}
           >
             <div
@@ -497,15 +503,31 @@ function Hero() {
                 flexShrink: 0,
               }}
             />
+            {/* Full tagline — hidden on small screens to avoid overflow */}
             <span
+              className="hero-tagline hidden sm:inline"
               style={{
                 fontFamily: "'Share Tech Mono', monospace",
                 fontSize: '0.72rem',
                 color: C.green,
                 letterSpacing: '0.28em',
+                whiteSpace: 'nowrap',
               }}
             >
               ▸&nbsp;&nbsp;SIGNAL DETECTED&nbsp;&nbsp;//&nbsp;&nbsp;INITIALIZING TRANSMISSION
+            </span>
+            {/* Short tagline — visible only on small screens */}
+            <span
+              className="hero-tagline sm:hidden"
+              style={{
+                fontFamily: "'Share Tech Mono', monospace",
+                fontSize: '0.6rem',
+                color: C.green,
+                letterSpacing: '0.12em',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              ▸&nbsp;&nbsp;SIGNAL DETECTED
             </span>
           </motion.div>
 

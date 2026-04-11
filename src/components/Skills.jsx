@@ -180,7 +180,7 @@ function Skills() {
   return (
     <section
       id="skills"
-      className="relative min-h-screen py-24 px-6"
+      className="relative min-h-screen py-12 md:py-24 px-4 sm:px-6"
       style={{ backgroundColor: C.bg }}
     >
       {/* Decorative background number — slow opacity pulse */}

@@ -216,10 +216,14 @@ function Navbar({ lenisRef }) {
               background: 'none',
               border: `1px solid ${C.g(0.25)}`,
               cursor: 'pointer',
-              padding: '0.45rem 0.55rem',
+              padding: '0.6rem 0.7rem',
               display: 'flex',
               flexDirection: 'column',
-              gap: '4px',
+              gap: '5px',
+              minWidth: '44px',
+              minHeight: '44px',
+              alignItems: 'center',
+              justifyContent: 'center',
             }}
           >
             <span style={{ display: 'block', width: '18px', height: '2px', backgroundColor: C.green, transition: 'transform 0.2s, opacity 0.2s', transform: mobileOpen ? 'rotate(45deg) translateY(6px)' : 'none' }} />
@@ -240,7 +244,7 @@ function Navbar({ lenisRef }) {
             transition={{ duration: 0.2 }}
             style={{
               position: 'fixed',
-              top: '3.5rem',
+              top: '3.75rem',
               left: 0,
               right: 0,
               zIndex: 49,

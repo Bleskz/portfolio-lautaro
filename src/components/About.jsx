@@ -27,7 +27,7 @@ function About() {
   return (
     <section
       id="about"
-      className="relative min-h-screen flex flex-col justify-center px-6 py-32"
+      className="relative min-h-screen flex flex-col justify-center px-4 sm:px-6 py-16 md:py-32"
       style={{ backgroundColor: C.bg }}
     >
       {/* Decorative background number — slow opacity pulse */}
@@ -58,7 +58,7 @@ function About() {
         />
 
         {/* Two-column grid — stacks vertically on mobile */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-20 items-start">
 
           {/* LEFT — Terminal card */}
           <motion.div
@@ -224,7 +224,7 @@ function About() {
               <p
                 style={{
                   fontFamily: "'Bebas Neue', sans-serif",
-                  fontSize: 'clamp(3.5rem, 6vw, 5rem)',
+                  fontSize: 'clamp(2.5rem, 6vw, 5rem)',
                   lineHeight: 1.05,
                   color: C.white,
                 }}
