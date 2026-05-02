@@ -46,6 +46,18 @@ const translations = {
       tabflowlanding: {
         description: 'Product page for the TabFlow extension. Fast, minimal, conversion-focused. Built to get installs.',
       },
+      outpost: {
+        description: 'Survival horror game built in Unity. First-person exploration with environmental storytelling. Currently in active development.',
+      },
+      chatbot: {
+        description: 'Automated WhatsApp chatbot for real estate agencies. Handles property inquiries, filters leads, and schedules visits without human intervention.',
+      },
+      walkingsim: {
+        description: 'First Unity project. A first-person walking experience focused on atmosphere and movement feel. Built to learn the engine from scratch.',
+      },
+      webclients: {
+        description: 'Landing pages and full sites for small businesses: dental clinics, local entrepreneurs, service companies. Built fast, responsive, conversion-focused.',
+      },
       viewCode: 'VIEW_CODE',
       liveDemo: 'LIVE_DEMO →',
     },
@@ -57,7 +69,7 @@ const translations = {
       handshake:       '→ Handshake established. Signal strong.',
       channelOpen:     '✓ Channel open',
       ready:           '✓ Ready',
-      reposAvailable:  '✓ 4 repos available',
+      reposAvailable:  '✓ 8+ projects shipped',
       namePlaceholder: 'your name',
       msgPlaceholder:  'your message',
       submit:          'TRANSMIT →',
@@ -105,6 +117,18 @@ const translations = {
       tabflowlanding: {
         description: 'Página de producto para la extensión TabFlow. Rápida, minimalista, orientada a conversión. Hecha para conseguir instalaciones.',
       },
+      outpost: {
+        description: 'Juego de survival horror hecho en Unity. Exploración en primera persona con narrativa ambiental. Actualmente en desarrollo activo.',
+      },
+      chatbot: {
+        description: 'Chatbot automatizado de WhatsApp para inmobiliarias. Atiende consultas de propiedades, filtra leads y agenda visitas sin intervención humana.',
+      },
+      walkingsim: {
+        description: 'Primer proyecto en Unity. Una experiencia walking simulator en primera persona enfocada en la atmósfera y la sensación del movimiento. Hecho para aprender el motor desde cero.',
+      },
+      webclients: {
+        description: 'Landing pages y sitios completos para pequeños negocios: clínicas dentales, emprendedores locales, empresas de servicios. Rápidos, responsive, orientados a conversión.',
+      },
       viewCode: 'VER_CÓDIGO',
       liveDemo: 'DEMO_EN_VIVO →',
     },
@@ -116,7 +140,7 @@ const translations = {
       handshake:       '→ Handshake establecido. Señal fuerte.',
       channelOpen:     '✓ Canal abierto',
       ready:           '✓ Listo',
-      reposAvailable:  '✓ 4 repositorios disponibles',
+      reposAvailable:  '✓ 8+ proyectos publicados',
       namePlaceholder: 'tu nombre',
       msgPlaceholder:  'tu mensaje',
       submit:          'TRANSMITIR →',
@@ -164,6 +188,18 @@ const translations = {
       tabflowlanding: {
         description: 'Página de produto para a extensão TabFlow. Rápida, minimalista, focada em conversão. Feita para conseguir instalações.',
       },
+      outpost: {
+        description: 'Jogo de survival horror feito em Unity. Exploração em primeira pessoa com narrativa ambiental. Atualmente em desenvolvimento ativo.',
+      },
+      chatbot: {
+        description: 'Chatbot automatizado de WhatsApp para imobiliárias. Atende consultas de propriedades, filtra leads e agenda visitas sem intervenção humana.',
+      },
+      walkingsim: {
+        description: 'Primeiro projeto em Unity. Uma experiência walking simulator em primeira pessoa focada na atmosfera e na sensação do movimento. Feito para aprender o motor do zero.',
+      },
+      webclients: {
+        description: 'Landing pages e sites completos para pequenos negócios: clínicas odontológicas, empreendedores locais, empresas de serviços. Rápidos, responsivos, focados em conversão.',
+      },
       viewCode: 'VER_CÓDIGO',
       liveDemo: 'DEMO_AO_VIVO →',
     },
@@ -175,7 +211,7 @@ const translations = {
       handshake:       '→ Handshake estabelecido. Sinal forte.',
       channelOpen:     '✓ Canal aberto',
       ready:           '✓ Pronto',
-      reposAvailable:  '✓ 4 repositórios disponíveis',
+      reposAvailable:  '✓ 8+ projetos publicados',
       namePlaceholder: 'seu nome',
       msgPlaceholder:  'sua mensagem',
       submit:          'TRANSMITIR →',
@@ -223,6 +259,18 @@ const translations = {
       tabflowlanding: {
         description: "Page produit pour l'extension TabFlow. Rapide, minimale, axée conversion. Conçue pour obtenir des installations.",
       },
+      outpost: {
+        description: "Jeu de survival horror conçu sur Unity. Exploration à la première personne avec narration environnementale. Actuellement en développement actif.",
+      },
+      chatbot: {
+        description: "Chatbot WhatsApp automatisé pour agences immobilières. Gère les demandes de biens, filtre les leads et planifie les visites sans intervention humaine.",
+      },
+      walkingsim: {
+        description: "Premier projet Unity. Une expérience walking simulator à la première personne axée sur l'atmosphère et la sensation du mouvement. Conçu pour apprendre le moteur à partir de zéro.",
+      },
+      webclients: {
+        description: "Landing pages et sites complets pour petites entreprises : cliniques dentaires, entrepreneurs locaux, sociétés de services. Rapides, responsives, orientés conversion.",
+      },
       viewCode: 'VOIR_CODE',
       liveDemo: 'DÉMO_EN_DIRECT →',
     },
@@ -234,7 +282,7 @@ const translations = {
       handshake:       '→ Handshake établi. Signal fort.',
       channelOpen:     '✓ Canal ouvert',
       ready:           '✓ Prêt',
-      reposAvailable:  '✓ 4 dépôts disponibles',
+      reposAvailable:  '✓ 8+ projets livrés',
       namePlaceholder: 'votre nom',
       msgPlaceholder:  'votre message',
       submit:          'TRANSMETTRE →',

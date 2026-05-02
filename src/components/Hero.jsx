@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
-import { motion } from 'framer-motion'
+import { motion, useInView } from 'framer-motion'
 import { useLang } from '../context/LangContext'
 import useReducedMotion from '../hooks/useReducedMotion'
 import { C } from '../theme/colors'
+import TerminalTitleBar from './ui/TerminalTitleBar'
 
 // Scrolls smoothly to the section with the given id
 function scrollTo(id) {
@@ -22,26 +23,28 @@ function fadeUp(delay) {
 // Characters used in data stream columns — hex digits + terminal symbols
 const STREAM_CHARS = '0123456789ABCDEF01./:#><|_~'
 
-// Single falling column — characters randomly flicker as it scrolls down
-function DataColumn({ left, delay, speed, charCount, baseOpacity }) {
+// Single falling column — characters randomly flicker as it scrolls down.
+// Mutation interval pauses when `enabled` is false (e.g. column off-viewport).
+function DataColumn({ left, delay, speed, charCount, baseOpacity, enabled }) {
   const [chars, setChars] = useState(
     () => Array.from({ length: charCount }, () => STREAM_CHARS[Math.floor(Math.random() * STREAM_CHARS.length)])
   )
 
-  // Randomly mutate ~35% of characters every 120ms — creates flicker effect
+  // Randomly mutate ~35% of characters every 250ms — creates flicker effect
   useEffect(() => {
+    if (!enabled) return
     const id = setInterval(() => {
       setChars(prev => prev.map(c =>
         Math.random() > 0.65 ? STREAM_CHARS[Math.floor(Math.random() * STREAM_CHARS.length)] : c
       ))
-    }, 120)
+    }, 250)
     return () => clearInterval(id)
-  }, [])
+  }, [enabled])
 
   return (
     <motion.div
-      animate={{ y: ['-15vh', '115vh'] }}
-      transition={{ duration: speed, repeat: Infinity, ease: 'linear', delay }}
+      animate={enabled ? { y: ['-15vh', '115vh'] } : { y: '-15vh' }}
+      transition={enabled ? { duration: speed, repeat: Infinity, ease: 'linear', delay } : { duration: 0 }}
       style={{
         position: 'absolute',
         left,
@@ -76,24 +79,25 @@ function DataColumn({ left, delay, speed, charCount, baseOpacity }) {
   )
 }
 
-// Multiple data stream columns along the edges — avoids the main text area
-function DataStreams() {
-  const columns = [
-    { left: '2%',   delay: 0,   speed: 14, charCount: 10, baseOpacity: 0.22 },
-    { left: '5.5%', delay: 4,   speed: 11, charCount: 7,  baseOpacity: 0.15 },
-    { left: '91%',  delay: 1.5, speed: 16, charCount: 12, baseOpacity: 0.20 },
-    { left: '94%',  delay: 5,   speed: 13, charCount: 8,  baseOpacity: 0.17 },
-    { left: '97%',  delay: 2,   speed: 15, charCount: 9,  baseOpacity: 0.18 },
-    { left: '87%',  delay: 7,   speed: 12, charCount: 6,  baseOpacity: 0.14 },
-    { left: '10%',  delay: 3,   speed: 17, charCount: 11, baseOpacity: 0.16 },
-  ]
+// Stable column config — defined at module scope so React doesn't recreate it every render
+const STREAM_COLUMNS = [
+  { left: '2%',   delay: 0,   speed: 14, charCount: 10, baseOpacity: 0.22 },
+  { left: '5.5%', delay: 4,   speed: 11, charCount: 7,  baseOpacity: 0.15 },
+  { left: '91%',  delay: 1.5, speed: 16, charCount: 12, baseOpacity: 0.20 },
+  { left: '94%',  delay: 5,   speed: 13, charCount: 8,  baseOpacity: 0.17 },
+  { left: '97%',  delay: 2,   speed: 15, charCount: 9,  baseOpacity: 0.18 },
+  { left: '87%',  delay: 7,   speed: 12, charCount: 6,  baseOpacity: 0.14 },
+  { left: '10%',  delay: 3,   speed: 17, charCount: 11, baseOpacity: 0.16 },
+]
 
+// Multiple data stream columns along the edges — pause when off-viewport (saves CPU on long scrolls)
+function DataStreams({ enabled }) {
   return (
     <div
       aria-hidden="true"
       style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 0, overflow: 'hidden' }}
     >
-      {columns.map((col, i) => <DataColumn key={i} {...col} />)}
+      {STREAM_COLUMNS.map((col, i) => <DataColumn key={i} {...col} enabled={enabled} />)}
     </div>
   )
 }
@@ -160,14 +164,18 @@ function CodeLine({ line }) {
   return <span style={{ color: 'rgba(232,255,232,0.78)' }}>{line}</span>
 }
 
-// Terminal panel — types real project code on a loop while the page is open
+// Terminal panel — types real project code on a loop while in viewport (pauses when scrolled out)
 function LiveCodePanel() {
+  const panelRef = useRef(null)
+  const inView = useInView(panelRef, { amount: 0.1 })
   const [idx, setIdx] = useState(0)
   const [charCount, setCharCount] = useState(0)
   const snippet = CODE_SNIPPETS[idx]
 
-  // Advance one character at 28ms; when done, pause 2.8s then move to next snippet
+  // Advance one character at 28ms; when done, pause 2.8s then move to next snippet.
+  // Pauses entirely when the panel is off-viewport.
   useEffect(() => {
+    if (!inView) return
     if (charCount < snippet.code.length) {
       const t = setTimeout(() => setCharCount(c => c + 1), 28)
       return () => clearTimeout(t)
@@ -177,12 +185,13 @@ function LiveCodePanel() {
       setIdx(i => (i + 1) % CODE_SNIPPETS.length)
     }, 2800)
     return () => clearTimeout(t)
-  }, [charCount, idx])
+  }, [charCount, idx, inView, snippet.code.length])
 
   const lines = snippet.code.slice(0, charCount).split('\n')
 
   return (
     <motion.div
+      ref={panelRef}
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.45, delay: 0.5 }}
@@ -193,27 +202,7 @@ function LiveCodePanel() {
         border: '1px solid rgba(0,255,65,0.18)',
         boxShadow: '0 0 30px rgba(0,255,65,0.05), inset 0 0 60px rgba(0,255,65,0.01)',
       }}>
-        {/* Title bar */}
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '8px',
-          padding: '10px 14px',
-          borderBottom: '1px solid rgba(0,255,65,0.1)',
-        }}>
-          <span style={{ width: 10, height: 10, borderRadius: '50%', backgroundColor: C.red, display: 'inline-block', opacity: 0.8 }} />
-          <span style={{ width: 10, height: 10, borderRadius: '50%', backgroundColor: '#FFD700', display: 'inline-block', opacity: 0.8 }} />
-          <span style={{ width: 10, height: 10, borderRadius: '50%', backgroundColor: C.green, display: 'inline-block', opacity: 0.8 }} />
-          <span style={{
-            marginLeft: 6,
-            fontFamily: "'Share Tech Mono', monospace",
-            fontSize: '0.65rem',
-            color: 'rgba(0,255,65,0.5)',
-            letterSpacing: '0.04em',
-          }}>
-            ~/projects/{snippet.file}
-          </span>
-        </div>
+        <TerminalTitleBar filename={`~/projects/${snippet.file}`} />
 
         {/* Code area */}
         <div style={{
@@ -301,18 +290,29 @@ function TypewriterRole() {
 
 // Full-screen hero section — SIGNAL DETECTED
 function Hero() {
+  const sectionRef = useRef(null)
+  const inView = useInView(sectionRef, { amount: 0.05 })
   const nameRef = useRef(null)
-  const { t } = useLang()
+  const { t, lang } = useLang()
   const reducedMotion = useReducedMotion()
 
-  // Randomly applies a 60ms blur glitch to the name every 4–8 seconds — skipped under reduced motion
+  // CV download — pick the file matching the current UI language and warn the user
+  const cvIsEnglish = lang !== 'es'
+  const cvHref = cvIsEnglish ? '/CV_Lautaro_Bleskz_EN.pdf' : '/CV_Lautaro_Bleskz_ES.pdf'
+  const cvFileName = cvIsEnglish ? 'Lautaro_Bleskz_CV_EN.pdf' : 'Lautaro_Bleskz_CV_ES.pdf'
+  const cvLangLabel = cvIsEnglish ? 'EN' : 'ES'
+  const cvNote = cvIsEnglish
+    ? 'Downloads the English version. Switch language for ES.'
+    : 'Descarga la versión en español. Cambiá el idioma para EN.'
+
+  // Randomly applies a 60ms blur glitch to the name every ~5 seconds (4–6s window) — skipped under reduced motion
   useEffect(() => {
     if (reducedMotion) return
 
     let timeout
 
     function scheduleGlitch() {
-      const delay = 4000 + Math.random() * 4000
+      const delay = 4000 + Math.random() * 2000
       timeout = setTimeout(() => {
         if (nameRef.current) {
           nameRef.current.style.filter = 'blur(0.8px)'
@@ -331,8 +331,9 @@ function Hero() {
   return (
     <section
       id="home"
+      ref={sectionRef}
       style={{
-        minHeight: '100vh',
+        height: '100vh',
         backgroundColor: C.bg,
         position: 'relative',
         overflow: 'hidden',
@@ -340,7 +341,7 @@ function Hero() {
         flexDirection: 'column',
         justifyContent: 'center',
         paddingTop: 'clamp(5.5rem, 18vw, 130px)',
-        paddingBottom: '5rem',
+        paddingBottom: 'clamp(3.5rem, 8vh, 5.5rem)',
         paddingLeft: 'clamp(1.25rem, 6vw, 7rem)',
         paddingRight: 'clamp(1.25rem, 6vw, 7rem)',
       }}
@@ -407,13 +408,13 @@ function Hero() {
       `}</style>
 
       {/* Data streams — falling columns of hex/terminal chars along the edges */}
-      <DataStreams />
+      <DataStreams enabled={inView} />
 
       {/* Hero-wide slow scanline sweep — soft green band drifting down the section */}
       <motion.div
         aria-hidden="true"
-        animate={{ y: ['-40%', '120vh'] }}
-        transition={{ duration: 10, repeat: Infinity, ease: 'linear', delay: 1 }}
+        animate={inView ? { y: ['-40%', '120vh'] } : { y: '-40%' }}
+        transition={inView ? { duration: 10, repeat: Infinity, ease: 'linear', delay: 1 } : { duration: 0 }}
         style={{
           position: 'absolute',
           left: 0,
@@ -483,6 +484,46 @@ function Hero() {
         {/* Left column — full width on mobile, 55% on desktop */}
         <div className="w-full lg:w-[55%] lg:shrink-0">
 
+          {/* 0. Available-for-hire badge — persistent, the #1 thing recruiters look for */}
+          <motion.div
+            {...fadeUp(0.1)}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              marginBottom: '1rem',
+              padding: '0.3rem 0.7rem',
+              border: `1px solid ${C.g(0.45)}`,
+              background: C.g(0.06),
+              borderRadius: '2px',
+            }}
+          >
+            <motion.span
+              animate={reducedMotion ? { opacity: 1 } : { opacity: [1, 0.25, 1] }}
+              transition={{ duration: 1.4, repeat: reducedMotion ? 0 : Infinity, ease: 'easeInOut' }}
+              aria-hidden="true"
+              style={{
+                width: '7px',
+                height: '7px',
+                borderRadius: '50%',
+                backgroundColor: C.green,
+                boxShadow: `0 0 8px ${C.green}`,
+                display: 'inline-block',
+              }}
+            />
+            <span
+              style={{
+                fontFamily: "'Share Tech Mono', monospace",
+                fontSize: '0.62rem',
+                color: C.green,
+                letterSpacing: '0.16em',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              AVAILABLE FOR HIRE
+            </span>
+          </motion.div>
+
           {/* 1. Tag line (delay 0.2s) */}
           <motion.div
             {...fadeUp(0.2)}
@@ -509,7 +550,7 @@ function Hero() {
               style={{
                 fontFamily: "'Share Tech Mono', monospace",
                 fontSize: '0.72rem',
-                color: C.green,
+                color: C.g(0.55),
                 letterSpacing: '0.28em',
                 whiteSpace: 'nowrap',
               }}
@@ -522,7 +563,7 @@ function Hero() {
               style={{
                 fontFamily: "'Share Tech Mono', monospace",
                 fontSize: '0.6rem',
-                color: C.green,
+                color: C.g(0.55),
                 letterSpacing: '0.12em',
                 whiteSpace: 'nowrap',
               }}
@@ -551,7 +592,7 @@ function Hero() {
             </div>
             <div
               className="glitch-line"
-              data-text="VELO"
+              data-text="BLESKZ"
               style={{
                 fontFamily: "'Bebas Neue', cursive",
                 fontSize: 'clamp(3.5rem, 14vw, 12rem)',
@@ -559,7 +600,7 @@ function Hero() {
                 textShadow: `0 0 40px ${C.g(0.08)}`,
               }}
             >
-              VELO
+              BLESKZ
             </div>
           </motion.div>
 
@@ -648,6 +689,69 @@ function Hero() {
             >
               {t.hero.ctaContact}
             </motion.button>
+
+            {/* Button C — CV download. File served from /public; language follows UI lang */}
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '0.35rem' }}>
+              <a
+                href={cvHref}
+                download={cvFileName}
+                aria-label={`Download CV in ${cvIsEnglish ? 'English' : 'Spanish'} (PDF)`}
+                style={{
+                  fontFamily: "'Share Tech Mono', monospace",
+                  fontSize: '0.78rem',
+                  letterSpacing: '0.1em',
+                  backgroundColor: 'transparent',
+                  color: C.g(0.7),
+                  border: `1px solid ${C.g(0.3)}`,
+                  cursor: 'pointer',
+                  padding: '0.5rem 1.1rem',
+                  textDecoration: 'none',
+                  transition: 'background 0.2s, color 0.2s, border-color 0.2s',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.6rem',
+                }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.background = C.g(0.08)
+                  e.currentTarget.style.color = C.green
+                  e.currentTarget.style.borderColor = C.g(0.55)
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.background = 'transparent'
+                  e.currentTarget.style.color = C.g(0.7)
+                  e.currentTarget.style.borderColor = C.g(0.3)
+                }}
+              >
+                <span>↓ DOWNLOAD_CV.PDF</span>
+                <span
+                  aria-hidden="true"
+                  style={{
+                    fontSize: '0.6rem',
+                    padding: '0.1rem 0.4rem',
+                    border: `1px solid ${C.cyan}`,
+                    color: C.cyan,
+                    letterSpacing: '0.08em',
+                    background: C.c(0.06),
+                  }}
+                >
+                  {cvLangLabel}
+                </span>
+              </a>
+              {/* Inline lang-warning so the user knows which version they'll get */}
+              <span
+                role="note"
+                style={{
+                  fontFamily: "'Share Tech Mono', monospace",
+                  fontSize: '0.6rem',
+                  color: C.w(0.5),
+                  letterSpacing: '0.04em',
+                  paddingLeft: '0.1rem',
+                }}
+              >
+                <span style={{ color: '#FFB200' }} aria-hidden="true">▸ </span>
+                {cvNote}
+              </span>
+            </div>
           </motion.div>
         </div>
 
@@ -665,7 +769,7 @@ function Hero() {
         {...fadeUp(1.0)}
         style={{
           position: 'absolute',
-          bottom: '2.5rem',
+          bottom: '1.5rem',
           left: 'clamp(1.5rem, 6vw, 7rem)',
           display: 'flex',
           alignItems: 'center',

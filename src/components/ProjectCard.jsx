@@ -3,40 +3,21 @@ import { motion } from 'framer-motion'
 import { useLang } from '../context/LangContext'
 import useReducedMotion from '../hooks/useReducedMotion'
 import { C } from '../theme/colors'
-
-// Stack chip — subtle background + stronger border on hover
-function StackChip({ label }) {
-  return (
-    <motion.span
-      className="px-2 py-1 cursor-default"
-      whileHover={{ background: C.g(0.1), borderColor: C.g(0.55) }}
-      style={{
-        fontFamily: "'Share Tech Mono', monospace",
-        fontSize: '0.62rem',
-        color: C.green,
-        border: `1px solid ${C.g(0.3)}`,
-        background: C.g(0.05),
-        letterSpacing: '0.05em',
-        display: 'inline-block',
-      }}
-    >
-      {label}
-    </motion.span>
-  )
-}
+import StackChip from './ui/StackChip'
 
 // Freq label — pulses opacity between 0.35 and 1 on a 2.5s loop; static under reduced motion
 function FreqLabel({ freq }) {
   const reducedMotion = useReducedMotion()
   return (
     <motion.span
-      animate={reducedMotion ? { opacity: 0.7 } : { opacity: [0.35, 1] }}
+      animate={reducedMotion ? { opacity: 0.6 } : { opacity: [0.3, 0.85] }}
       transition={{ duration: 2.5, repeat: reducedMotion ? 0 : Infinity, repeatType: 'reverse', ease: 'easeInOut' }}
       style={{
         fontFamily: "'Share Tech Mono', monospace",
         fontSize: '0.6rem',
         color: C.cyan,
         letterSpacing: '0.06em',
+        opacity: 0.55,
       }}
     >
       FREQ: {freq}
@@ -44,7 +25,57 @@ function FreqLabel({ freq }) {
   )
 }
 
-function ProjectCard({ sigId, type, freq, name, codename, description, stack, codeUrl, demoUrl, index }) {
+// Disabled button — same border style, lower opacity, no hover, not-allowed cursor
+function DisabledButton({ label, title }) {
+  return (
+    <span
+      title={title}
+      style={{
+        fontFamily: "'Share Tech Mono', monospace",
+        fontSize: '0.62rem',
+        color: C.green,
+        background: 'transparent',
+        border: `1px solid ${C.g(0.28)}`,
+        padding: '0.45rem 0.9rem',
+        letterSpacing: '0.06em',
+        opacity: 0.35,
+        cursor: 'not-allowed',
+        display: 'inline-block',
+      }}
+    >
+      {label}
+    </span>
+  )
+}
+
+// Status badge — different color (amber) so it stands out from the green CTAs
+function StatusBadge({ label }) {
+  return (
+    <span
+      style={{
+        fontFamily: "'Share Tech Mono', monospace",
+        fontSize: '0.62rem',
+        color: '#FFB200',
+        background: 'rgba(255,178,0,0.06)',
+        border: '1px solid rgba(255,178,0,0.45)',
+        padding: '0.45rem 0.9rem',
+        letterSpacing: '0.06em',
+        display: 'inline-block',
+      }}
+    >
+      {label}
+    </span>
+  )
+}
+
+function ProjectCard({
+  sigId, type, freq, name, codename, description, stack,
+  codeUrl, demoUrl,
+  // New optional props for disabled / status states
+  codeDisabled, codeDisabledLabel,
+  demoLabel, demoDisabled, statusBadge,
+  index,
+}) {
   const { t } = useLang()
 
   // Opens a URL in new tab; skips if null or '#'
@@ -53,9 +84,6 @@ function ProjectCard({ sigId, type, freq, name, codename, description, stack, co
       window.open(url, '_blank', 'noopener,noreferrer')
     }
   }
-
-  // demoUrl === null means desktop app — show a different label instead of a greyed-out button
-  const isDesktopOnly = demoUrl === null
 
   return (
     <motion.div
@@ -97,7 +125,7 @@ function ProjectCard({ sigId, type, freq, name, codename, description, stack, co
           style={{
             fontFamily: "'Share Tech Mono', monospace",
             fontSize: '0.6rem',
-            color: C.g(0.5),
+            color: C.g(0.45),
             letterSpacing: '0.06em',
           }}
         >
@@ -125,7 +153,7 @@ function ProjectCard({ sigId, type, freq, name, codename, description, stack, co
         style={{
           fontFamily: "'Share Tech Mono', monospace",
           fontSize: '0.6rem',
-          color: C.g(0.65),
+          color: C.g(0.55),
           letterSpacing: '0.06em',
           marginTop: '0.2rem',
         }}
@@ -133,13 +161,14 @@ function ProjectCard({ sigId, type, freq, name, codename, description, stack, co
         {codename}
       </p>
 
-      {/* Description */}
+      {/* Description — tighter letter-spacing for readability on multi-line paragraphs */}
       <p
         style={{
           fontFamily: "'Space Mono', monospace",
           fontSize: '0.76rem',
-          color: C.w(0.5),
+          color: C.w(0.55),
           lineHeight: 1.7,
+          letterSpacing: '0.02em',
           marginTop: '0.75rem',
         }}
       >
@@ -155,49 +184,45 @@ function ProjectCard({ sigId, type, freq, name, codename, description, stack, co
 
       {/* Button row */}
       <div className="flex gap-2 flex-wrap">
-        {/* VIEW_CODE button */}
-        <button
-          onClick={() => openLink(codeUrl)}
-          style={{
-            fontFamily: "'Share Tech Mono', monospace",
-            fontSize: '0.62rem',
-            color: C.green,
-            background: 'transparent',
-            border: `1px solid ${C.g(0.28)}`,
-            padding: '0.45rem 0.9rem',
-            cursor: 'pointer',
-            letterSpacing: '0.06em',
-            transition: 'background 0.2s, border-color 0.2s',
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.background = C.g(0.07)
-            e.currentTarget.style.borderColor = C.g(0.55)
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background = 'transparent'
-            e.currentTarget.style.borderColor = C.g(0.28)
-          }}
-        >
-          {t.projects.viewCode}
-        </button>
-
-        {/* LIVE_DEMO button — or DESKTOP_APP label if no browser demo exists */}
-        {isDesktopOnly ? (
-          <span
+        {/* VIEW_CODE — disabled (private repo) or active link */}
+        {codeDisabled ? (
+          <DisabledButton
+            label={codeDisabledLabel || t.projects.viewCode}
+            title="Repository is private"
+          />
+        ) : (
+          <button
+            onClick={() => openLink(codeUrl)}
             style={{
               fontFamily: "'Share Tech Mono', monospace",
               fontSize: '0.62rem',
-              color: C.g(0.4),
-              border: `1px solid ${C.g(0.12)}`,
+              color: C.green,
+              background: 'transparent',
+              border: `1px solid ${C.g(0.28)}`,
               padding: '0.45rem 0.9rem',
+              cursor: 'pointer',
               letterSpacing: '0.06em',
-              cursor: 'default',
+              transition: 'background 0.2s, border-color 0.2s',
             }}
-            title="Desktop application — no browser demo available"
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = C.g(0.07)
+              e.currentTarget.style.borderColor = C.g(0.55)
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'transparent'
+              e.currentTarget.style.borderColor = C.g(0.28)
+            }}
           >
-            DESKTOP_APP
-          </span>
-        ) : (
+            {t.projects.viewCode}
+          </button>
+        )}
+
+        {/* Right slot: status badge / disabled label / live demo */}
+        {statusBadge ? (
+          <StatusBadge label={statusBadge} />
+        ) : demoDisabled ? (
+          <DisabledButton label={demoLabel || 'NO_BROWSER_DEMO'} />
+        ) : demoUrl ? (
           <button
             onClick={() => openLink(demoUrl)}
             style={{
@@ -224,7 +249,7 @@ function ProjectCard({ sigId, type, freq, name, codename, description, stack, co
           >
             {t.projects.liveDemo}
           </button>
-        )}
+        ) : null}
       </div>
     </motion.div>
   )

@@ -6,29 +6,50 @@
     <link rel="apple-touch-icon" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>Lautaro Velo — Fullstack Developer</title>
-    <meta name="description" content="Portfolio of Lautaro Velo, Fullstack Developer from Neuquen, Argentina. TabFlow, Steam Analyzer, CoreTracker." />
+    <title>Lautaro Bleskz — Fullstack Developer</title>
+    <meta name="description" content="Portfolio of Lautaro Bleskz, Fullstack Developer from Neuquen, Argentina. TabFlow, Steam Analyzer, CoreTracker." />
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://portfolio-lautaro-steel.vercel.app/" />
-    <meta property="og:title" content="Lautaro Velo — Fullstack Developer" />
+    <meta property="og:title" content="Lautaro Bleskz — Fullstack Developer" />
     <meta property="og:description" content="Self-taught fullstack dev from Neuquen, Argentina. Ships real things: Chrome extensions, desktop apps, web apps." />
     <meta property="og:image" content="https://portfolio-lautaro-steel.vercel.app/og-image.svg" />
 
     <!-- Twitter / X -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:url" content="https://portfolio-lautaro-steel.vercel.app/" />
-    <meta name="twitter:title" content="Lautaro Velo — Fullstack Developer" />
+    <meta name="twitter:title" content="Lautaro Bleskz — Fullstack Developer" />
     <meta name="twitter:description" content="Self-taught fullstack dev from Neuquen, Argentina. Ships real things: Chrome extensions, desktop apps, web apps." />
     <meta name="twitter:image" content="https://portfolio-lautaro-steel.vercel.app/og-image.svg" />
 
     <meta name="theme-color" content="#020502" />
+    <meta name="author" content="Lautaro Bleskz" />
+    <meta name="robots" content="index, follow" />
 
-    <!-- Prevent horizontal scroll on mobile -->
+    <!-- Prevent horizontal scroll without colliding with scrollbar width on Windows -->
     <style>
-      html, body { overflow-x: hidden; max-width: 100vw; }
+      html, body { overflow-x: clip; }
     </style>
+
+    <!-- Structured data — helps Google understand who this page is about -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Lautaro Bleskz",
+      "jobTitle": "Fullstack Developer",
+      "description": "Self-taught fullstack developer from Neuquen, Argentina. Builds Chrome extensions, desktop apps, and web apps.",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Neuquen",
+        "addressCountry": "AR"
+      },
+      "sameAs": [
+        "https://github.com/Bleskz"
+      ]
+    }
+    </script>
 
     <!-- Google Fonts preconnect -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />

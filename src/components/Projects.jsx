@@ -1,5 +1,5 @@
 // Projects section — PROJECT_LOGS: live status bar + 2×2 card grid
-import { useState, useEffect, useRef, memo } from 'react'
+import { useState, useEffect, useRef, useMemo, memo } from 'react'
 import { motion, useInView } from 'framer-motion'
 import SectionHeader from './SectionHeader'
 import ProjectCard from './ProjectCard'
@@ -39,7 +39,9 @@ const PROJECTS_BASE = [
     codename: 'CORETRACK_DESKTOP.EXE',
     stack: ['ELECTRON', 'REACT', 'SQLITE', 'NODE.JS'],
     codeUrl: `${LINKS.github}/coretracker`,
-    demoUrl: null, // Desktop app — no browser demo, .exe not yet built
+    demoUrl: null,
+    demoDisabled: true,
+    demoLabel: 'NO_BROWSER_DEMO',
   },
   {
     sigId: 'SIG-004',
@@ -51,6 +53,62 @@ const PROJECTS_BASE = [
     stack: ['HTML', 'CSS', 'VANILLA JS', 'RESPONSIVE'],
     codeUrl: `${LINKS.github}/tabflow-landing`,
     demoUrl: 'https://mytabflow.com/',
+  },
+  {
+    sigId: 'SIG-005',
+    descKey: 'outpost',
+    type: 'GAME_DEV',
+    freq: '662.4MHz',
+    name: 'OUTPOST',
+    codename: 'OUTPOST.UNITY',
+    stack: ['UNITY', 'C#'],
+    codeUrl: null,
+    codeDisabled: true,
+    codeDisabledLabel: 'PRIVATE_REPO',
+    demoUrl: null,
+    statusBadge: 'STATUS: IN_DEVELOPMENT',
+  },
+  {
+    sigId: 'SIG-006',
+    descKey: 'chatbot',
+    type: 'AUTOMATION',
+    freq: '512.8MHz',
+    name: 'REAL ESTATE CHATBOT',
+    codename: 'CHATBOT_INMOB.SYS',
+    stack: ['TWILIO', 'NODE.JS', 'AUTOMATION'],
+    codeUrl: null,
+    codeDisabled: true,
+    codeDisabledLabel: 'PRIVATE_REPO',
+    demoUrl: null,
+    demoDisabled: true,
+    demoLabel: 'PRIVATE_REPO',
+  },
+  {
+    sigId: 'SIG-007',
+    descKey: 'walkingsim',
+    type: 'GAME_DEV',
+    freq: '418.3MHz',
+    name: 'WALKING SIMULATOR',
+    codename: 'WALK_SIM.UNITY',
+    stack: ['UNITY', 'C#', 'HLSL'],
+    codeUrl: 'https://github.com/Bleskz/walking-simulator',
+    demoUrl: null,
+    demoDisabled: true,
+    demoLabel: 'NO_BROWSER_DEMO',
+  },
+  {
+    sigId: 'SIG-008',
+    descKey: 'webclients',
+    type: 'WEB_CLIENTS',
+    freq: '298.6MHz',
+    name: 'CLIENT WEBSITES',
+    codename: 'WEB_CLIENTS.HTML',
+    stack: ['HTML', 'CSS', 'JS', 'REACT'],
+    codeUrl: null,
+    codeDisabled: true,
+    codeDisabledLabel: 'CLIENT_WORK',
+    demoUrl: null,
+    statusBadge: 'MULTIPLE_SITES',
   },
 ]
 
@@ -66,9 +124,9 @@ function formatTimestamp(date) {
   return `${y}.${mo}.${d}_${h}:${mi}:${s}`
 }
 
-// Types "LISTING: 04 ACTIVE_SIGNALS" character by character when in view
+// Types "LISTING: 08 ACTIVE_SIGNALS" character by character when in view
 const StatusTypewriter = memo(function StatusTypewriter() {
-  const full = 'LISTING: 04 ACTIVE_SIGNALS'
+  const full = 'LISTING: 08 ACTIVE_SIGNALS'
   const [text, setText] = useState('')
   const ref = useRef(null)
   const inView = useInView(ref, { once: true })
@@ -107,16 +165,16 @@ const LiveClock = memo(function LiveClock() {
 function Projects() {
   const { t } = useLang()
 
-  // Merge static base data with translated descriptions
-  const PROJECTS = PROJECTS_BASE.map((p) => ({
-    ...p,
-    description: t.projects[p.descKey].description,
-  }))
+  // Merge static base data with translated descriptions — memoized so we don't rebuild on every render
+  const PROJECTS = useMemo(
+    () => PROJECTS_BASE.map((p) => ({ ...p, description: t.projects[p.descKey].description })),
+    [t]
+  )
 
   return (
     <section
       id="projects"
-      className="relative min-h-screen flex flex-col justify-center px-4 sm:px-6 py-12 md:py-24"
+      className="relative flex flex-col justify-center px-4 sm:px-6 py-10 md:py-16"
       style={{ backgroundColor: '#020502' }}
     >
       {/* Decorative background number — slow opacity pulse */}
@@ -126,7 +184,7 @@ function Projects() {
         transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut', delay: 1.5 }}
         style={{
           fontFamily: "'Bebas Neue', sans-serif",
-          fontSize: 'clamp(8rem, 18vw, 16rem)',
+          fontSize: 'clamp(4rem, 12vw, 16rem)',
           color: '#00FF41',
           lineHeight: 1,
           right: '1.5vw',

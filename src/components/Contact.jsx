@@ -5,6 +5,7 @@ import SectionHeader from './SectionHeader'
 import { useLang } from '../context/LangContext'
 import { LINKS } from '../config/links'
 import { C } from '../theme/colors'
+import TerminalTitleBar from './ui/TerminalTitleBar'
 
 // Types text character by character when active — shows a cursor while typing
 function TypewriterText({ text, active, delay = 0, speed = 20, style }) {
@@ -66,21 +67,7 @@ function Terminal({ t }) {
         boxShadow: `-4px 0 15px ${C.g(0.2)}`,
       }}
     >
-      {/* Window bar: colored dots + terminal title */}
-      <div
-        className="flex items-center gap-2 px-4 py-3"
-        style={{ borderBottom: `1px solid ${C.g(0.1)}` }}
-      >
-        <span style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: C.red, display: 'inline-block' }} />
-        <span style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: '#FFD700', display: 'inline-block' }} />
-        <span style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: C.green, display: 'inline-block' }} />
-        <span
-          className="ml-2"
-          style={{ fontFamily: "'Share Tech Mono', monospace", fontSize: '0.65rem', color: C.textFaint, letterSpacing: '0.05em' }}
-        >
-          CONTACT_PROTOCOL.TERMINAL
-        </span>
-      </div>
+      <TerminalTitleBar filename="CONTACT_PROTOCOL.TERMINAL" padding="12px 16px" />
 
       {/* Terminal lines — commands type out, responses fade in after each command */}
       <div className="p-4 sm:p-5" style={{ fontFamily: "'Share Tech Mono', monospace", fontSize: 'clamp(0.62rem, 2vw, 0.76rem)', lineHeight: '1.9', overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
@@ -129,14 +116,20 @@ function Terminal({ t }) {
 }
 
 // Input/textarea with a blinking terminal cursor when the field is empty and unfocused
-function TerminalField({ id, as: Tag = 'input', label, placeholder, value, onChange, disabled, type, rows }) {
+function TerminalField({
+  id, as: Tag = 'input', label, placeholder,
+  value, onChange, onBlur: onBlurProp,
+  disabled, type, rows, fieldError,
+}) {
   const [focused, setFocused] = useState(false)
   const showCursor = value === '' && !focused
+  const hasError = Boolean(fieldError)
 
+  const borderColor = hasError ? '#FF003C' : C.g(0.14)
   const baseInputStyle = {
     width: '100%',
     backgroundColor: C.cardBg,
-    border: `1px solid ${C.g(0.14)}`,
+    border: `1px solid ${borderColor}`,
     color: C.white,
     fontFamily: "'Share Tech Mono', monospace",
     fontSize: '0.78rem',
@@ -146,16 +139,19 @@ function TerminalField({ id, as: Tag = 'input', label, placeholder, value, onCha
     ...(Tag === 'textarea' ? { resize: 'vertical' } : {}),
   }
 
-  function onFocus(e) {
+  function handleFocus(e) {
     setFocused(true)
-    e.target.style.border = `1px solid ${C.borderStrong}`
-    e.target.style.boxShadow = `0 0 0 1px ${C.borderStrong}, 0 0 20px ${C.g(0.1)}`
+    if (!hasError) {
+      e.target.style.border = `1px solid ${C.borderStrong}`
+      e.target.style.boxShadow = `0 0 0 1px ${C.borderStrong}, 0 0 20px ${C.g(0.1)}`
+    }
   }
 
-  function onBlur(e) {
+  function handleBlur(e) {
     setFocused(false)
-    e.target.style.border = `1px solid ${C.g(0.14)}`
+    e.target.style.border = `1px solid ${hasError ? '#FF003C' : C.g(0.14)}`
     e.target.style.boxShadow = 'none'
+    if (onBlurProp) onBlurProp(e)
   }
 
   return (
@@ -178,10 +174,12 @@ function TerminalField({ id, as: Tag = 'input', label, placeholder, value, onCha
           placeholder={showCursor ? '' : placeholder}
           value={value}
           onChange={onChange}
-          onFocus={onFocus}
-          onBlur={onBlur}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
           disabled={disabled}
           required
+          aria-invalid={hasError}
+          aria-describedby={hasError ? `${id}-error` : undefined}
           className="contact-input"
           style={baseInputStyle}
         />
@@ -205,8 +203,78 @@ function TerminalField({ id, as: Tag = 'input', label, placeholder, value, onCha
           </span>
         )}
       </div>
+      {/* Inline error — visible only when this specific field has an error */}
+      {hasError && (
+        <p
+          id={`${id}-error`}
+          role="alert"
+          style={{
+            fontFamily: "'Share Tech Mono', monospace",
+            fontSize: '0.65rem',
+            color: '#FF7A8C',
+            marginTop: '0.35rem',
+            letterSpacing: '0.04em',
+          }}
+        >
+          ✗ {fieldError}
+        </p>
+      )}
     </div>
   )
+}
+
+// Formspree endpoint — configured via VITE_FORMSPREE_ID environment variable
+const FORMSPREE_URL = `https://formspree.io/f/${import.meta.env.VITE_FORMSPREE_ID}`
+
+// Stricter email regex: requires alpha TLD with 2+ chars (rejects a@b.c)
+const EMAIL_RE = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/
+
+// Throttle window between submissions (anti-abuse — protects Formspree free quota)
+const SUBMIT_COOLDOWN_MS = 30_000
+const THROTTLE_KEY = 'portfolio-last-submit-ts'
+
+// Validates one field — returns null if valid, error string if not
+function validateField(name, value) {
+  switch (name) {
+    case 'name':
+      if (!value.trim()) return 'Required.'
+      return null
+    case 'email':
+      if (!value.trim()) return 'Required.'
+      if (!EMAIL_RE.test(value)) return 'Must be a valid email.'
+      return null
+    case 'message':
+      if (value.trim().length < 10) return 'Min 10 characters.'
+      if (value.length > 5000) return 'Max 5000 characters.'
+      return null
+    default:
+      return null
+  }
+}
+
+// Validates all fields at once — returns map { fieldName: error | null }
+function validateAll(form) {
+  return {
+    name:    validateField('name', form.name),
+    email:   validateField('email', form.email),
+    message: validateField('message', form.message),
+  }
+}
+
+// Reads the last submission timestamp safely
+function getLastSubmit() {
+  try {
+    return Number(sessionStorage.getItem(THROTTLE_KEY)) || 0
+  } catch {
+    return 0
+  }
+}
+
+// Persists the submission timestamp (silently ignores quota / privacy errors)
+function setLastSubmit(ts) {
+  try {
+    sessionStorage.setItem(THROTTLE_KEY, String(ts))
+  } catch { /* storage unavailable — throttle won't persist across reloads */ }
 }
 
 // Contact form with terminal cursor fields and success state on submit
@@ -214,16 +282,52 @@ function ContactForm() {
   const { t } = useLang()
   const [status, setStatus] = useState('idle') // 'idle' | 'sending' | 'transmitted'
   const [form, setForm] = useState({ name: '', email: '', message: '' })
+  const [fieldErrors, setFieldErrors] = useState({ name: null, email: null, message: null })
   const [error, setError] = useState(null)
+
+  // Updates a single field and clears its inline error as the user types
+  function setField(name, value) {
+    setForm((f) => ({ ...f, [name]: value }))
+    setFieldErrors((errs) => (errs[name] ? { ...errs, [name]: null } : errs))
+    if (error) setError(null)
+  }
+
+  // On blur, run per-field validation so the user gets feedback before submitting
+  function handleBlur(name) {
+    setFieldErrors((errs) => ({ ...errs, [name]: validateField(name, form[name]) }))
+  }
 
   // Submits form to Formspree — shows sending → transmitted or error state
   async function handleSubmit(e) {
     e.preventDefault()
+
+    // Honeypot: if a bot filled the hidden _gotcha field, silently drop the submission
+    if (e.target.elements._gotcha && e.target.elements._gotcha.value) {
+      setStatus('transmitted')
+      return
+    }
+
+    const errs = validateAll(form)
+    setFieldErrors(errs)
+    if (Object.values(errs).some(Boolean)) {
+      setError('Check the highlighted fields.')
+      return
+    }
+
+    // Client-side throttle — prevents accidental double-submits and basic abuse
+    const now = Date.now()
+    const last = getLastSubmit()
+    if (now - last < SUBMIT_COOLDOWN_MS) {
+      const wait = Math.ceil((SUBMIT_COOLDOWN_MS - (now - last)) / 1000)
+      setError(`Slow down — wait ${wait}s before sending another transmission.`)
+      return
+    }
+
     setStatus('sending')
     setError(null)
 
     try {
-      const res = await fetch('https://formspree.io/f/xaqlgeob', {
+      const res = await fetch(FORMSPREE_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         body: JSON.stringify({ name: form.name, email: form.email, message: form.message }),
@@ -231,10 +335,12 @@ function ContactForm() {
 
       if (!res.ok) throw new Error('non-ok response')
 
+      setLastSubmit(Date.now())
       setStatus('transmitted')
       setTimeout(() => {
         setStatus('idle')
         setForm({ name: '', email: '', message: '' })
+        setFieldErrors({ name: null, email: null, message: null })
       }, 3000)
     } catch {
       setError('TRANSMISSION FAILED — check your connection and retry.')
@@ -258,15 +364,35 @@ function ContactForm() {
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, amount: 0.1 }}
+        noValidate
       >
+        {/* Honeypot — hidden from humans, bots fill it and get silently dropped */}
+        <input
+          type="text"
+          name="_gotcha"
+          tabIndex="-1"
+          autoComplete="off"
+          aria-hidden="true"
+          style={{
+            position: 'absolute',
+            left: '-9999px',
+            width: '1px',
+            height: '1px',
+            opacity: 0,
+            pointerEvents: 'none',
+          }}
+        />
+
         <motion.div variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0, transition: { duration: 0.3 } } }}>
           <TerminalField
             id="contact-name"
             label="// SENDER_ID"
             placeholder={t.contact.namePlaceholder}
             value={form.name}
-            onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
+            onChange={(e) => setField('name', e.target.value)}
+            onBlur={() => handleBlur('name')}
             disabled={disabled}
+            fieldError={fieldErrors.name}
           />
         </motion.div>
         <motion.div variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0, transition: { duration: 0.3 } } }}>
@@ -276,8 +402,10 @@ function ContactForm() {
             label="// RETURN_FREQ"
             placeholder="your@email.com"
             value={form.email}
-            onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
+            onChange={(e) => setField('email', e.target.value)}
+            onBlur={() => handleBlur('email')}
             disabled={disabled}
+            fieldError={fieldErrors.email}
           />
         </motion.div>
         <motion.div variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0, transition: { duration: 0.3 } } }}>
@@ -288,8 +416,10 @@ function ContactForm() {
             label="// PAYLOAD"
             placeholder={t.contact.msgPlaceholder}
             value={form.message}
-            onChange={(e) => setForm((f) => ({ ...f, message: e.target.value }))}
+            onChange={(e) => setField('message', e.target.value)}
+            onBlur={() => handleBlur('message')}
             disabled={disabled}
+            fieldError={fieldErrors.message}
           />
         </motion.div>
 
@@ -350,7 +480,7 @@ function Contact() {
   return (
     <section
       id="contact"
-      className="relative min-h-screen py-12 md:py-24 px-4 sm:px-6"
+      className="relative py-10 md:py-16 px-4 sm:px-6"
       style={{ backgroundColor: C.bg }}
     >
       {/* Decorative background number — slow opacity pulse */}
@@ -360,7 +490,7 @@ function Contact() {
         transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut', delay: 2.2 }}
         style={{
           fontFamily: "'Bebas Neue', sans-serif",
-          fontSize: 'clamp(8rem, 18vw, 16rem)',
+          fontSize: 'clamp(4rem, 12vw, 16rem)',
           color: C.green,
           lineHeight: 1,
           right: '1.5vw',

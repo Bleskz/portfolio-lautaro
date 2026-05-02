@@ -16,12 +16,12 @@ function scrollTo(id, lenisRef) {
 }
 
 // Language labels for aria-label accessibility
-const LANG_LABELS = { en: 'English', es: 'Español', pt: 'Português', fr: 'Français' }
+const LANG_LABELS = { en: 'English', es: 'Español' }
 
-// Available language codes
-const LANGS = ['en', 'es', 'pt', 'fr']
+// Available language codes — only EN and ES are exposed in the selector
+const LANGS = ['en', 'es']
 
-// Language switcher buttons — EN / ES / PT / FR
+// Language switcher buttons — EN / ES
 function LangSelector({ lang, changeLang }) {
   return (
     <div style={{ display: 'flex', gap: '0.25rem' }} role="group" aria-label="Language selector">
@@ -73,31 +73,63 @@ function Navbar({ lenisRef }) {
   const [activeId, setActiveId] = useState('home')
   const [glitchId, setGlitchId] = useState(null)
 
-  // Track active section: whichever section's top is closest to (but above) the middle of the viewport
+  // Track active section using IntersectionObserver — far cheaper than a scroll-listener
+  // with getBoundingClientRect on every event.
+  // Lazy-loaded sections may not exist on first mount; we re-observe whenever a tracked
+  // section appears in the DOM via MutationObserver.
   useEffect(() => {
     const ids = ['home', 'about', 'projects', 'skills', 'contact']
+    const visibilities = new Map(ids.map((id) => [id, 0]))
+    const observed = new Set()
 
-    function onScroll() {
-      const mid = window.innerHeight * 0.25
-      let closest = ids[0]
-      let closestDist = Infinity
+    function pickActive() {
+      let best = null
+      let bestRatio = 0
       for (const id of ids) {
-        const el = document.getElementById(id)
-        if (!el) continue
-        const rect = el.getBoundingClientRect()
-        // Distance from top of section to mid-screen, only count sections that have started
-        const dist = Math.abs(rect.top - mid)
-        if (dist < closestDist) {
-          closestDist = dist
-          closest = id
-        }
+        const r = visibilities.get(id) ?? 0
+        if (r > bestRatio) { bestRatio = r; best = id }
       }
-      setActiveId(closest)
+      if (best) {
+        setActiveId(best)
+        return
+      }
+      // No section in viewport — only switch to "contact" once the user is genuinely
+      // near the page bottom (footer area), otherwise leave the previous active state.
+      const docHeight = document.documentElement.scrollHeight
+      const scrollBottom = window.scrollY + window.innerHeight
+      if (scrollBottom >= docHeight - 80) setActiveId('contact')
     }
 
-    window.addEventListener('scroll', onScroll, { passive: true })
-    onScroll() // run once on mount
-    return () => window.removeEventListener('scroll', onScroll)
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          visibilities.set(entry.target.id, entry.intersectionRatio)
+        }
+        pickActive()
+      },
+      { threshold: [0, 0.25, 0.5, 0.75, 1] }
+    )
+
+    function attachAvailable() {
+      for (const id of ids) {
+        if (observed.has(id)) continue
+        const el = document.getElementById(id)
+        if (el) {
+          io.observe(el)
+          observed.add(id)
+        }
+      }
+    }
+
+    attachAvailable()
+
+    // Watch for lazy-mounted sections appearing in the DOM
+    const mo = new MutationObserver(() => {
+      if (observed.size < ids.length) attachAvailable()
+    })
+    mo.observe(document.body, { childList: true, subtree: true })
+
+    return () => { io.disconnect(); mo.disconnect() }
   }, [])
 
   // Trigger a short glitch on the link that just became active
@@ -107,6 +139,15 @@ function Navbar({ lenisRef }) {
     const t = setTimeout(() => setGlitchId(null), 350)
     return () => clearTimeout(t)
   }, [activeId, reducedMotion])
+
+  // Locks page scroll while the mobile menu is open — prevents background scrolling under the overlay
+  useEffect(() => {
+    if (mobileOpen) {
+      const previous = document.body.style.overflow
+      document.body.style.overflow = 'hidden'
+      return () => { document.body.style.overflow = previous }
+    }
+  }, [mobileOpen])
 
   const NAV_LINKS = [
     { num: '01.', label: t.nav.home,     id: 'home'     },
@@ -187,9 +228,9 @@ function Navbar({ lenisRef }) {
           </span>
         </div>
 
-        {/* CENTER — Nav links (hidden below md / 768px) */}
+        {/* CENTER — Nav links (visible from lg / 1024px+) */}
         <nav
-          className="hidden md:flex"
+          className="hidden lg:flex"
           aria-label="Main navigation"
           style={{ gap: '2rem', alignItems: 'center' }}
         >
@@ -202,13 +243,13 @@ function Navbar({ lenisRef }) {
         {/* RIGHT — Lang selector + CTA button + hamburger */}
         <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '0.75rem' }}>
           <LangSelector lang={lang} changeLang={changeLang} />
-          {/* CTA hidden on mobile — not enough space */}
-          <div className="hidden md:block">
+          {/* CTA visible from lg+ — keeps mobile/tablet header uncluttered */}
+          <div className="hidden lg:block">
             <CTAButton label={t.nav.cta} onClick={() => scrollTo('contact', lenisRef)} />
           </div>
-          {/* Hamburger button — visible only on mobile */}
+          {/* Hamburger button — visible only below lg (mobile + tablet) */}
           <button
-            className="flex md:hidden"
+            className="flex lg:hidden"
             onClick={() => setMobileOpen((v) => !v)}
             aria-label={mobileOpen ? 'Close navigation menu' : 'Open navigation menu'}
             aria-expanded={mobileOpen}
@@ -310,36 +351,58 @@ function NavLink({ num, label, id, lenisRef, active, glitch }) {
         fontSize: '0.68rem',
         letterSpacing: '0.15em',
         textTransform: 'uppercase',
-        padding: 0,
+        padding: '0.25rem 0',
         display: 'flex',
         alignItems: 'center',
         gap: '0.3rem',
+        position: 'relative',
       }}
     >
-      <span style={{ color: C.green }}>{num}</span>
+      <span style={{ color: active ? C.green : C.g(0.5) }}>{num}</span>
       <motion.span
-        animate={glitch
-          ? { x: [-4, 3, -1, 0], color: [C.cyan, C.cyan, C.green, active ? C.green : C.textDim] }
-          : { x: 0, color: active ? C.green : C.textDim }
+        // Keep the shape of `animate` stable — always { x, color }. The glitch is a
+        // brief one-shot keyframe burst that always settles on the section's resting color.
+        animate={
+          glitch
+            ? { x: [-4, 3, -1, 0], color: [C.cyan, C.cyan, C.green, active ? C.green : C.w(0.45)] }
+            : { x: 0, color: active ? C.green : C.w(0.45) }
         }
-        transition={glitch
-          ? { duration: 0.18, ease: 'easeOut' }
-          : { duration: 0.25 }
-        }
+        transition={glitch ? { duration: 0.18, ease: 'easeOut' } : { duration: 0.25 }}
         style={{
           display: 'inline-block',
-          textShadow: active ? `0 0 10px ${C.g(0.6)}` : 'none',
-          transition: 'text-shadow 0.25s',
+          textShadow: active ? `0 0 12px ${C.g(0.85)}` : 'none',
+          fontWeight: active ? 700 : 400,
+          transition: 'text-shadow 0.25s, font-weight 0.25s',
         }}
         onMouseEnter={e => {
           e.currentTarget.style.textShadow = `0 0 10px ${C.green}`
         }}
         onMouseLeave={e => {
-          e.currentTarget.style.textShadow = active ? `0 0 10px ${C.g(0.6)}` : 'none'
+          e.currentTarget.style.textShadow = active ? `0 0 12px ${C.g(0.85)}` : 'none'
         }}
       >
         {label}
       </motion.span>
+      {/* Active indicator — animated underline that slides in/out on section change */}
+      <motion.span
+        aria-hidden="true"
+        initial={false}
+        animate={{
+          opacity: active ? 1 : 0,
+          scaleX: active ? 1 : 0,
+        }}
+        transition={{ duration: 0.25, ease: 'easeOut' }}
+        style={{
+          position: 'absolute',
+          bottom: -2,
+          left: 0,
+          right: 0,
+          height: '2px',
+          backgroundColor: C.green,
+          boxShadow: `0 0 8px ${C.green}`,
+          transformOrigin: 'left',
+        }}
+      />
     </motion.button>
   )
 }

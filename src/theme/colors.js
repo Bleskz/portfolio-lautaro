@@ -20,6 +20,7 @@ export const C = {
   borderStrong: 'rgba(0,255,65,0.5)',
   cardBg:       'rgba(2,5,2,0.85)',
   terminalBg:   'rgba(2,5,2,0.95)',
-  textDim:      'rgba(232,255,232,0.55)',
-  textFaint:    'rgba(232,255,232,0.35)',
+  // Bumped to meet WCAG AA on small text against the near-black background
+  textDim:      'rgba(232,255,232,0.7)',
+  textFaint:    'rgba(232,255,232,0.55)',
 }

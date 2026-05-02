@@ -1,8 +1,11 @@
 // Footer — full-width two-column layout: copyright left, links right
+import { useState } from 'react'
 import { LINKS } from '../config/links'
 import { C } from '../theme/colors'
 
 function Footer() {
+  const [discordCopied, setDiscordCopied] = useState(false)
+
   const linkStyle = {
     fontFamily: "'Share Tech Mono', monospace",
     fontSize: '0.62rem',
@@ -23,6 +26,17 @@ function Footer() {
   function onLeave(e) {
     e.currentTarget.style.color = C.textFaint
     e.currentTarget.style.textShadow = 'none'
+  }
+
+  // Copies the Discord handle to clipboard, falls back silently if clipboard API is unavailable
+  async function copyDiscord() {
+    try {
+      await navigator.clipboard.writeText(LINKS.discord)
+      setDiscordCopied(true)
+      setTimeout(() => setDiscordCopied(false), 1800)
+    } catch {
+      // Clipboard blocked — leave the user to copy manually from the tooltip
+    }
   }
 
   return (
@@ -49,7 +63,7 @@ function Footer() {
             letterSpacing: '0.05em',
           }}
         >
-          © {new Date().getFullYear()} LAUTARO VELO{' '}
+          © {new Date().getFullYear()} LAUTARO BLESKZ{' '}
         </span>
         <span
           style={{
@@ -64,7 +78,7 @@ function Footer() {
       </div>
 
       {/* RIGHT — external links row */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '2rem', flexWrap: 'wrap' }}>
         <a
           href={LINKS.github}
           target="_blank"
@@ -87,13 +101,26 @@ function Footer() {
         >
           EMAIL
         </a>
-        {/* Discord: not an interactive link — displayed as label only */}
-        <span
-          style={{ ...linkStyle, cursor: 'default', color: C.w(0.25) }}
-          title="Discord: Bleskz"
+        {/* Discord — click to copy handle to clipboard */}
+        <button
+          type="button"
+          onClick={copyDiscord}
+          style={{
+            ...linkStyle,
+            background: 'none',
+            border: 'none',
+            padding: 0,
+            color: discordCopied ? C.green : C.textFaint,
+          }}
+          onMouseEnter={onEnter}
+          onMouseLeave={(e) => {
+            if (!discordCopied) onLeave(e)
+          }}
+          title={`Click to copy Discord handle: ${LINKS.discord}`}
+          aria-label={`Copy Discord handle ${LINKS.discord} to clipboard`}
         >
-          DISCORD
-        </span>
+          {discordCopied ? '✓ COPIED' : 'DISCORD'}
+        </button>
       </div>
     </footer>
   )

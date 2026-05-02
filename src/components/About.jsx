@@ -4,6 +4,7 @@ import SectionHeader from './SectionHeader'
 import { useLang } from '../context/LangContext'
 import { LINKS } from '../config/links'
 import { C } from '../theme/colors'
+import StackChip from './ui/StackChip'
 
 const STACK_TAGS = [
   'REACT', 'NODE.JS', 'ELECTRON', 'CHROME EXT API', 'SQLITE',
@@ -15,10 +16,10 @@ function About() {
 
   // Terminal rows: keys are terminal labels (never translated), only ROLE and EXPERIENCE values are translated
   const TERMINAL_ROWS = [
-    { key: 'NAME',       value: 'Lautaro Velo',                cyan: false, link: null },
+    { key: 'NAME',       value: 'Lautaro Bleskz',              cyan: false, link: null },
     { key: 'ROLE',       value: t.about.role,                  cyan: false, link: null },
     { key: 'ORIGIN',     value: 'Neuquen, Argentina',          cyan: false, link: null },
-    { key: 'STATUS',     value: 'BUILDING_SOMETHING_RN',       cyan: true,  link: null },
+    { key: 'STATUS',     value: 'BUILDING_PROJECTS // OPEN_TO_WORK', cyan: true, link: null },
     { key: 'EXPERIENCE', value: t.about.experience,            cyan: false, link: null },
     { key: 'GITHUB',     value: 'github.com/Bleskz',           cyan: false, link: LINKS.github },
     { key: 'DISCORD',    value: LINKS.discord,                 cyan: false, link: null },
@@ -27,8 +28,8 @@ function About() {
   return (
     <section
       id="about"
-      className="relative min-h-screen flex flex-col justify-center px-4 sm:px-6 py-16 md:py-32"
-      style={{ backgroundColor: C.bg }}
+      className="relative flex flex-col justify-center px-4 sm:px-6 py-12 md:py-20"
+      style={{ backgroundColor: C.bg, minHeight: 'auto' }}
     >
       {/* Decorative background number — slow opacity pulse */}
       <motion.span
@@ -37,7 +38,7 @@ function About() {
         transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut', delay: 0 }}
         style={{
           fontFamily: "'Bebas Neue', sans-serif",
-          fontSize: 'clamp(8rem, 18vw, 16rem)',
+          fontSize: 'clamp(4rem, 12vw, 16rem)',
           color: C.green,
           lineHeight: 1,
           right: '1.5vw',
@@ -257,8 +258,9 @@ function About() {
                 style={{
                   fontFamily: "'Space Mono', monospace",
                   fontSize: '0.8rem',
-                  color: C.w(0.5),
+                  color: C.w(0.55),
                   lineHeight: 1.75,
+                  letterSpacing: '0.02em',
                 }}
               >
                 {t.about.bio1}
@@ -271,8 +273,9 @@ function About() {
                 style={{
                   fontFamily: "'Space Mono', monospace",
                   fontSize: '0.8rem',
-                  color: C.w(0.5),
+                  color: C.w(0.55),
                   lineHeight: 1.75,
+                  letterSpacing: '0.02em',
                 }}
               >
                 {t.about.bio2}
@@ -288,25 +291,15 @@ function About() {
               viewport={{ once: true, amount: 0.05 }}
             >
               {STACK_TAGS.map((tag) => (
-                <motion.span
+                <motion.div
                   key={tag}
                   variants={{
                     hidden: { opacity: 0, y: 8 },
                     visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
                   }}
-                  whileHover={{ background: C.g(0.1), borderColor: C.g(0.55) }}
-                  className="px-2 py-1 cursor-default"
-                  style={{
-                    fontFamily: "'Share Tech Mono', monospace",
-                    fontSize: '0.62rem',
-                    color: C.green,
-                    border: `1px solid ${C.g(0.3)}`,
-                    background: C.g(0.05),
-                    letterSpacing: '0.05em',
-                  }}
                 >
-                  {tag}
-                </motion.span>
+                  <StackChip label={tag} />
+                </motion.div>
               ))}
             </motion.div>
           </motion.div>

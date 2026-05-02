@@ -30,3 +30,8 @@ CLAUDE.md
 CONTEXT.md
 AUDIT.md
 recordatorios.md
+.claude/
+
+# CV sources — only the rendered PDFs in /public are committed (served by Vercel).
+# The /cv working folder (drafts, instructions, vocab guides) stays local.
+cv/

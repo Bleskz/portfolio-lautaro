@@ -11,26 +11,34 @@ const channels = [
     skills: [
       { name: 'HTML + CSS', pct: 95 },
       { name: 'JavaScript', pct: 85 },
-      { name: 'React', pct: 75 },
-      { name: 'Tailwind CSS', pct: 90 },
+      { name: 'React', pct: 80 },
+      { name: 'Tailwind CSS', pct: 75 },
+      { name: 'UI/UX Design', pct: 70 },
     ],
   },
   {
     name: '// BACKEND_AND_TOOLS',
     skills: [
-      { name: 'Node.js', pct: 70 },
-      { name: 'REST APIs', pct: 85 },
-      { name: 'Electron', pct: 72 },
-      { name: 'Git / GitHub', pct: 80 },
+      { name: 'Node.js', pct: 75 },
+      { name: 'REST APIs', pct: 70 },
+      { name: 'Electron', pct: 65 },
+      { name: 'Git / GitHub', pct: 90 },
+      { name: 'Twilio', pct: 60 },
     ],
   },
   {
     name: '// AI_AND_CREATIVE',
     skills: [
-      { name: 'Claude Code', pct: 95 },
-      { name: 'Prompt Engineering', pct: 90 },
-      { name: 'ComfyUI', pct: 80 },
-      { name: 'UI/UX Design', pct: 75 },
+      { name: 'Claude Code', pct: 85 },
+      { name: 'Prompt Engineering', pct: 80 },
+      { name: 'ComfyUI', pct: 65 },
+    ],
+  },
+  {
+    name: '// GAME_DEV',
+    skills: [
+      { name: 'Unity', pct: 55 },
+      { name: 'C#', pct: 50 },
     ],
   },
 ]
@@ -41,7 +49,7 @@ function SkillBar({ name, pct, index }) {
   const inView = useInView(ref, { once: true, amount: 0.05 })
   const [count, setCount] = useState(0)
 
-  // Count up from 0 to pct using rAF — randomly glitches to a noise digit during animation
+  // Count up from 0 to pct using rAF — sparingly glitches to a noise digit during the early portion only
   useEffect(() => {
     if (!inView) return
     const duration = 800 + index * 60
@@ -51,7 +59,8 @@ function SkillBar({ name, pct, index }) {
       const progress = Math.min((now - startTime) / duration, 1)
       const eased = 1 - Math.pow(1 - progress, 3)
       const target = Math.round(eased * pct)
-      const isGlitch = Math.random() < 0.18 && progress < 0.85
+      // Only glitch during the first ~40% so the user always sees the real number for most of the animation
+      const isGlitch = Math.random() < 0.08 && progress < 0.4
       setCount(isGlitch ? Math.floor(Math.random() * 100) : target)
       if (progress < 1) raf = requestAnimationFrame(tick)
       else setCount(pct)
@@ -180,7 +189,7 @@ function Skills() {
   return (
     <section
       id="skills"
-      className="relative min-h-screen py-12 md:py-24 px-4 sm:px-6"
+      className="relative py-10 md:py-16 px-4 sm:px-6"
       style={{ backgroundColor: C.bg }}
     >
       {/* Decorative background number — slow opacity pulse */}
@@ -190,7 +199,7 @@ function Skills() {
         transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut', delay: 0.8 }}
         style={{
           fontFamily: "'Bebas Neue', sans-serif",
-          fontSize: 'clamp(8rem, 18vw, 16rem)',
+          fontSize: 'clamp(4rem, 12vw, 16rem)',
           color: C.green,
           lineHeight: 1,
           right: '1.5vw',
@@ -210,7 +219,7 @@ function Skills() {
           subtitle={t.skills.subtitle}
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
           {channels.map((channel, i) => (
             <ChannelCard key={channel.name} channel={channel} index={i} />
           ))}

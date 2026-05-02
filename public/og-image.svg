@@ -47,7 +47,7 @@
     font-size="13"
     fill="#00FF41"
     letter-spacing="3.5"
-    opacity="0.8">▸  SIGNAL_DETECTED  //  PORTFOLIO.LAUTARO_VELO</text>
+    opacity="0.8">▸  SIGNAL_DETECTED  //  PORTFOLIO.LAUTARO_BLESKZ</text>
 
   <!-- ── MAIN NAME ── -->
   <!-- Name glow layer (blurred) -->
@@ -62,7 +62,7 @@
     font-size="175"
     fill="#00FF41"
     opacity="0.04"
-    filter="url(#greenGlow)">VELO</text>
+    filter="url(#greenGlow)">BLESKZ</text>
 
   <!-- Name main text -->
   <text x="72" y="298"
@@ -76,7 +76,7 @@
     font-size="175"
     fill="#F0FFF0"
     letter-spacing="2"
-    opacity="0.96">VELO</text>
+    opacity="0.96">BLESKZ</text>
 
   <!-- Divider line after name -->
   <line x1="72" y1="482" x2="480" y2="482" stroke="#00FF41" stroke-width="0.8" opacity="0.3"/>

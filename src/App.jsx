@@ -1,8 +1,7 @@
 // Root app — renders Navbar, all sections, and Footer in order
 import { useEffect, useState, lazy, Suspense } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, MotionConfig } from 'framer-motion'
 import useLenis from './hooks/useLenis'
-import useReducedMotion from './hooks/useReducedMotion'
 import { LangProvider } from './context/LangContext'
 import Navbar from './components/Navbar'
 import Hero   from './components/Hero'
@@ -26,15 +25,49 @@ function SectionDivider() {
   )
 }
 
-// Fixed button that appears after scrolling 400px — scrolls back to top on click
+// Fixed button that appears after scrolling past Hero — scrolls back to top on click.
+// Hides itself when the footer enters viewport so it never overlaps the bottom links.
 function ScrollToTop({ lenisRef }) {
-  const [visible, setVisible] = useState(false)
+  const [pastHero, setPastHero] = useState(false)
+  const [footerVisible, setFooterVisible] = useState(false)
 
+  // Watch the Hero — button is candidate-visible only when Hero is fully out
   useEffect(() => {
-    function onScroll() { setVisible(window.scrollY > 400) }
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
+    const hero = document.getElementById('home')
+    if (!hero) return
+    const io = new IntersectionObserver(
+      ([entry]) => setPastHero(!entry.isIntersecting),
+      { threshold: 0 }
+    )
+    io.observe(hero)
+    return () => io.disconnect()
   }, [])
+
+  // Watch the footer — once visible, hide the button to avoid overlapping the bottom links.
+  // Footer is lazy-loaded, so we poll the DOM briefly until it mounts, then attach the observer.
+  useEffect(() => {
+    let io
+    let pollId
+    function attach() {
+      const footer = document.querySelector('footer')
+      if (!footer) {
+        pollId = setTimeout(attach, 200)
+        return
+      }
+      io = new IntersectionObserver(
+        ([entry]) => setFooterVisible(entry.isIntersecting),
+        { threshold: 0 }
+      )
+      io.observe(footer)
+    }
+    attach()
+    return () => {
+      if (io) io.disconnect()
+      if (pollId) clearTimeout(pollId)
+    }
+  }, [])
+
+  const visible = pastHero && !footerVisible
 
   function handleClick() {
     const lenis = lenisRef?.current
@@ -80,69 +113,69 @@ function ScrollToTop({ lenisRef }) {
             e.currentTarget.style.backgroundColor = 'transparent'
             e.currentTarget.style.boxShadow = '0 0 10px rgba(0,255,65,0.12)'
           }}
+          aria-hidden="false"
         >
-          ▲
+          <span aria-hidden="true">▲</span>
         </motion.button>
       )}
     </AnimatePresence>
   )
 }
 
-// Applies a brief brightness flash on fast scrolls (CRT flicker effect)
-// Skipped entirely when prefers-reduced-motion is active
-function useScrollFlash(reducedMotion) {
-  useEffect(() => {
-    if (reducedMotion) return
-
-    let lastY = window.scrollY
-    let flashTimeout = null
-
-    function handleScroll() {
-      const currentY = window.scrollY
-      const delta = Math.abs(currentY - lastY)
-      lastY = currentY
-
-      if (delta > 100) {
-        document.body.style.filter = 'brightness(1.04)'
-        clearTimeout(flashTimeout)
-        flashTimeout = setTimeout(() => {
-          document.body.style.filter = 'none'
-        }, 80)
-      }
-    }
-
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => {
-      window.removeEventListener('scroll', handleScroll)
-      clearTimeout(flashTimeout)
-      document.body.style.filter = 'none'
-    }
-  }, [reducedMotion])
+// Visually hidden link — appears on Tab focus, lets keyboard users jump straight to content
+function SkipLink() {
+  return (
+    <a
+      href="#home"
+      style={{
+        position: 'absolute',
+        left: '-9999px',
+        top: 0,
+        zIndex: 100,
+        padding: '0.6rem 1rem',
+        backgroundColor: '#00FF41',
+        color: '#020502',
+        fontFamily: "'Share Tech Mono', monospace",
+        fontSize: '0.78rem',
+        textDecoration: 'none',
+        letterSpacing: '0.08em',
+      }}
+      onFocus={(e) => { e.target.style.left = '0.5rem'; e.target.style.top = '0.5rem' }}
+      onBlur={(e) => { e.target.style.left = '-9999px' }}
+    >
+      SKIP TO CONTENT
+    </a>
+  )
 }
 
 function App() {
-  const reducedMotion = useReducedMotion()
-  useScrollFlash(reducedMotion)
   const lenisRef = useLenis()
 
   return (
-    <LangProvider>
-      <Navbar lenisRef={lenisRef} />
-      <Hero />
-      <ScrollToTop lenisRef={lenisRef} />
-      <Suspense fallback={<div style={{ backgroundColor: '#020502', minHeight: '100vh' }} />}>
-        <SectionDivider />
-        <About />
-        <SectionDivider />
-        <Projects />
-        <SectionDivider />
-        <Skills />
-        <SectionDivider />
-        <Contact />
-        <SectionDivider />
-        <Footer />
-      </Suspense>
-    </LangProvider>
+    // MotionConfig "never" disables framer-motion's automatic reduced-motion handling.
+    // We honor prefers-reduced-motion manually via the useReducedMotion hook in the
+    // few components that have looping decorative animations, so transitions and
+    // one-shot reveals stay snappy and predictable.
+    <MotionConfig reducedMotion="never">
+      <LangProvider>
+        <SkipLink />
+        <Navbar lenisRef={lenisRef} />
+        <Hero />
+        <ScrollToTop lenisRef={lenisRef} />
+        <Suspense fallback={<div style={{ backgroundColor: '#020502', minHeight: '100vh' }} />}>
+          <SectionDivider />
+          <About />
+          <SectionDivider />
+          <Projects />
+          <SectionDivider />
+          <Skills />
+          <SectionDivider />
+          <Contact />
+          <SectionDivider />
+          <Footer />
+        </Suspense>
+      </LangProvider>
+    </MotionConfig>
   )
 }
 
