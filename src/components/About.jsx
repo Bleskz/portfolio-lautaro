@@ -7,8 +7,11 @@ import { C } from '../theme/colors'
 import StackChip from './ui/StackChip'
 
 const STACK_TAGS = [
-  'REACT', 'NODE.JS', 'ELECTRON', 'CHROME EXT API', 'SQLITE',
-  'TAILWIND', 'FRAMER MOTION', 'CLAUDE CODE', 'COMFYUI',
+  'CLAUDE CODE', 'CLAUDE AGENTS', 'PROMPT ENGINEERING',
+  'CUSTOM SKILLS', 'COMFYUI', 'FLUX', 'NANO BANANA',
+  'GENERATIVE AI', 'LLM ORCHESTRATION',
+  'REACT', 'NODE.JS', 'ELECTRON', 'CHROME EXT API',
+  'TAILWIND', 'FRAMER MOTION', 'SQLITE',
 ]
 
 function About() {
@@ -16,7 +19,7 @@ function About() {
 
   // Terminal rows: keys are terminal labels (never translated), only ROLE and EXPERIENCE values are translated
   const TERMINAL_ROWS = [
-    { key: 'NAME',       value: 'Lautaro Bleskz',              cyan: false, link: null },
+    { key: 'NAME',       value: 'Lautaro Velo',                cyan: false, link: null },
     { key: 'ROLE',       value: t.about.role,                  cyan: false, link: null },
     { key: 'ORIGIN',     value: 'Neuquen, Argentina',          cyan: false, link: null },
     { key: 'STATUS',     value: 'BUILDING_PROJECTS // OPEN_TO_WORK', cyan: true, link: null },

@@ -16,7 +16,7 @@ const translations = {
       cta:      'OPEN_CHANNEL →',
     },
     hero: {
-      subtitle1:   '// Fullstack Developer from Neuquen, AR',
+      subtitle1:   '// AI Engineer & AI-Augmented Builder from Neuquen, AR',
       subtitle2:   '— Ships things. Fast. With whatever it takes.',
       ctaProjects: 'TUNE IN → PROJECTS',
       ctaContact:  'OPEN CHANNEL →',
@@ -24,7 +24,7 @@ const translations = {
     },
     about: {
       subtitle:   '// IDENTITY PACKET RECEIVED',
-      role:       'Fullstack Developer',
+      role:       'AI Engineer & AI-Augmented Builder',
       experience: 'Self-taught, 0 to shipped',
       quotePart1: 'Always',
       quoteWord:  'make',
@@ -50,7 +50,7 @@ const translations = {
         description: 'Survival horror game built in Unity. First-person exploration with environmental storytelling. Currently in active development.',
       },
       chatbot: {
-        description: 'Automated WhatsApp chatbot for real estate agencies. Handles property inquiries, filters leads, and schedules visits without human intervention.',
+        description: 'AI-powered WhatsApp chatbot for real estate agencies. LLM-driven conversation handles property inquiries, filters leads, and schedules visits 24/7 without human intervention.',
       },
       walkingsim: {
         description: 'First Unity project. A first-person walking experience focused on atmosphere and movement feel. Built to learn the engine from scratch.',
@@ -69,7 +69,7 @@ const translations = {
       handshake:       '→ Handshake established. Signal strong.',
       channelOpen:     '✓ Channel open',
       ready:           '✓ Ready',
-      reposAvailable:  '✓ 8+ projects shipped',
+      reposAvailable:  '✓ 32+ projects shipped · 12+ clients',
       namePlaceholder: 'your name',
       msgPlaceholder:  'your message',
       submit:          'TRANSMIT →',
@@ -87,7 +87,7 @@ const translations = {
       cta:      'CANAL_ABIERTO →',
     },
     hero: {
-      subtitle1:   '// Desarrollador Fullstack desde Neuquén, AR',
+      subtitle1:   '// AI Engineer y constructor de productos con IA desde Neuquén, AR',
       subtitle2:   '— Construye cosas. Rápido. Con lo que haga falta.',
       ctaProjects: 'VER → PROYECTOS',
       ctaContact:  'ABRIR CANAL →',
@@ -95,7 +95,7 @@ const translations = {
     },
     about: {
       subtitle:   '// PAQUETE DE IDENTIDAD RECIBIDO',
-      role:       'Desarrollador Fullstack',
+      role:       'AI Engineer y Constructor con IA',
       experience: 'Autodidacta, de 0 a publicado',
       quotePart1: 'Siempre',
       quoteWord:  'hacé',
@@ -121,7 +121,7 @@ const translations = {
         description: 'Juego de survival horror hecho en Unity. Exploración en primera persona con narrativa ambiental. Actualmente en desarrollo activo.',
       },
       chatbot: {
-        description: 'Chatbot automatizado de WhatsApp para inmobiliarias. Atiende consultas de propiedades, filtra leads y agenda visitas sin intervención humana.',
+        description: 'Chatbot de WhatsApp con automatización de IA para inmobiliarias. Conversación orquestada con LLM: atiende consultas, filtra leads y agenda visitas 24/7 sin intervención humana.',
       },
       walkingsim: {
         description: 'Primer proyecto en Unity. Una experiencia walking simulator en primera persona enfocada en la atmósfera y la sensación del movimiento. Hecho para aprender el motor desde cero.',
@@ -140,7 +140,7 @@ const translations = {
       handshake:       '→ Handshake establecido. Señal fuerte.',
       channelOpen:     '✓ Canal abierto',
       ready:           '✓ Listo',
-      reposAvailable:  '✓ 8+ proyectos publicados',
+      reposAvailable:  '✓ 32+ proyectos publicados · 12+ clientes',
       namePlaceholder: 'tu nombre',
       msgPlaceholder:  'tu mensaje',
       submit:          'TRANSMITIR →',
@@ -158,7 +158,7 @@ const translations = {
       cta:      'CANAL_ABERTO →',
     },
     hero: {
-      subtitle1:   '// Desenvolvedor Fullstack de Neuquén, AR',
+      subtitle1:   '// AI Engineer e construtor de produtos com IA de Neuquén, AR',
       subtitle2:   '— Constrói coisas. Rápido. Com o que for preciso.',
       ctaProjects: 'VER → PROJETOS',
       ctaContact:  'ABRIR CANAL →',
@@ -166,7 +166,7 @@ const translations = {
     },
     about: {
       subtitle:   '// PACOTE DE IDENTIDADE RECEBIDO',
-      role:       'Desenvolvedor Fullstack',
+      role:       'AI Engineer e Construtor com IA',
       experience: 'Autodidata, do 0 ao publicado',
       quotePart1: 'Sempre',
       quoteWord:  'faça',
@@ -192,7 +192,7 @@ const translations = {
         description: 'Jogo de survival horror feito em Unity. Exploração em primeira pessoa com narrativa ambiental. Atualmente em desenvolvimento ativo.',
       },
       chatbot: {
-        description: 'Chatbot automatizado de WhatsApp para imobiliárias. Atende consultas de propriedades, filtra leads e agenda visitas sem intervenção humana.',
+        description: 'Chatbot de WhatsApp com automação de IA para imobiliárias. Conversa orquestrada com LLM: atende consultas, filtra leads e agenda visitas 24/7 sem intervenção humana.',
       },
       walkingsim: {
         description: 'Primeiro projeto em Unity. Uma experiência walking simulator em primeira pessoa focada na atmosfera e na sensação do movimento. Feito para aprender o motor do zero.',
@@ -211,7 +211,7 @@ const translations = {
       handshake:       '→ Handshake estabelecido. Sinal forte.',
       channelOpen:     '✓ Canal aberto',
       ready:           '✓ Pronto',
-      reposAvailable:  '✓ 8+ projetos publicados',
+      reposAvailable:  '✓ 32+ projetos publicados · 12+ clientes',
       namePlaceholder: 'seu nome',
       msgPlaceholder:  'sua mensagem',
       submit:          'TRANSMITIR →',
@@ -229,7 +229,7 @@ const translations = {
       cta:      'CANAL_OUVERT →',
     },
     hero: {
-      subtitle1:   '// Développeur Fullstack depuis Neuquén, AR',
+      subtitle1:   '// AI Engineer et constructeur de produits IA depuis Neuquén, AR',
       subtitle2:   '— Il construit des choses. Vite. Avec ce qu\'il faut.',
       ctaProjects: 'VOIR → PROJETS',
       ctaContact:  'OUVRIR CANAL →',
@@ -237,7 +237,7 @@ const translations = {
     },
     about: {
       subtitle:   '// PAQUET D\'IDENTITÉ REÇU',
-      role:       'Développeur Fullstack',
+      role:       'AI Engineer et Constructeur IA',
       experience: 'Autodidacte, de 0 au déploiement',
       quotePart1: 'Toujours',
       quoteWord:  'créer',
@@ -263,7 +263,7 @@ const translations = {
         description: "Jeu de survival horror conçu sur Unity. Exploration à la première personne avec narration environnementale. Actuellement en développement actif.",
       },
       chatbot: {
-        description: "Chatbot WhatsApp automatisé pour agences immobilières. Gère les demandes de biens, filtre les leads et planifie les visites sans intervention humaine.",
+        description: "Chatbot WhatsApp avec automatisation IA pour agences immobilières. Conversation orchestrée par LLM : gère les demandes, filtre les leads et planifie les visites 24/7 sans intervention humaine.",
       },
       walkingsim: {
         description: "Premier projet Unity. Une expérience walking simulator à la première personne axée sur l'atmosphère et la sensation du mouvement. Conçu pour apprendre le moteur à partir de zéro.",
@@ -282,7 +282,7 @@ const translations = {
       handshake:       '→ Handshake établi. Signal fort.',
       channelOpen:     '✓ Canal ouvert',
       ready:           '✓ Prêt',
-      reposAvailable:  '✓ 8+ projets livrés',
+      reposAvailable:  '✓ 32+ projets livrés · 12+ clients',
       namePlaceholder: 'votre nom',
       msgPlaceholder:  'votre message',
       submit:          'TRANSMETTRE →',

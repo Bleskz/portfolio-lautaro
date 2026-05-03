@@ -6,10 +6,26 @@ import ProjectCard from './ProjectCard'
 import { useLang } from '../context/LangContext'
 import { LINKS } from '../config/links'
 
-// Static project data — names and codenames are never translated
+// Static project data — names and codenames are never translated.
+// Order is AI-centric first: AI/automation, then shipped products, then exploratory work.
 const PROJECTS_BASE = [
   {
     sigId: 'SIG-001',
+    descKey: 'chatbot',
+    type: 'AI_AUTOMATION',
+    freq: '512.8MHz',
+    name: 'REAL ESTATE CHATBOT',
+    codename: 'CHATBOT_INMOB.SYS',
+    stack: ['LLM', 'TWILIO', 'WHATSAPP API', 'NODE.JS'],
+    codeUrl: null,
+    codeDisabled: true,
+    codeDisabledLabel: 'PRIVATE_REPO',
+    demoUrl: null,
+    demoDisabled: true,
+    demoLabel: 'PRIVATE_REPO',
+  },
+  {
+    sigId: 'SIG-002',
     descKey: 'tabflow',
     type: 'CHROME_EXT',
     freq: '443.7MHz',
@@ -18,17 +34,6 @@ const PROJECTS_BASE = [
     stack: ['CHROME API', 'VANILLA JS', 'HTML/CSS'],
     codeUrl: `${LINKS.github}/tabflow`,
     demoUrl: 'https://chromewebstore.google.com/detail/tabflow-workspace-tab-man/fallkdcngmhiefbhlfbjhjeibmoedkpp',
-  },
-  {
-    sigId: 'SIG-002',
-    descKey: 'steam',
-    type: 'WEB_APP',
-    freq: '887.2MHz',
-    name: 'Steam Analyzer',
-    codename: 'STEAM_ANALYZER.SYS',
-    stack: ['REACT', 'STEAM API', 'TAILWIND', 'NODE.JS'],
-    codeUrl: `${LINKS.github}/steam-analyzer`,
-    demoUrl: 'https://steam-analyzer-rust.vercel.app/',
   },
   {
     sigId: 'SIG-003',
@@ -45,6 +50,17 @@ const PROJECTS_BASE = [
   },
   {
     sigId: 'SIG-004',
+    descKey: 'steam',
+    type: 'WEB_APP',
+    freq: '887.2MHz',
+    name: 'Steam Analyzer',
+    codename: 'STEAM_ANALYZER.SYS',
+    stack: ['REACT', 'STEAM API', 'TAILWIND', 'NODE.JS'],
+    codeUrl: `${LINKS.github}/steam-analyzer`,
+    demoUrl: 'https://steam-analyzer-rust.vercel.app/',
+  },
+  {
+    sigId: 'SIG-005',
     descKey: 'tabflowlanding',
     type: 'LANDING',
     freq: '221.9MHz',
@@ -55,7 +71,7 @@ const PROJECTS_BASE = [
     demoUrl: 'https://mytabflow.com/',
   },
   {
-    sigId: 'SIG-005',
+    sigId: 'SIG-006',
     descKey: 'outpost',
     type: 'GAME_DEV',
     freq: '662.4MHz',
@@ -67,21 +83,6 @@ const PROJECTS_BASE = [
     codeDisabledLabel: 'PRIVATE_REPO',
     demoUrl: null,
     statusBadge: 'STATUS: IN_DEVELOPMENT',
-  },
-  {
-    sigId: 'SIG-006',
-    descKey: 'chatbot',
-    type: 'AUTOMATION',
-    freq: '512.8MHz',
-    name: 'REAL ESTATE CHATBOT',
-    codename: 'CHATBOT_INMOB.SYS',
-    stack: ['TWILIO', 'NODE.JS', 'AUTOMATION'],
-    codeUrl: null,
-    codeDisabled: true,
-    codeDisabledLabel: 'PRIVATE_REPO',
-    demoUrl: null,
-    demoDisabled: true,
-    demoLabel: 'PRIVATE_REPO',
   },
   {
     sigId: 'SIG-007',

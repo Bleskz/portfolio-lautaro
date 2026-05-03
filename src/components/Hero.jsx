@@ -102,56 +102,51 @@ function DataStreams({ enabled }) {
   )
 }
 
-// Real code snippets from each project — cycled in the live panel
+// AI-centric snippets — cycled in the live panel to showcase the new positioning
 const CODE_SNIPPETS = [
   {
-    file: 'TabFlow/background.js',
+    file: 'agents/web-builder.md',
     code:
-`// Save current tab session
-async function saveSession(name) {
-  const tabs = await chrome.tabs.query({
-    currentWindow: true
-  })
-  const session = {
-    name,
-    tabs: tabs.map(t => ({
-      url:   t.url,
-      title: t.title,
-    }))
+`// Custom agent for client websites
+---
+name: web-builder
+description: Builds landing pages
+tools: Read, Write, Edit, Bash
+---
+
+You are a web builder agent.
+Goal: ship landing pages fast,
+responsive, conversion-focused.
+Always validate before deploy.`,
+  },
+  {
+    file: 'comfyui/flux-portrait.json',
+    code:
+`// Flux inference workflow
+{
+  "model": "flux-dev-fp8",
+  "sampler": "euler",
+  "steps": 28,
+  "cfg": 3.5,
+  "prompt": "cyberpunk portrait,
+    neon green lights,
+    cinematic, 8k detail",
+  "lora": "style-matrix-v2"
+}`,
+  },
+  {
+    file: 'chatbot/whatsapp-handler.js',
+    code:
+`// WhatsApp AI chatbot — handles leads
+async function handleMessage(msg) {
+  const intent = await classifyIntent(msg)
+  if (intent === 'property_inquiry') {
+    return await searchProperties(msg)
   }
-  await chrome.storage.local.set({
-    [name]: session
-  })
-}`,
-  },
-  {
-    file: 'SteamAnalyzer/api.js',
-    code:
-`// Fetch player game library
-async function getLibrary(steamId) {
-  const url = '/api/steam/' + steamId
-  const res = await fetch(url)
-  const { games } = await res.json()
-  return games.sort(
-    (a, b) => b.playtime - a.playtime
-  )
-}`,
-  },
-  {
-    file: 'CoreTracker/database.js',
-    code:
-`// Register new well sample
-function addSample(data) {
-  const db = getDatabase()
-  const stmt = db.prepare(
-    'INSERT INTO samples ' +
-    '(well_id, depth, type, date) ' +
-    'VALUES (?, ?, ?, ?)'
-  )
-  return stmt.run(
-    data.wellId, data.depth,
-    data.type,   Date.now()
-  )
+  if (intent === 'schedule_visit') {
+    return await bookVisit(msg)
+  }
+  return await fallbackLLM(msg)
 }`,
   },
 ]
@@ -242,9 +237,10 @@ function LiveCodePanel() {
 
 // Roles cycled by the typewriter — tech terms, no translation needed
 const ROLES = [
-  'Fullstack Developer',
-  'React + Node.js',
-  'Ships Real Products',
+  'AI Engineer',
+  'Prompt Engineering · LLM Agents',
+  'ComfyUI · Flux · Nano Banana',
+  'Ships Real AI Products',
   'Open to Work',
 ]
 
@@ -299,7 +295,7 @@ function Hero() {
   // CV download — pick the file matching the current UI language and warn the user
   const cvIsEnglish = lang !== 'es'
   const cvHref = cvIsEnglish ? '/CV_Lautaro_Bleskz_EN.pdf' : '/CV_Lautaro_Bleskz_ES.pdf'
-  const cvFileName = cvIsEnglish ? 'Lautaro_Bleskz_CV_EN.pdf' : 'Lautaro_Bleskz_CV_ES.pdf'
+  const cvFileName = cvIsEnglish ? 'Lautaro_Velo_CV_EN.pdf' : 'Lautaro_Velo_CV_ES.pdf'
   const cvLangLabel = cvIsEnglish ? 'EN' : 'ES'
   const cvNote = cvIsEnglish
     ? 'Downloads the English version. Switch language for ES.'
@@ -592,7 +588,7 @@ function Hero() {
             </div>
             <div
               className="glitch-line"
-              data-text="BLESKZ"
+              data-text="VELO"
               style={{
                 fontFamily: "'Bebas Neue', cursive",
                 fontSize: 'clamp(3.5rem, 14vw, 12rem)',
@@ -600,7 +596,7 @@ function Hero() {
                 textShadow: `0 0 40px ${C.g(0.08)}`,
               }}
             >
-              BLESKZ
+              VELO
             </div>
           </motion.div>
 

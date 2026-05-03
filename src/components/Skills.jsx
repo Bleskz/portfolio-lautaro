@@ -7,31 +7,46 @@ import { C } from '../theme/colors'
 
 const channels = [
   {
-    name: '// FRONTEND_CORE',
+    name: '// AI_AND_LLM_ORCHESTRATION',
+    skills: [
+      { name: 'Claude Code', pct: 90 },
+      { name: 'Prompt Engineering', pct: 85 },
+      { name: 'Context Engineering', pct: 85 },
+      { name: 'Agent Design', pct: 80 },
+      { name: 'Custom Skills', pct: 80 },
+      { name: 'LLM Orchestration', pct: 75 },
+    ],
+  },
+  {
+    name: '// GENERATIVE_AI_AND_IMAGE',
+    skills: [
+      { name: 'ComfyUI', pct: 85 },
+      { name: 'Flux', pct: 80 },
+      { name: 'Workflow Design', pct: 80 },
+      { name: 'Nano Banana', pct: 75 },
+      { name: 'LoRA / ControlNet', pct: 60 },
+    ],
+  },
+  {
+    name: '// FRONTEND_AND_WEB',
     skills: [
       { name: 'HTML + CSS', pct: 95 },
       { name: 'JavaScript', pct: 85 },
       { name: 'React', pct: 80 },
-      { name: 'Tailwind CSS', pct: 75 },
+      { name: 'Tailwind CSS', pct: 80 },
+      { name: 'Vite', pct: 75 },
       { name: 'UI/UX Design', pct: 70 },
     ],
   },
   {
     name: '// BACKEND_AND_TOOLS',
     skills: [
-      { name: 'Node.js', pct: 75 },
-      { name: 'REST APIs', pct: 70 },
-      { name: 'Electron', pct: 65 },
       { name: 'Git / GitHub', pct: 90 },
-      { name: 'Twilio', pct: 60 },
-    ],
-  },
-  {
-    name: '// AI_AND_CREATIVE',
-    skills: [
-      { name: 'Claude Code', pct: 85 },
-      { name: 'Prompt Engineering', pct: 80 },
-      { name: 'ComfyUI', pct: 65 },
+      { name: 'Node.js', pct: 75 },
+      { name: 'REST APIs', pct: 75 },
+      { name: 'SQLite', pct: 70 },
+      { name: 'Twilio / WhatsApp API', pct: 70 },
+      { name: 'Electron', pct: 65 },
     ],
   },
   {
@@ -219,7 +234,7 @@ function Skills() {
           subtitle={t.skills.subtitle}
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           {channels.map((channel, i) => (
             <ChannelCard key={channel.name} channel={channel} index={i} />
           ))}
