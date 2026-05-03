@@ -295,7 +295,7 @@ function Hero() {
   // CV download — pick the file matching the current UI language and warn the user
   const cvIsEnglish = lang !== 'es'
   const cvHref = cvIsEnglish ? '/CV_Lautaro_Bleskz_EN.pdf' : '/CV_Lautaro_Bleskz_ES.pdf'
-  const cvFileName = cvIsEnglish ? 'Lautaro_Velo_CV_EN.pdf' : 'Lautaro_Velo_CV_ES.pdf'
+  const cvFileName = cvIsEnglish ? 'Lautaro_Bleskz_CV_EN.pdf' : 'Lautaro_Bleskz_CV_ES.pdf'
   const cvLangLabel = cvIsEnglish ? 'EN' : 'ES'
   const cvNote = cvIsEnglish
     ? 'Downloads the English version. Switch language for ES.'
@@ -588,7 +588,7 @@ function Hero() {
             </div>
             <div
               className="glitch-line"
-              data-text="VELO"
+              data-text="BLESKZ"
               style={{
                 fontFamily: "'Bebas Neue', cursive",
                 fontSize: 'clamp(3.5rem, 14vw, 12rem)',
@@ -596,7 +596,7 @@ function Hero() {
                 textShadow: `0 0 40px ${C.g(0.08)}`,
               }}
             >
-              VELO
+              BLESKZ
             </div>
           </motion.div>
 
