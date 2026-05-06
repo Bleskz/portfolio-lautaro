@@ -5,10 +5,15 @@ import useReducedMotion from '../hooks/useReducedMotion'
 import { C } from '../theme/colors'
 import TerminalTitleBar from './ui/TerminalTitleBar'
 
-// Scrolls smoothly to the section with the given id
-function scrollTo(id) {
-  const el = document.getElementById(id)
-  if (el) el.scrollIntoView({ behavior: 'smooth' })
+// Scrolls smoothly to a section — uses Lenis if available, falls back to native
+function scrollTo(id, lenisRef) {
+  const lenis = lenisRef?.current
+  if (lenis) {
+    lenis.scrollTo(`#${id}`, { offset: -80, duration: 1.8 })
+  } else {
+    const el = document.getElementById(id)
+    if (el) el.scrollIntoView({ behavior: 'smooth' })
+  }
 }
 
 // Returns Framer Motion props for a staggered fade-up entrance
@@ -285,7 +290,7 @@ function TypewriterRole() {
 }
 
 // Full-screen hero section — SIGNAL DETECTED
-function Hero() {
+function Hero({ lenisRef }) {
   const sectionRef = useRef(null)
   const inView = useInView(sectionRef, { amount: 0.05 })
   const nameRef = useRef(null)
@@ -336,7 +341,7 @@ function Hero() {
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
-        paddingTop: 'clamp(5.5rem, 18vw, 130px)',
+        paddingTop: 'clamp(6.5rem, 18vw, 130px)',
         paddingBottom: 'clamp(3.5rem, 8vh, 5.5rem)',
         paddingLeft: 'clamp(1.25rem, 6vw, 7rem)',
         paddingRight: 'clamp(1.25rem, 6vw, 7rem)',
@@ -629,7 +634,7 @@ function Hero() {
           >
             {/* Button A — scroll to Projects */}
             <motion.button
-              onClick={() => scrollTo('projects')}
+              onClick={() => scrollTo('projects', lenisRef)}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               style={{
@@ -658,7 +663,7 @@ function Hero() {
 
             {/* Button B — scroll to Contact */}
             <motion.button
-              onClick={() => scrollTo('contact')}
+              onClick={() => scrollTo('contact', lenisRef)}
               whileHover={{ scale: 1.01 }}
               style={{
                 fontFamily: "'Share Tech Mono', monospace",

@@ -160,7 +160,7 @@ function App() {
       <LangProvider>
         <SkipLink />
         <Navbar lenisRef={lenisRef} />
-        <Hero />
+        <Hero lenisRef={lenisRef} />
         <ScrollToTop lenisRef={lenisRef} />
         <Suspense fallback={<div style={{ backgroundColor: '#020502', minHeight: '100vh' }} />}>
           <SectionDivider />

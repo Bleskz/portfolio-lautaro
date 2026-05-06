@@ -3,12 +3,16 @@
 @tailwind utilities;
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
 body {
   background-color: #020502;
   color: #E8FFE8;
   overflow-x: clip;
 }
+
+/* Fixed navbar offset for in-page anchor jumps — keeps section titles below the navbar
+   when the user clicks a nav link or the URL hash changes. Lenis uses its own offset
+   on desktop; this covers touch devices (where Lenis is disabled) and native hash navigation. */
+section[id] { scroll-margin-top: 5rem; }
 
 /* Sensible cursor defaults — text fields show text caret, buttons show pointer */
 input, textarea, select { cursor: text; }
