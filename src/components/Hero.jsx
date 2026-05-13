@@ -289,6 +289,211 @@ function TypewriterRole() {
   )
 }
 
+// Brand icons rendered as currentColor SVGs so hover can recolor them
+function DiscordIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M20.317 4.37a19.79 19.79 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z" />
+    </svg>
+  )
+}
+
+function FiverrIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M16.25 16.5h-2.5V9.4h-3.91v7.1H7.34V9.4H5.75V6.9h1.59v-.64C7.34 4.33 8.8 3 10.81 3h2.74v2.5h-1.99c-.69 0-1.16.41-1.16 1.08V6.9h7.85V16.5zm-1.25-12c.83 0 1.5.67 1.5 1.5S15.83 7.5 15 7.5s-1.5-.67-1.5-1.5S14.17 4.5 15 4.5z" />
+    </svg>
+  )
+}
+
+// Terminal-style channel card — corner brackets, signal indicator, scanline-on-hover
+function ChannelCard({ href, channelId, label, handle, icon, accent }) {
+  const [hovered, setHovered] = useState(false)
+  const reducedMotion = useReducedMotion()
+  const accentSoft = accent === C.cyan ? C.c(0.4) : C.g(0.4)
+  const accentBg = accent === C.cyan ? C.c(0.05) : C.g(0.05)
+
+  // Four absolute-positioned L-shaped brackets — one per corner
+  const brackets = [
+    { top: -1, left: -1, borderTop: '1px solid', borderLeft: '1px solid' },
+    { top: -1, right: -1, borderTop: '1px solid', borderRight: '1px solid' },
+    { bottom: -1, left: -1, borderBottom: '1px solid', borderLeft: '1px solid' },
+    { bottom: -1, right: -1, borderBottom: '1px solid', borderRight: '1px solid' },
+  ]
+
+  return (
+    <motion.a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      whileHover={reducedMotion ? {} : { y: -2 }}
+      whileTap={{ scale: 0.985 }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      onFocus={() => setHovered(true)}
+      onBlur={() => setHovered(false)}
+      aria-label={`Open ${label} channel: ${handle}`}
+      style={{
+        position: 'relative',
+        display: 'block',
+        padding: '0.85rem 1.1rem',
+        minWidth: '210px',
+        flex: '1 1 210px',
+        maxWidth: '260px',
+        backgroundColor: hovered ? 'rgba(0,255,65,0.045)' : 'rgba(2,5,2,0.55)',
+        border: `1px solid ${hovered ? C.g(0.55) : C.g(0.18)}`,
+        textDecoration: 'none',
+        cursor: 'pointer',
+        transition: 'background 0.25s, border-color 0.25s, box-shadow 0.25s',
+        boxShadow: hovered
+          ? `0 0 22px ${C.g(0.18)}, inset 0 0 25px ${C.g(0.03)}`
+          : 'none',
+        overflow: 'hidden',
+      }}
+    >
+      {/* Corner brackets — accent color on hover, dim green at rest */}
+      {brackets.map((b, i) => (
+        <span
+          key={i}
+          aria-hidden="true"
+          style={{
+            position: 'absolute',
+            width: '9px',
+            height: '9px',
+            pointerEvents: 'none',
+            borderColor: hovered ? accent : C.g(0.55),
+            transition: 'border-color 0.25s',
+            ...b,
+          }}
+        />
+      ))}
+
+      {/* Sweeping scanline on hover — narrow vertical gradient that drifts L→R */}
+      {hovered && !reducedMotion && (
+        <motion.div
+          initial={{ x: '-60%', opacity: 0 }}
+          animate={{ x: '160%', opacity: [0, 1, 0] }}
+          transition={{ duration: 0.9, ease: 'linear' }}
+          aria-hidden="true"
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '35%',
+            height: '100%',
+            background: `linear-gradient(90deg, transparent 0%, ${C.g(0.12)} 50%, transparent 100%)`,
+            pointerEvents: 'none',
+          }}
+        />
+      )}
+
+      {/* Header row — channel tag + pulsing signal dot */}
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          marginBottom: '0.6rem',
+          position: 'relative',
+          zIndex: 1,
+        }}
+      >
+        <span
+          style={{
+            fontFamily: "'Share Tech Mono', monospace",
+            fontSize: '0.55rem',
+            color: accent,
+            letterSpacing: '0.2em',
+            padding: '0.13rem 0.5rem',
+            border: `1px solid ${accentSoft}`,
+            background: accentBg,
+          }}
+        >
+          {channelId}
+        </span>
+        <motion.span
+          animate={reducedMotion ? { opacity: 1 } : { opacity: [1, 0.25, 1] }}
+          transition={{ duration: 1.6, repeat: reducedMotion ? 0 : Infinity, ease: 'easeInOut' }}
+          aria-hidden="true"
+          style={{
+            width: '6px',
+            height: '6px',
+            borderRadius: '50%',
+            backgroundColor: C.green,
+            boxShadow: `0 0 6px ${C.green}`,
+            display: 'inline-block',
+          }}
+        />
+      </div>
+
+      {/* Body — icon + label/handle stack + arrow that slides on hover */}
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.8rem',
+          position: 'relative',
+          zIndex: 1,
+        }}
+      >
+        <div
+          style={{
+            flexShrink: 0,
+            color: hovered ? accent : C.green,
+            transition: 'color 0.25s, filter 0.25s',
+            filter: hovered ? `drop-shadow(0 0 6px ${accent})` : 'none',
+            display: 'flex',
+          }}
+        >
+          {icon}
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.18rem', flex: 1, minWidth: 0 }}>
+          <span
+            style={{
+              fontFamily: "'Share Tech Mono', monospace",
+              fontSize: '0.85rem',
+              color: hovered ? C.white : C.green,
+              letterSpacing: '0.14em',
+              lineHeight: 1,
+              transition: 'color 0.25s',
+              fontWeight: 700,
+            }}
+          >
+            {label}
+          </span>
+          <span
+            style={{
+              fontFamily: "'Share Tech Mono', monospace",
+              fontSize: '0.62rem',
+              color: C.w(0.55),
+              letterSpacing: '0.1em',
+              lineHeight: 1.2,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {handle}
+          </span>
+        </div>
+        <span
+          aria-hidden="true"
+          style={{
+            fontFamily: "'Share Tech Mono', monospace",
+            fontSize: '0.9rem',
+            color: hovered ? accent : C.g(0.4),
+            transition: 'color 0.25s, transform 0.25s',
+            transform: hovered ? 'translateX(3px) translateY(-3px)' : 'translateX(0)',
+            flexShrink: 0,
+          }}
+        >
+          ↗
+        </span>
+      </div>
+    </motion.a>
+  )
+}
+
 // Full-screen hero section — SIGNAL DETECTED
 function Hero({ lenisRef }) {
   const sectionRef = useRef(null)
@@ -333,15 +538,16 @@ function Hero({ lenisRef }) {
     <section
       id="home"
       ref={sectionRef}
+      className="hero-section"
       style={{
-        height: '100vh',
+        minHeight: '100vh',
         backgroundColor: C.bg,
         position: 'relative',
         overflow: 'hidden',
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'center',
-        paddingTop: 'clamp(6.5rem, 18vw, 130px)',
+        justifyContent: 'flex-start',
+        paddingTop: 'clamp(7.5rem, 22vw, 140px)',
         paddingBottom: 'clamp(3.5rem, 8vh, 5.5rem)',
         paddingLeft: 'clamp(1.25rem, 6vw, 7rem)',
         paddingRight: 'clamp(1.25rem, 6vw, 7rem)',
@@ -753,6 +959,79 @@ function Hero({ lenisRef }) {
                 {cvNote}
               </span>
             </div>
+
+          </motion.div>
+
+          {/* 5. ESTABLISH_CONTACT — direct channels row (Discord + Fiverr) */}
+          <motion.div
+            {...fadeUp(0.95)}
+            style={{ marginTop: '2.25rem' }}
+          >
+            {/* Section label — mirrors the "SIGNAL DETECTED" tagline pattern */}
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.7rem',
+                marginBottom: '0.85rem',
+              }}
+            >
+              <div
+                style={{
+                  width: '22px',
+                  height: '1px',
+                  backgroundColor: C.green,
+                  boxShadow: `0 0 6px ${C.green}`,
+                  flexShrink: 0,
+                }}
+              />
+              <span
+                style={{
+                  fontFamily: "'Share Tech Mono', monospace",
+                  fontSize: '0.6rem',
+                  color: C.g(0.55),
+                  letterSpacing: '0.22em',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                ▸ ESTABLISH_CONTACT
+              </span>
+              <span
+                aria-hidden="true"
+                style={{
+                  flex: 1,
+                  height: '1px',
+                  background: `linear-gradient(90deg, ${C.g(0.18)} 0%, transparent 100%)`,
+                  maxWidth: '160px',
+                }}
+              />
+            </div>
+
+            {/* Channel cards — wrap on narrow viewports, side-by-side on wider */}
+            <div
+              style={{
+                display: 'flex',
+                gap: '0.85rem',
+                flexWrap: 'wrap',
+              }}
+            >
+              <ChannelCard
+                href="https://discord.com/users/Bleskz"
+                channelId="CH.01"
+                label="DISCORD"
+                handle="// BLESKZ"
+                icon={<DiscordIcon />}
+                accent={C.cyan}
+              />
+              <ChannelCard
+                href="https://es.fiverr.com/s/6YBz1Gr"
+                channelId="CH.02"
+                label="FIVERR"
+                handle="// HIRE_ME"
+                icon={<FiverrIcon />}
+                accent={C.green}
+              />
+            </div>
           </motion.div>
         </div>
 
@@ -765,14 +1044,14 @@ function Hero({ lenisRef }) {
         </div>
       </div>
 
-      {/* 5. Scroll hint — absolute bottom-left (delay 1.0s) */}
+      {/* 5. Scroll hint — absolute bottom-left, desktop only (would overlap channel cards on narrow screens) */}
       <motion.div
         {...fadeUp(1.0)}
+        className="hidden lg:flex"
         style={{
           position: 'absolute',
           bottom: '1.5rem',
           left: 'clamp(1.5rem, 6vw, 7rem)',
-          display: 'flex',
           alignItems: 'center',
           gap: '0.7rem',
         }}
